@@ -1,0 +1,22 @@
+<ActionBar title="Details"></ActionBar>
+
+<FlexboxLayout flexDirection="column">
+    <FlexboxLayout class="m-15" flexDirection="column" flexWrap="wrap" flexDirection="row">
+        <RadListView row="0" orientation="horizontal" [items]="item.img"
+            (scrollDragEnded)="onScrollDragEnded($event)" (scrollEnded)="onScrollEnded($event)"
+            width="100%" height="350">
+            <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="350" itemHeight="350" [spanCount]="1"></ListViewLinearLayout>
+            <ng-template let-img="item">
+                <StackLayout>
+                    <Image [src]="img" height="350" ios:stretch="aspectFill"></Image>
+                </StackLayout>
+            </ng-template>
+        </RadListView>
+        <Label class="h1" width="100%" [text]="item.source" textWrap="false"></Label>
+        <StackLayout orientation="horizontal">
+            <Label [text]="item.name" class="listing-left" textAlignment="left" textWrap="true"></Label>
+            <Label [text]="'$' + item.price" class="listing-right" textAlignment="center" textWrap="true"></Label>
+        </StackLayout>
+        <Button text="Buy This Product" width="100%" margin="10 0 10 0" backgroundColor="blue" height="100px" [nsRouterLink]="index"></Button>
+    </FlexboxLayout>
+</FlexboxLayout>

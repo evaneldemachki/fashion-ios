@@ -1,0 +1,11 @@
+.listing-left {
+    font-size: 18px;
+    width: 75%;
+    float: left;
+}
+.listing-right {
+    font-size: 25px;
+    width: 25%;
+    float: right;
+    vertical-align: middle;
+}
