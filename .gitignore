@@ -2,7 +2,6 @@
 hooks/
 node_modules/
 platforms/
-.vscode/
 
 # NativeScript Template
 *.js.map
