@@ -18,7 +18,6 @@ import { ListPicker } from "tns-core-modules/ui/list-picker";
     templateUrl: "./items.component.html"
 })
 export class ItemsComponent implements OnInit {
-    //items: Item[];
     items: ObservableArray<Item>;
     categories = [];
     public selectedIndex = 0;

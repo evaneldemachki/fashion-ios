@@ -4,8 +4,6 @@ import { NativeScriptModule } from "@nativescript/angular/nativescript.module";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 
-import { DropDownModule } from "nativescript-drop-down/angular";
-
 //import { ItemsComponent } from "./item/items.component";
 //import { ItemDetailComponent } from "./item/item-detail.component";
 
@@ -22,7 +20,6 @@ import { DropDownModule } from "nativescript-drop-down/angular";
     imports: [
         NativeScriptModule,
         AppRoutingModule,
-        DropDownModule,
     ],
     declarations: [
         AppComponent
