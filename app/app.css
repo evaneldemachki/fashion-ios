@@ -9,6 +9,11 @@
     width: 200;
     height: 75;
     vertical-align: middle;
+    visibility: collapse;
+}
+
+.searchMenu {
+    visibility: collapse;
 }
 
 .i-profile {

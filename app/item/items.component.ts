@@ -11,6 +11,7 @@ import { ObservableArray } from 'tns-core-modules/data/observable-array';
 import { SelectedIndexChangedEventData, ValueList, DropDown } from "nativescript-drop-down";
 import { EventData, fromObject } from "tns-core-modules/data/observable";
 import { ListPicker } from "tns-core-modules/ui/list-picker";
+import { View } from "tns-core-modules/ui/core/view";
 
 @Component({
     selector: "ns-items",
@@ -22,6 +23,7 @@ export class ItemsComponent implements OnInit {
     categories = [];
     public selectedIndex = 0;
     searchBar: SearchBar;
+    listPicker: ListPicker;
     searchText: string;
 
     constructor(private itemService: ItemService) {}
@@ -60,8 +62,9 @@ export class ItemsComponent implements OnInit {
         this.refreshSearch();
     }
 
-    categoryPicker(index) {
-        this.selectedIndex = index;
+    categoryPicker(args) {
+        this.listPicker = args.object as ListPicker;
+        this.selectedIndex = args.object.selectedIndex;
         this.refreshSearch()
     }
 
@@ -103,15 +106,19 @@ export class ItemsComponent implements OnInit {
         });
     }
 
-    onSearch(args){
-        let search = document.getElementsByClassName('searchMenu') as HTMLCollectionOf<HTMLElement>;
-        let list = document.getElementsByClassName('picker') as HTMLCollectionOf<HTMLElement>;
-        console.log("Fired");
-        if (search.length != 0) {
-            search[0].style.visibility = "visible";
+    onSearch(){
+        if(this.searchBar.visibility=="collapse"){
+            let search = this.searchBar.visibility = "visible";
+            let list = this.listPicker.visibility = "visible";
+        }else{
+            let search = this.searchBar.visibility = "collapse";
+            let list = this.listPicker.visibility = "collapse";
         }
-        if (list.length != 0) {
-            list[0].style.visibility = "visible";
-        }
+        
     }
+}
+
+export function onLoaded(args: EventData) {
+    this.page = <View>args.object;
+    this.page.bindingContext = new Observable();
 }
