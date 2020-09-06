@@ -21,7 +21,8 @@ export class ItemsComponent implements OnInit {
     items: ObservableArray<Item>;
     categories = [];
     public selectedIndex = 0;
-    searchingBar;
+    searchBar: SearchBar;
+    searchText: string;
 
     constructor(private itemService: ItemService) {}
 
@@ -32,68 +33,85 @@ export class ItemsComponent implements OnInit {
         });
 
         this.itemService.getCategories().subscribe((res) =>{
-            var str = res.slice(1,res.length-1);
-            var words = str.split(',')
-            for(var i=0; i<words.length;i++){
-                words[i] = words[i].slice(1,words[i].length-1)
-                words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
+            let cat = JSON.parse(res);
+            for(let i=0; i < cat.length; i++) {
+                // capitalize first letter of category
+                cat[i] = cat[i].charAt(0).toUpperCase() + cat[i].slice(1);
             }
-            words.unshift("Any");
-            this.categories = words;
+            // add 'Any' category to search all items
+            cat.unshift("Any");
+            this.categories = cat;
         });
+
+        this.searchText = "";
         
     }
 
     onSubmit(args) {
-        const searchBar = args.object as SearchBar;
-        var searchText = searchBar.text.toLowerCase();
-        this.refreshSearch(searchText);
-
+        this.refreshSearch();
     }
 
     onTextChanged(args) {
-        this.searchingBar = args.object as SearchBar;
+        this.searchBar = args.object as SearchBar;
+        this.searchText = this.searchBar.text.toLowerCase();
     }
 
     onClear(args) {
-        while(this.items.length > 0) {
-            this.items.pop();
+        this.refreshSearch();
+    }
+
+    categoryPicker(index) {
+        this.selectedIndex = index;
+        this.refreshSearch()
+    }
+
+    scrollStartedEvent(args) {
+        this.searchBar.dismissSoftInput();
+    }
+
+    searchRouter() {
+        let itemsRequest;
+
+        if (this.searchText == "") {
+            if(this.selectedIndex==0) {
+                console.log("Searching for <all>");
+                itemsRequest = this.itemService.getItems();         
+            } else {
+                console.log("Searching for <all> in category '" + this.categories[this.selectedIndex] + "'");
+                itemsRequest = this.itemService.getFromCategory(this.categories[this.selectedIndex].toLowerCase());
+            }
+        } else {
+            if(this.selectedIndex==0) {
+                console.log("Searching for '" + this.searchText + "'");
+                itemsRequest = this.itemService.getFromName(this.searchText);
+            } else {
+                console.log("Searching for '" + this.searchText + "' in category: '"+ this.categories[this.selectedIndex] + "'");
+                itemsRequest = this.itemService.getFromNameAndCategory(
+                    this.searchText, this.categories[this.selectedIndex].toLowerCase());
+            }
         }
-        this.itemService.getItems().subscribe((res) => {
+
+        return itemsRequest;
+    }
+
+    refreshSearch() {
+        let itemsRequest = this.searchRouter();
+
+        itemsRequest.subscribe((res) => {
             this.items = JSON.parse(res);
             this.itemService.items = this.items;
         });
     }
 
-    categoryPicker(index) {
-        this.selectedIndex = index;
-    }
-
-    scrollStartedEvent(args) {
-        this.searchingBar.dismissSoftInput();
-    }
-
-
-    refreshSearch(searchText){
-        console.log("Searching for " + searchText + " in "+ this.categories[this.selectedIndex]);
-        if(this.selectedIndex==0){
-            while(this.items.length > 0) {
-                this.items.pop();
-            }
-
-            this.itemService.getFromName(searchText).subscribe((res) => {
-                this.items = JSON.parse(res);
-                this.itemService.items = this.items;
-            });
+    onSearch(args){
+        let search = document.getElementsByClassName('searchMenu') as HTMLCollectionOf<HTMLElement>;
+        let list = document.getElementsByClassName('picker') as HTMLCollectionOf<HTMLElement>;
+        console.log("Fired");
+        if (search.length != 0) {
+            search[0].style.visibility = "visible";
         }
-        else{
-            while(this.items.length > 0) {
-                this.items.pop();
-            }
-            this.itemService.getFromNameAndCategory(searchText, this.categories[this.selectedIndex]).subscribe((res) => {
-                this.items = JSON.parse(res);
-                this.itemService.items = this.items;
-            });
+        if (list.length != 0) {
+            list[0].style.visibility = "visible";
         }
     }
 }

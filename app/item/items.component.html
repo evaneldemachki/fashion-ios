@@ -1,4 +1,7 @@
-<ActionBar title="Explore Items"></ActionBar>
+<ActionBar title="Explore Items">
+    <ActionItem tap="onShare" ios.systemIcon="9" ios.position="left" android.systemIcon="res://ic_menu_share" android.position="actionBar"></ActionItem>
+    <ActionItem (tap)="onSearch($event)" ios.systemIcon="12" ios.position="right" text="search" android.position="popup"></ActionItem>
+</ActionBar>
 <BottomNavigation selectedIndex="1">
     <!-- The bottom tab UI is created via TabStrip (the containier) and TabStripItem (for each tab)-->
     <TabStrip>
@@ -44,11 +47,12 @@
     <TabContentItem>
         <StackLayout>
             <Label text="Search Page" class="h2 text-center"></Label>
-            <SearchBar hint="Enter search term here ..."
-            [text]="searchPhrase" (textChange)="onTextChanged($event)" 
-            (clear)="onClear($event)" (submit)="onSubmit($event)">
+            <SearchBar hint="Enter search term here ..." (textChange)="onTextChanged($event)"
+            [text]="searchPhrase" (clear)="onClear($event)" (submit)="onSubmit($event)">
             </SearchBar>
-            <ListPicker [items]="categories" class="picker" (selectedIndexChange)="categoryPicker($event.object.selectedIndex)"></ListPicker>
+            <ListPicker class="picker"
+            [items]="categories" (selectedIndexChange)="categoryPicker($event.object.selectedIndex)">
+            </ListPicker>
             <GridLayout padding="2 0 2 2" backgroundColor="lightGray" margin="0">
                 <RadListView row="0" orientation="vertical" [items]="items"
                 width="100%" height="100%" (scrolled)="scrollStartedEvent($event)">
