@@ -3,7 +3,6 @@ import { NativeScriptModule } from "@nativescript/angular/nativescript.module";
 
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
-require("nativescript-dom");
 
 //import { ItemsComponent } from "./item/items.component";
 //import { ItemDetailComponent } from "./item/item-detail.component";

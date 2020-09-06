@@ -55,7 +55,9 @@ export class ItemsComponent implements OnInit {
 
     onTextChanged(args) {
         this.searchBar = args.object as SearchBar;
-        this.searchText = this.searchBar.text.toLowerCase();
+        if(this.searchBar.text != null){
+            this.searchText = this.searchBar.text.toLowerCase();
+        }
     }
 
     onClear(args) {
@@ -106,13 +108,13 @@ export class ItemsComponent implements OnInit {
         });
     }
 
-    onSearch(){
-        if(this.searchBar.visibility=="collapse"){
-            let search = this.searchBar.visibility = "visible";
-            let list = this.listPicker.visibility = "visible";
-        }else{
-            let search = this.searchBar.visibility = "collapse";
-            let list = this.listPicker.visibility = "collapse";
+    onSearch() {
+        if(this.searchBar.visibility == "collapse") {
+            this.searchBar.visibility = "visible";
+            this.listPicker.visibility = "visible";
+        } else {
+            this.searchBar.visibility = "collapse";
+            this.listPicker.visibility = "collapse";
         }
         
     }
