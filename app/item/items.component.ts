@@ -63,7 +63,7 @@ export class ItemsComponent implements OnInit {
 
     onTextChanged(args) {
         this.searchBar = args.object as SearchBar;
-        if(this.searchBar.text !=null){
+        if(this.searchBar.text != null) {
             this.searchText = this.searchBar.text.toLowerCase();
         }
     }
@@ -115,17 +115,6 @@ export class ItemsComponent implements OnInit {
             this.itemService.items = this.items;
         });
     }
-
-    onSearch(){
-        if(this.searchBar.visibility=="collapse"){
-            this.searchBar.visibility = "visible";
-            this.listPicker.visibility = "visible";
-        }else{
-            this.searchBar.visibility = "collapse";
-            this.listPicker.visibility = "collapse";
-        }
-    
-    }
     
     public onLoadMoreItemsRequested(args) {
         if(this.currentlyLoaded >= this.items.length){
@@ -136,6 +125,14 @@ export class ItemsComponent implements OnInit {
                 this.itemService.items = this.items;
             });
             this.currentlyLoaded+=1;
+          
+    onSearch() {
+        if(this.searchBar.visibility == "collapse") {
+            this.searchBar.visibility = "visible";
+            this.listPicker.visibility = "visible";
+        } else {
+            this.searchBar.visibility = "collapse";
+            this.listPicker.visibility = "collapse";
         }
         
         var newitems = this.items.slice(this.currentlyLoaded,this.currentlyLoaded+20);
