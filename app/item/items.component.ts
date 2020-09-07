@@ -124,7 +124,6 @@ export class ItemsComponent implements OnInit {
             this.searchBar.visibility = "collapse";
             this.listPicker.visibility = "collapse";
         }
-    
     }
     
     public onLoadMoreItemsRequested(args) {
