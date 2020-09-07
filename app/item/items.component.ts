@@ -33,11 +33,6 @@ export class ItemsComponent implements OnInit {
     constructor(private itemService: ItemService) {}
 
     ngOnInit(): void {
-        this.itemService.getItems().subscribe((res) => {
-            this.items = JSON.parse(res);
-            this.itemService.items = this.items;
-            this.addItemsToView();
-        });
 
         this.itemService.getCategories().subscribe((res) =>{
             let cat = JSON.parse(res);
@@ -74,7 +69,7 @@ export class ItemsComponent implements OnInit {
 
     onTextChanged(args) {
         this.searchBar = args.object as SearchBar;
-        if(this.searchBar.text !=null){
+        if(this.searchBar.text != null) {
             this.searchText = this.searchBar.text.toLowerCase();
         }
     }
@@ -125,17 +120,10 @@ export class ItemsComponent implements OnInit {
             this.items = JSON.parse(res);
             console.log(this.items[this.items.length - 1].name)
             this.itemService.items = this.items;
+            this.itemsShown.length = 0;
+            this.currentlyLoaded = 0;
+            this.addItemsToView();
         });
-    }
-
-    onSearch(){
-        if(this.searchBar.visibility=="collapse"){
-            this.searchBar.visibility = "visible";
-            this.listPicker.visibility = "visible";
-        }else{
-            this.searchBar.visibility = "collapse";
-            this.listPicker.visibility = "collapse";
-        }
     }
     
     onSearch() {
@@ -151,21 +139,16 @@ export class ItemsComponent implements OnInit {
     
     onLoadMoreItemsRequested(args) {
         console.log("fetching more items: ");
-        if(this.currentlyLoaded >= this.items.length){
-            this.itemService.loadMore().subscribe((res) => {
-                console.log("populating more: " + this.items.length);
-
+        if(this.currentlyLoaded==0){
+            this.itemService.getItems().subscribe((res) => {
                 this.items = JSON.parse(res);
                 this.itemService.items = this.items;
+                this.addItemsToView();
             });
-<<<<<<< HEAD
-            this.currentlyLoaded += 1;
-=======
-            this.currentlyLoaded+=1;
->>>>>>> 4b3f1eeda55b0e269afc866189d33716be67391d
-        }
-        
-        this.addItemsToView();
+        }else{
+            this.addItemsToView();
+        }   
+
         args.returnValue = false;
     }
 }
