@@ -21,13 +21,14 @@ import { View } from "tns-core-modules/ui/core/view";
 export class ItemsComponent implements OnInit {
     items: ObservableArray<Item>;
     itemsShown = new ObservableArray<Item>();
-    categories = [];
-    public selectedIndex = 0;
     searchBar: SearchBar;
     listPicker: ListPicker;
     searchText: string;
-    public currentlyLoaded=0;
-    loadMore = false;
+
+    public categories = [];
+    public loadMore = false;
+    public currentlyLoaded = 0;
+    public selectedIndex = 0;
 
     constructor(private itemService: ItemService) {}
 
@@ -35,11 +36,7 @@ export class ItemsComponent implements OnInit {
         this.itemService.getItems().subscribe((res) => {
             this.items = JSON.parse(res);
             this.itemService.items = this.items;
-            var newitems = this.items.slice(0,20)
-            for(let i=0; i<newitems.length; i++){
-                this.itemsShown.push(newitems[i]);
-            }
-            this.currentlyLoaded = this.itemsShown.length;
+            this.addItemsToView();
         });
 
         this.itemService.getCategories().subscribe((res) =>{
@@ -56,6 +53,20 @@ export class ItemsComponent implements OnInit {
         this.searchText = "";
         
     }
+
+    addItemsToView() {
+        let newitems = this.items.splice(this.currentlyLoaded, this.currentlyLoaded + 20)
+        for(let i = 0; i < 20; i++) {
+            this.itemsShown.push(newitems[i]);
+        }
+        this.currentlyLoaded = this.itemsShown.length;
+    }
+
+    refreshView() {
+        this.itemsShown = this.items;
+    }
+
+
 
     onSubmit(args) {
         this.refreshSearch();
@@ -86,7 +97,7 @@ export class ItemsComponent implements OnInit {
         let itemsRequest;
 
         if (this.searchText == "") {
-            if(this.selectedIndex==0) {
+            if(this.selectedIndex == 0) {
                 console.log("Searching for <all>");
                 itemsRequest = this.itemService.getItems();         
             } else {
@@ -112,11 +123,24 @@ export class ItemsComponent implements OnInit {
 
         itemsRequest.subscribe((res) => {
             this.items = JSON.parse(res);
+            console.log(this.items[this.items.length - 1].name)
             this.itemService.items = this.items;
         });
     }
     
-    public onLoadMoreItemsRequested(args) {
+    onSearch() {
+        if(this.searchBar.visibility=="collapse") {
+            this.searchBar.visibility = "visible";
+            this.listPicker.visibility = "visible";
+        } else {
+            this.searchBar.visibility = "collapse";
+            this.listPicker.visibility = "collapse";
+        }
+
+    }
+    
+    onLoadMoreItemsRequested(args) {
+        console.log("fetching more items: ");
         if(this.currentlyLoaded >= this.items.length){
             this.itemService.loadMore().subscribe((res) => {
                 console.log("populating more: " + this.items.length);
@@ -124,22 +148,10 @@ export class ItemsComponent implements OnInit {
                 this.items = JSON.parse(res);
                 this.itemService.items = this.items;
             });
-            this.currentlyLoaded+=1;
-          
-    onSearch() {
-        if(this.searchBar.visibility == "collapse") {
-            this.searchBar.visibility = "visible";
-            this.listPicker.visibility = "visible";
-        } else {
-            this.searchBar.visibility = "collapse";
-            this.listPicker.visibility = "collapse";
+            this.currentlyLoaded += 1;
         }
         
-        var newitems = this.items.slice(this.currentlyLoaded,this.currentlyLoaded+20);
-        for(let i=0; i<newitems.length; i++){
-            this.itemsShown.push(newitems[i]);
-        }
-        this.currentlyLoaded = this.itemsShown.length+20;
+        this.addItemsToView();
         args.returnValue = false;
     }
 }

@@ -11,7 +11,7 @@ export class ItemService {
     private serverUrl = "https://fashionapi.herokuapp.com/api/";
     
     //items: Item[];
-    items = new ObservableArray();
+    items: ObservableArray<Item>;
     search = new ObservableArray();
     lastSearch = "";
     limit=100;
