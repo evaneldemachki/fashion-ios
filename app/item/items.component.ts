@@ -20,11 +20,14 @@ import { View } from "tns-core-modules/ui/core/view";
 })
 export class ItemsComponent implements OnInit {
     items: ObservableArray<Item>;
+    itemsShown = new ObservableArray<Item>();
     categories = [];
     public selectedIndex = 0;
     searchBar: SearchBar;
     listPicker: ListPicker;
     searchText: string;
+    public currentlyLoaded=0;
+    loadMore = false;
 
     constructor(private itemService: ItemService) {}
 
@@ -32,6 +35,11 @@ export class ItemsComponent implements OnInit {
         this.itemService.getItems().subscribe((res) => {
             this.items = JSON.parse(res);
             this.itemService.items = this.items;
+            var newitems = this.items.slice(0,20)
+            for(let i=0; i<newitems.length; i++){
+                this.itemsShown.push(newitems[i]);
+            }
+            this.currentlyLoaded = this.itemsShown.length;
         });
 
         this.itemService.getCategories().subscribe((res) =>{
@@ -55,7 +63,7 @@ export class ItemsComponent implements OnInit {
 
     onTextChanged(args) {
         this.searchBar = args.object as SearchBar;
-        if(this.searchBar.text != null){
+        if(this.searchBar.text != null) {
             this.searchText = this.searchBar.text.toLowerCase();
         }
     }
@@ -107,7 +115,17 @@ export class ItemsComponent implements OnInit {
             this.itemService.items = this.items;
         });
     }
+    
+    public onLoadMoreItemsRequested(args) {
+        if(this.currentlyLoaded >= this.items.length){
+            this.itemService.loadMore().subscribe((res) => {
+                console.log("populating more: " + this.items.length);
 
+                this.items = JSON.parse(res);
+                this.itemService.items = this.items;
+            });
+            this.currentlyLoaded+=1;
+          
     onSearch() {
         if(this.searchBar.visibility == "collapse") {
             this.searchBar.visibility = "visible";
@@ -117,10 +135,11 @@ export class ItemsComponent implements OnInit {
             this.listPicker.visibility = "collapse";
         }
         
+        var newitems = this.items.slice(this.currentlyLoaded,this.currentlyLoaded+20);
+        for(let i=0; i<newitems.length; i++){
+            this.itemsShown.push(newitems[i]);
+        }
+        this.currentlyLoaded = this.itemsShown.length+20;
+        args.returnValue = false;
     }
-}
-
-export function onLoaded(args: EventData) {
-    this.page = <View>args.object;
-    this.page.bindingContext = new Observable();
 }

@@ -1,8 +1,20 @@
 @import '~@nativescript/theme/css/core.css';
 @import '~@nativescript/theme/css/default.css';
 
-.btn {
+.fa {
+    font-family: FontAwesome, fontawesome-webfont;
+}
+
+Button {
     font-size: 18;
+    border-width: 3;
+    border-color: black;
+    border-radius: 50%;
+    width: 60%;
+}
+
+#accountMenu {
+    background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
 }
 
 .picker {
@@ -14,6 +26,7 @@
 
 .searchMenu {
     visibility: collapse;
+    border-radius: 25px;
 }
 
 .i-profile {
