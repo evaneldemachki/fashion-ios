@@ -11,10 +11,10 @@ export class ItemService {
     private serverUrl = "https://fashionapi.herokuapp.com/api/";
     
     //items: Item[];
-    items: ObservableArray<Item>;
+    items = new ObservableArray();
     search = new ObservableArray();
     lastSearch = "";
-    limit=100;
+    limit=500;
 
     constructor(private http: HttpClient) { }
 
@@ -53,7 +53,7 @@ export class ItemService {
     }
 
     getFromCategory(category){
-        var query = "search?category="+category;
+        var query = "search?category="+category+"&limit="+this.limit;
         this.lastSearch = query
         return this.http.get(
             this.serverUrl + query, {
@@ -62,7 +62,7 @@ export class ItemService {
     }
 
     getFromNameAndCategory(name, category){
-        var basequery = "search?category="+category+"&"+"name="+name
+        var basequery = "search?category="+category+"&"+"name="+name+"&limit="+this.limit
         this.lastSearch = basequery;
 
         this.lastSearch = basequery;
@@ -73,7 +73,7 @@ export class ItemService {
     }
 
     getFromName(name){
-        var basequery = "search?name="+name;
+        var basequery = "search?name="+name+"&limit="+this.limit;
         this.lastSearch = basequery;
         return this.http.get(
             this.serverUrl + basequery, {
