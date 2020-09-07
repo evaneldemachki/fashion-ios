@@ -29,6 +29,7 @@ export class ItemsComponent implements OnInit {
     public loadMore = false;
     public currentlyLoaded = 0;
     public selectedIndex = 0;
+    public totalLoaded = 0;
 
     constructor(private itemService: ItemService) {}
 
@@ -50,8 +51,16 @@ export class ItemsComponent implements OnInit {
     }
 
     addItemsToView() {
-        let newitems = this.items.splice(this.currentlyLoaded, this.currentlyLoaded + 20)
-        for(let i = 0; i < 20; i++) {
+        let newitems = [];
+        let tobeLoaded = 0
+        if(this.currentlyLoaded+20>this.totalLoaded){
+            newitems = this.items.slice(this.currentlyLoaded, this.totalLoaded);
+            tobeLoaded = this.totalLoaded - this.currentlyLoaded;
+        }else{
+            newitems = this.items.slice(this.currentlyLoaded, this.currentlyLoaded + 20)
+            tobeLoaded = 20
+        }
+        for(let i = 0; i < tobeLoaded; i++) {
             this.itemsShown.push(newitems[i]);
         }
         this.currentlyLoaded = this.itemsShown.length;
@@ -109,7 +118,6 @@ export class ItemsComponent implements OnInit {
                     this.searchText, this.categories[this.selectedIndex].toLowerCase());
             }
         }
-
         return itemsRequest;
     }
 
@@ -118,7 +126,7 @@ export class ItemsComponent implements OnInit {
 
         itemsRequest.subscribe((res) => {
             this.items = JSON.parse(res);
-            console.log(this.items[this.items.length - 1].name)
+            this.totalLoaded = this.items.length
             this.itemService.items = this.items;
             this.itemsShown.length = 0;
             this.currentlyLoaded = 0;
