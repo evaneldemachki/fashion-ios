@@ -13,12 +13,29 @@ export class ItemService {
     //items: Item[];
     items = new ObservableArray();
     search = new ObservableArray();
+    lastSearch = "";
+    limit=100;
 
     constructor(private http: HttpClient) { }
 
     getItems() {
+        var basequery = "search?category=dress";
+        this.lastSearch = basequery;
+        var limitQuery = "&limit="+this.limit;
+
+        var query = basequery + limitQuery
         return this.http.get(
-            this.serverUrl + "search?category=dress", {
+            this.serverUrl + query, {
+                responseType: "text"
+            });
+    }
+
+    loadMore(){
+        var basequery = this.lastSearch;
+        var limitQuery = "&limit="+this.limit+100;
+        var query = basequery + limitQuery;
+        return this.http.get(
+            this.serverUrl + query, {
                 responseType: "text"
             });
     }
@@ -36,22 +53,30 @@ export class ItemService {
     }
 
     getFromCategory(category){
+        var query = "search?category="+category;
+        this.lastSearch = query
         return this.http.get(
-            this.serverUrl + "search?category="+category, {
+            this.serverUrl + query, {
                 responseType: "text"
             });
     }
 
     getFromNameAndCategory(name, category){
+        var basequery = "search?category="+category+"&"+"name="+name
+        this.lastSearch = basequery;
+
+        this.lastSearch = basequery;
         return this.http.get(
-            this.serverUrl + "search?category="+category+"&"+"name="+name, {
+            this.serverUrl + basequery, {
                 responseType: "text"
             });
     }
 
     getFromName(name){
+        var basequery = "search?name="+name;
+        this.lastSearch = basequery;
         return this.http.get(
-            this.serverUrl + "search?name="+name, {
+            this.serverUrl + basequery, {
                 responseType: "text"
             });
     }

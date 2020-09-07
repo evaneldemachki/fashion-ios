@@ -21,15 +21,15 @@
 
     <!-- The number of TabContentItem components should corespond to the number of TabStripItem components -->
     <TabContentItem>
-        <StackLayout padding="2 0 2 2" backgroundColor="lightGray" margin="0">
+        <StackLayout padding="2 0 2 2" backgroundColor="gray" margin="0">
             <SearchBar class="searchMenu" hint="Enter search term here ..." (textChange)="onTextChanged($event)"
             [text]="searchPhrase" (clear)="onClear($event)" (submit)="onSubmit($event)">
             </SearchBar>
             <ListPicker class="picker"
             [items]="categories" (selectedIndexChange)="categoryPicker($event)">
             </ListPicker>
-            <RadListView row="0" orientation="vertical" [items]="items"
-            width="100%" height="100%" (scrolled)="scrollStartedEvent($event)">
+            <RadListView row="0" orientation="vertical" [items]="itemsShown"
+            width="100%" height="100%" (scrolled)="scrollStartedEvent($event)" loadOnDemandMode="Auto" (loadMoreDataRequested)="onLoadMoreItemsRequested($event)" loadOnDemandBufferSize=2>
                 <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
                 <ng-template let-item="item" let-index="index">
                     <StackLayout [nsRouterLink]="index" padding="0 2 2 0">
@@ -41,13 +41,14 @@
     </TabContentItem>
     <TabContentItem>
             <Label text="Account Page" class="h2 text-center"></Label>
-            <StackLayout padding="2 0 2 2" backgroundColor="darkGray" margin="0">
-                <Button text="My Likes" tap="myLikes"></Button>
-                <Button text="Find My Style" tap="findMyStyle"></Button>
-                <Button text="Latest and Greatest" tap="Latest"></Button>
-
-                <Button text="Edit Account Details" tap="editAccount"></Button>
-            </StackLayout>
+            <Gridlayout padding="2 0 2 2" rows = "*,*" id="accountMenu" margin="0">     
+                <Stacklayout row = 1>        
+                    <Button text="My Likes" tap="myLikes"></Button>
+                    <Button text="Find My Style" tap="findMyStyle"></Button>
+                    <Button text="Latest and Greatest" tap="Latest"></Button>
+                    <Button text="Edit Account Details" tap="editAccount"></Button>
+                </Stacklayout>   
+            </Gridlayout>
 
     </TabContentItem>
     <TabContentItem>

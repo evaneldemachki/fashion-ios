@@ -20,11 +20,14 @@ import { View } from "tns-core-modules/ui/core/view";
 })
 export class ItemsComponent implements OnInit {
     items: ObservableArray<Item>;
+    itemsShown = new ObservableArray<Item>();
     categories = [];
     public selectedIndex = 0;
     searchBar: SearchBar;
     listPicker: ListPicker;
     searchText: string;
+    public currentlyLoaded=0;
+    loadMore = false;
 
     constructor(private itemService: ItemService) {}
 
@@ -32,6 +35,11 @@ export class ItemsComponent implements OnInit {
         this.itemService.getItems().subscribe((res) => {
             this.items = JSON.parse(res);
             this.itemService.items = this.items;
+            var newitems = this.items.slice(0,20)
+            for(let i=0; i<newitems.length; i++){
+                this.itemsShown.push(newitems[i]);
+            }
+            this.currentlyLoaded = this.itemsShown.length;
         });
 
         this.itemService.getCategories().subscribe((res) =>{
@@ -55,7 +63,9 @@ export class ItemsComponent implements OnInit {
 
     onTextChanged(args) {
         this.searchBar = args.object as SearchBar;
-        this.searchText = this.searchBar.text.toLowerCase();
+        if(this.searchBar.text !=null){
+            this.searchText = this.searchBar.text.toLowerCase();
+        }
     }
 
     onClear(args) {
@@ -108,17 +118,31 @@ export class ItemsComponent implements OnInit {
 
     onSearch(){
         if(this.searchBar.visibility=="collapse"){
-            let search = this.searchBar.visibility = "visible";
-            let list = this.listPicker.visibility = "visible";
+            this.searchBar.visibility = "visible";
+            this.listPicker.visibility = "visible";
         }else{
-            let search = this.searchBar.visibility = "collapse";
-            let list = this.listPicker.visibility = "collapse";
+            this.searchBar.visibility = "collapse";
+            this.listPicker.visibility = "collapse";
+        }
+    
+    }
+    
+    public onLoadMoreItemsRequested(args) {
+        if(this.currentlyLoaded >= this.items.length){
+            this.itemService.loadMore().subscribe((res) => {
+                console.log("populating more: " + this.items.length);
+
+                this.items = JSON.parse(res);
+                this.itemService.items = this.items;
+            });
+            this.currentlyLoaded+=1;
         }
         
+        var newitems = this.items.slice(this.currentlyLoaded,this.currentlyLoaded+20);
+        for(let i=0; i<newitems.length; i++){
+            this.itemsShown.push(newitems[i]);
+        }
+        this.currentlyLoaded = this.itemsShown.length+20;
+        args.returnValue = false;
     }
-}
-
-export function onLoaded(args: EventData) {
-    this.page = <View>args.object;
-    this.page.bindingContext = new Observable();
 }
