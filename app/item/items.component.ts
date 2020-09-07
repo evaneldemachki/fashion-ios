@@ -74,7 +74,7 @@ export class ItemsComponent implements OnInit {
 
     onTextChanged(args) {
         this.searchBar = args.object as SearchBar;
-        if(this.searchBar.text != null) {
+        if(this.searchBar.text !=null){
             this.searchText = this.searchBar.text.toLowerCase();
         }
     }
@@ -127,6 +127,16 @@ export class ItemsComponent implements OnInit {
             this.itemService.items = this.items;
         });
     }
+
+    onSearch(){
+        if(this.searchBar.visibility=="collapse"){
+            this.searchBar.visibility = "visible";
+            this.listPicker.visibility = "visible";
+        }else{
+            this.searchBar.visibility = "collapse";
+            this.listPicker.visibility = "collapse";
+        }
+    }
     
     onSearch() {
         if(this.searchBar.visibility=="collapse") {
@@ -148,7 +158,11 @@ export class ItemsComponent implements OnInit {
                 this.items = JSON.parse(res);
                 this.itemService.items = this.items;
             });
+<<<<<<< HEAD
             this.currentlyLoaded += 1;
+=======
+            this.currentlyLoaded+=1;
+>>>>>>> 4b3f1eeda55b0e269afc866189d33716be67391d
         }
         
         this.addItemsToView();
