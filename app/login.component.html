@@ -1,15 +1,15 @@
 <FlexboxLayout class="page">
     <StackLayout class="form">
       <StackLayout class="input-field">
-        <TextField [(ngModel)]="credentials.username" hint="Email" ...></TextField>
+        <TextField [(ngModel)]="credentials.username" keyboardType="email" autocorrect="false" autocapitalizationType="none" hint="Email" ...></TextField>
       </StackLayout>
   
       <StackLayout class="input-field">
-        <TextField [(ngModel)]="credentials.password" hint="Password" ...></TextField>
+        <TextField [(ngModel)]="credentials.password" autocorrect="false" secure="true" autocapitalizationType="none" hint="Password" ...></TextField>
       </StackLayout>
   
       <StackLayout *ngIf="!isLoggingIn" class="input-field">
-        <TextField [(ngModel)]="confirm" hint="Confirm password" ...></TextField>
+        <TextField [(ngModel)]="confirm" autocorrect="false" secure="true" autocapitalizationType="none" hint="Confirm password" ...></TextField>
       </StackLayout>
   
       <Button [text]="isLoggingIn ? 'Log In' : 'Sign Up'" (tap)="submit()"></Button>
