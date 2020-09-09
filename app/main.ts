@@ -3,6 +3,8 @@ import { platformNativeScriptDynamic } from "nativescript-angular/platform";
 import { enableProdMode } from '@angular/core';
 
 import { AppModule } from "./app.module";
+import { Fontawesome } from 'nativescript-fontawesome';
+Fontawesome.init();
 
 enableProdMode();
 platformNativeScriptDynamic().bootstrapModule(AppModule);

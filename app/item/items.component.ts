@@ -4,7 +4,9 @@ import { Component, OnInit } from "@angular/core";
 import { SearchBar } from "tns-core-modules/ui/search-bar";
 import { Page } from "tns-core-modules/ui/page";
 import { registerElement } from 'nativescript-angular/element-registry';
-import { RadListView } from "nativescript-ui-listview";
+import { RadListView, ListViewEventData, SwipeActionsEventData } from "nativescript-ui-listview";
+import * as viewModule from 'tns-core-modules/ui/core/view';
+import * as utils from "tns-core-modules/utils/utils";
 
 import { Observable } from 'tns-core-modules/data/observable';
 import { ObservableArray } from 'tns-core-modules/data/observable-array';
@@ -12,6 +14,7 @@ import { SelectedIndexChangedEventData, ValueList, DropDown } from "nativescript
 import { EventData, fromObject } from "tns-core-modules/data/observable";
 import { ListPicker } from "tns-core-modules/ui/list-picker";
 import { View } from "tns-core-modules/ui/core/view";
+import { PanGestureEventData, GestureStateTypes } from "tns-core-modules/ui/gestures";
 
 @Component({
     selector: "ns-items",
@@ -30,6 +33,8 @@ export class ItemsComponent implements OnInit {
     public currentlyLoaded = 0;
     public selectedIndex = 0;
     public totalLoaded = 0;
+    public leftThresholdPassed = false;
+    public rightThresholdPassed = false;
 
     constructor(private itemService: ItemService) {}
 
@@ -146,7 +151,6 @@ export class ItemsComponent implements OnInit {
     }
     
     onLoadMoreItemsRequested(args) {
-        console.log("fetching more items: ");
         if(this.currentlyLoaded==0){
             this.itemService.getItems().subscribe((res) => {
                 this.items = JSON.parse(res);
@@ -158,5 +162,69 @@ export class ItemsComponent implements OnInit {
         }   
 
         args.returnValue = false;
+    }
+    
+    onSwipeCellStarted(args: SwipeActionsEventData) {
+        const swipeLimits = args.data.swipeLimits;
+        const swipeView = args.object;
+        const leftItem = swipeView.getViewById<View>('mark-view');
+        const rightItem = swipeView.getViewById<View>('delete-view');
+        swipeLimits.left = leftItem.getMeasuredWidth();
+        swipeLimits.right = rightItem.getMeasuredWidth();
+        swipeLimits.threshold = leftItem.getMeasuredWidth() / 2;
+    }
+
+    onLeftSwipeClick(args: SwipeActionsEventData) {
+        console.log("Left swipe click");
+    }
+    
+    onRightSwipeClick(args: SwipeActionsEventData) {
+        console.log("Right swipe click");
+    }
+
+    onItemSwipeProgressChanged(args: any) {
+        let itemView = args.swipeView;
+        let mainView = args.mainView;
+        let currentView;
+    
+        if (args.data.x >= 0) {
+            currentView = itemView.getViewById("complete-view");
+            var dimensions = viewModule.View.measureChild(
+                <viewModule.View>currentView.parent,
+                currentView,
+                utils.layout.makeMeasureSpec(Math.abs(args.data.x), utils.layout.EXACTLY),
+                utils.layout.makeMeasureSpec(itemView.getMeasuredHeight(), utils.layout.EXACTLY));
+            viewModule.View.layoutChild(<viewModule.View>currentView.parent, currentView, 0, 0, dimensions.measuredWidth, dimensions.measuredHeight);
+            if (args.data.x > mainView.getMeasuredWidth() / 3) {
+                this.rightThresholdPassed = false;
+                this.leftThresholdPassed = true;
+            }
+        } else {
+            currentView = itemView.getViewById("delete-view");
+            var dimensions = viewModule.View.measureChild(
+                <viewModule.View>currentView.parent,
+                currentView,
+                utils.layout.makeMeasureSpec(Math.abs(args.data.x), utils.layout.EXACTLY),
+                utils.layout.makeMeasureSpec(mainView.getMeasuredHeight(), utils.layout.EXACTLY));
+            viewModule.View.layoutChild(<viewModule.View>currentView.parent, currentView, mainView.getMeasuredWidth() - dimensions.measuredWidth, 0, mainView.getMeasuredWidth(), dimensions.measuredHeight);
+            if (Math.abs(args.data.x) > mainView.getMeasuredWidth() / 3) {
+                this.leftThresholdPassed = false;
+                this.rightThresholdPassed = true;
+            }
+        }
+    }
+    onSwipeCellProgressChanged(args: SwipeActionsEventData) {
+        const swipeLimits = args.data.swipeLimits;
+        const currentItemView = args.object;
+        console.log(swipeLimits);
+        if (args.data.x > 200) {
+            console.log("Notify perform left action");
+        } else if (args.data.x < -200) {
+            console.log("Notify perform right action");
+        }
+    }
+    
+    onSwipeCellFinished(args: SwipeActionsEventData) {
+        console.log('hello---->', args);
     }
 }
