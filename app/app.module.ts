@@ -1,8 +1,10 @@
 import { NgModule, NgModuleFactoryLoader, NO_ERRORS_SCHEMA } from "@angular/core";
 import { NativeScriptModule } from "@nativescript/angular/nativescript.module";
-
+import { NativeScriptHttpClientModule } from "@nativescript/angular/http-client";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
+import { LoginComponent } from "./login.component";
+import { NativeScriptFormsModule } from "@nativescript/angular/forms";
 
 //import { ItemsComponent } from "./item/items.component";
 //import { ItemDetailComponent } from "./item/item-detail.component";
@@ -20,9 +22,12 @@ import { AppComponent } from "./app.component";
     imports: [
         NativeScriptModule,
         AppRoutingModule,
+        NativeScriptHttpClientModule,
+        NativeScriptFormsModule
     ],
     declarations: [
-        AppComponent
+        AppComponent,
+        LoginComponent
     ],
     providers: [],
     schemas: [

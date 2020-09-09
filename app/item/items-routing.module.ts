@@ -8,8 +8,8 @@ import { ItemReferenceComponent } from "./item-reference.component";
 
 const routes: Routes = [
     { path: "", component: ItemsComponent },
-    { path: ":id", component: ItemDetailComponent },
-    { path: ":id/:url", component: ItemReferenceComponent }
+    { path: "detail/:id", component: ItemDetailComponent },
+    { path: "detail/:id/:url", component: ItemReferenceComponent }
 ];
 
 @NgModule({
