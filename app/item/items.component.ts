@@ -12,6 +12,7 @@ import { SelectedIndexChangedEventData, ValueList, DropDown } from "nativescript
 import { EventData, fromObject } from "tns-core-modules/data/observable";
 import { ListPicker } from "tns-core-modules/ui/list-picker";
 import { View } from "tns-core-modules/ui/core/view";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
     selector: "ns-items",
@@ -31,10 +32,16 @@ export class ItemsComponent implements OnInit {
     public selectedIndex = 0;
     public totalLoaded = 0;
 
-    constructor(private itemService: ItemService) {}
+    private token: string;
+
+    constructor(
+        private itemService: ItemService,
+        private route: ActivatedRoute
+        ) { }
 
     ngOnInit(): void {
-
+        this.token = this.route.snapshot.params.token;
+        
         this.itemService.getCategories().subscribe((res) =>{
             let cat = JSON.parse(res);
             for(let i=0; i < cat.length; i++) {
@@ -53,12 +60,12 @@ export class ItemsComponent implements OnInit {
     addItemsToView() {
         let newitems = [];
         let tobeLoaded = 0
-        if(this.currentlyLoaded+20>this.totalLoaded){
+        if(this.currentlyLoaded + 20 > this.totalLoaded) {
             newitems = this.items.slice(this.currentlyLoaded, this.totalLoaded);
             tobeLoaded = this.totalLoaded - this.currentlyLoaded;
-        }else{
-            newitems = this.items.slice(this.currentlyLoaded, this.currentlyLoaded + 20)
-            tobeLoaded = 20
+        } else {
+            newitems = this.items.slice(this.currentlyLoaded, this.currentlyLoaded + 20);
+            tobeLoaded = 20;
         }
         for(let i = 0; i < tobeLoaded; i++) {
             this.itemsShown.push(newitems[i]);

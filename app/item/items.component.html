@@ -32,7 +32,7 @@
             width="100%" height="100%" (scrolled)="scrollStartedEvent($event)" loadOnDemandMode="Auto" (loadMoreDataRequested)="onLoadMoreItemsRequested($event)" loadOnDemandBufferSize="2">
                 <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
                 <ng-template let-item="item" let-index="index">
-                    <StackLayout [nsRouterLink]="index" padding="0 2 2 0">
+                    <StackLayout [nsRouterLink]="['detail', index]" padding="0 2 2 0">
                         <Image [src]="item.img[0]" height="180" ios:stretch="aspectFill"></Image>
                     </StackLayout>
                 </ng-template>
