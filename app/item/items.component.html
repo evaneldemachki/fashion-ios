@@ -14,8 +14,8 @@
             <Image src="font://&#xf007;" class="fas t-36"></Image>
         </TabStripItem>
         <TabStripItem class="special">
-            <Label text="Search"></Label>
-            <Image src="font://&#xf00e;" class="fas t-36"></Image>
+            <Label text="Profile"></Label>
+            <Image src="font://&#xf2bd;" class="fas t-36"></Image>
         </TabStripItem>
     </TabStrip>
 
@@ -33,9 +33,8 @@
                 <RadListView row="0" orientation="vertical" [items]="itemsShown"
                 width="100%" height="100%" (scrolled)="scrollStartedEvent($event)" loadOnDemandMode="Auto" (loadMoreDataRequested)="onLoadMoreItemsRequested($event)" loadOnDemandBufferSize="2"
                 id="listView" selectionBehavior="None" 
-                (itemSwipeProgressEnded)="onSwipeCellFinished"
+                (itemSwipeProgressEnded)="onSwipeCellFinished($event)"
                 (itemSwipeProgressStarted)="onSwipeCellStarted($event)" 
-                (itemSwipeProgressChanged)="onSwipeCellProgressChanged"
                 (itemSwiping)="onItemSwiping" 
                 swipeActions="true">
                     <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
@@ -47,10 +46,10 @@
                     <lv:RadListView.itemSwipeTemplate>
                         <GridLayout *tkListItemSwipeTemplate columns="auto, *, auto" backgroundColor="White">
                             <StackLayout id="mark-view" col="0" style="background-color:white;" (tap)="onLeftSwipeClick($event)" paddingLeft="16" paddingRight="16" orientation="horizontal">
-                                <Label class="fas" style="font-size: 50em; color: red" text="&#xf165;"></Label>
+                                <Label class="far" style="font-size: 50em; color: black" text="&#xf165;"></Label>
                             </StackLayout>
                             <StackLayout id="delete-view" col="2" style="background-color: white;" (tap)="onRightSwipeClick($event)"  paddingLeft="16" paddingRight="16" orientation="horizontal">
-                                <Label class="fas" style="font-size: 50em; color: green" text="&#xf004;"></Label>
+                                <Label class="far" style="font-size: 50em; color: black" text="&#xf004;"></Label>
                             </StackLayout>
                         </GridLayout>
                     </lv:RadListView.itemSwipeTemplate>
