@@ -1,5 +1,6 @@
 <FlexboxLayout class="page">
     <StackLayout class="form">
+      <ActivityIndicator [busy]="isBusy" (busyChange)="onBusyChanged($event)"></ActivityIndicator>
       <StackLayout class="input-field">
         <TextField [(ngModel)]="credentials.username" keyboardType="email" autocorrect="false" autocapitalizationType="none" hint="Email" ...></TextField>
       </StackLayout>

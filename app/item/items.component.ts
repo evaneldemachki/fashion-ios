@@ -175,23 +175,22 @@ export class ItemsComponent implements OnInit {
     
     onSwipeCellStarted(args: SwipeActionsEventData) {
         const swipeLimits = args.data.swipeLimits;
-        const swipeView = args.object;
-        const leftItem = swipeView.getViewById<View>('mark-view');
-        const rightItem = swipeView.getViewById<View>('delete-view');
-        swipeLimits.left = leftItem.getMeasuredWidth();
-        swipeLimits.right = rightItem.getMeasuredWidth();
-        swipeLimits.threshold = leftItem.getMeasuredWidth() / 2;
+        const swipeView = args.swipeView;
+        const leftItem = swipeView.getViewById('mark-view');
+        const rightItem = swipeView.getViewById('delete-view');
+        swipeLimits.left = swipeLimits.right = args.data.x > 0 ? swipeView.getMeasuredWidth() / 2 : swipeView.getMeasuredWidth() / 2;
+        swipeLimits.threshold = swipeView.getMeasuredWidth();
     }
 
-    onLeftSwipeClick(args: SwipeActionsEventData) {
+    onLeftSwipeClick() {
         console.log("Left swipe click");
     }
     
-    onRightSwipeClick(args: SwipeActionsEventData) {
+    onRightSwipeClick() {
         console.log("Right swipe click");
     }
 
-    onItemSwipeProgressChanged(args: any) {
+    onItemSwiping(args: any) {
         let itemView = args.swipeView;
         let mainView = args.mainView;
         let currentView;
@@ -222,18 +221,23 @@ export class ItemsComponent implements OnInit {
             }
         }
     }
-    onSwipeCellProgressChanged(args: SwipeActionsEventData) {
+    
+    onSwipeCellFinished(args: SwipeActionsEventData) {
         const swipeLimits = args.data.swipeLimits;
         const currentItemView = args.object;
-        console.log(swipeLimits);
-        if (args.data.x > 200) {
+        if (args.data.x > swipeLimits.left/3) {
             console.log("Notify perform left action");
-        } else if (args.data.x < -200) {
+        } else if (args.data.x < (swipeLimits.right/3)*-1) {
             console.log("Notify perform right action");
         }
     }
-    
-    onSwipeCellFinished(args: SwipeActionsEventData) {
-        console.log('hello---->', args);
+
+    onItemLike(args){
+        console.log(args.object.src);
+    }
+
+    onItemDislike(args){
+        console.log(args.object.src);
+
     }
 }
