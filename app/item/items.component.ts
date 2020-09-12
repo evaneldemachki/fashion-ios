@@ -98,6 +98,7 @@ export class ItemsComponent implements OnInit {
         for(let i = 0; i < tobeLoaded; i++) {
             this.itemsShown.push(newitems[i]);
         }
+        this.currentlyLoaded = this.itemsShown.length;
         this.findLiked();
     }
 
