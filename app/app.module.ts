@@ -27,7 +27,7 @@ import { NativeScriptFormsModule } from "@nativescript/angular/forms";
     ],
     declarations: [
         AppComponent,
-        LoginComponent
+        LoginComponent,
     ],
     providers: [],
     schemas: [

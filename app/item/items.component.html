@@ -70,8 +70,26 @@
 
     </TabContentItem>
     <TabContentItem>
-        <StackLayout>
-            <Label>Nothing here yet...</Label>
-        </StackLayout>
+        <Gridlayout padding="2 0 2 2" rows = "*,*,*" id="accountMenu" margin="0"> 
+            <StackLayout row="0">
+                <Image [src] = "userIcon" height="70%" width = "70%"></Image>
+            </StackLayout>    
+            <ScrollView row="1" rowspan="2" orientation="vertical">
+                <StackLayout>
+                        <Button class="profile" textAlignment = "center" text="My Liked"></Button>
+                        <RadListView height ="200" row="0" orientation="horizontal" [items]="items" margin-left = "2" margin-right="2">
+                            <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal"></ListViewLinearLayout>
+                            <ng-template let-item="item" let-index="index">
+                                <StackLyout [nsRouterLink]="['detail', index]">
+                                    <Image [src]="item.img[0]" height="80%" width = "80%" ios:stretch="aspectFill"></Image>
+                                    <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
+                                </StackLyout>
+                            </ng-template>
+                        </RadListView>
+                        <Button text = "My Friend's Likes"></Button>
+                        <Button text = "Recently Viewed"></Button>
+                </StackLayout>
+            </ScrollView>
+        </Gridlayout>
     </TabContentItem>
 </BottomNavigation>

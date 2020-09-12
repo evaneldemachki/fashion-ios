@@ -8,7 +8,7 @@
 Button {
     font-size: 18;
     border-width: 3;
-    border-color: black;
+    border-color: white;
     border-radius: 50%;
     width: 60%;
 }

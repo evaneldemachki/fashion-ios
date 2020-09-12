@@ -5,6 +5,9 @@ import { NativeScriptFormsModule } from "@nativescript/angular/forms";
 import { alert, prompt } from "tns-core-modules/ui/dialogs";
 import { ActivityIndicator } from "tns-core-modules/ui/activity-indicator";
 import { EventData } from "tns-core-modules/data/observable";
+import { getBoolean, setBoolean, getNumber, setNumber, getString, setString, hasKey, remove, clear} from "tns-core-modules/application-settings";
+import { topmost } from '@nativescript/core/ui/frame';
+
 
 @Component({
     selector: "ns-login",
@@ -19,10 +22,17 @@ export class LoginComponent {
     }
     public isBusy: boolean = false;
     public confirm: string = "";
+    public checkYes: Boolean = false;
+
 
     constructor(
         private routerExtensions: RouterExtensions,
         private http: HttpClient) { }
+
+    ngOnInit(): void {
+        this.checkYes = getBoolean("checkYes");
+        this.credentials.username = getString("email");
+    }
 
     toggleForm() {
         this.isLoggingIn = !this.isLoggingIn;
@@ -45,6 +55,10 @@ export class LoginComponent {
             this.isBusy = true;
             this.validateLogin().subscribe(res => {
                 let token = res.body; // return token if verification successful
+                if(this.checkYes==true){
+                    setBoolean("checkYes", true);
+                    setString("email", this.credentials.username)
+                }
                 this.routerExtensions.navigate(["items", token], { clearHistory: true });
             }, err => { // alert with error message if verification failed
                 let response = err.error.slice(7, err.error.length);
@@ -79,6 +93,16 @@ export class LoginComponent {
         let indicator: ActivityIndicator = <ActivityIndicator>args.object;
         console.log("indicator.busy changed to: " + indicator.busy);
     }
+    saveEmailOption(){
+        if(this.checkYes==true){
+            this.checkYes = false;
+            remove("email")
+            remove("checkYes")
+        }else{
+            this.checkYes = true;
+        }
+    }
+
 }
 
 export interface User {
