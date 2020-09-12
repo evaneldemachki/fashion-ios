@@ -10,7 +10,7 @@ import { Image } from 'tns-core-modules/ui/image';
 import { Page } from "tns-core-modules/ui/page";
 import { HttpClient } from "@angular/common/http";
 import { User } from "~/login.component";
-
+import { ObservableArray } from 'tns-core-modules/data/observable-array';
 
 
 @Component({
@@ -27,7 +27,9 @@ export class ItemDetailComponent implements OnInit {
     activelikedIcon: Image;
     likes=[];
     dislikes=[];
-    userData: User;
+    userLikes = new ObservableArray();
+    userDislikes = new ObservableArray();
+
 
     activedislikedIcon: Image;
     Color = require("tns-core-modules/color").Color;
@@ -45,19 +47,18 @@ export class ItemDetailComponent implements OnInit {
         this.token = this.route.snapshot.params.token;
         const i = +this.route.snapshot.params.id;
         this.item = this.itemService.getItem(i);
-        this.checkLikeDislikeStatus();
         let input = {"token": this.token}
         this.itemService.getUserData(input).subscribe((res) =>{
             let data = JSON.parse(res['body']);
-            this.likes = data['likes'];
-            this.dislikes = data['dislikes'];
-            for(var i=0;i<this.likes.length;i++){
-                if(this.likes[i]==this.item._id){
+            this.userLikes = data['likes'];
+            this.userDislikes = data['dislikes'];
+            for(var i=0;i<this.userLikes.length;i++){
+                if(this.userLikes[i]['_id']==this.item._id){
                     this.liked = true;
                 }
             }
-            for(var i=0;i<this.dislikes.length;i++){
-                if(this.dislikes[i]==this.item._id){
+            for(var i=0;i<this.userDislikes.length;i++){
+                if(this.userDislikes[i]['_id']==this.item._id){
                     this.disliked = true;
                 }        
             }
