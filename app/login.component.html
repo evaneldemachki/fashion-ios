@@ -3,6 +3,7 @@
       <ActivityIndicator [busy]="isBusy" (busyChange)="onBusyChanged($event)"></ActivityIndicator>
       <StackLayout class="input-field">
         <TextField [(ngModel)]="credentials.username" keyboardType="email" autocorrect="false" autocapitalizationType="none" hint="Email" ...></TextField>
+        <Label text="&#xf058; Save Email?" [class]="checkYes ? 'fas' : 'far'" (tap)="saveEmailOption()"></Label>
       </StackLayout>
   
       <StackLayout class="input-field">

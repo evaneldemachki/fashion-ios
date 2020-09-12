@@ -81,4 +81,16 @@ export class ItemService {
             });
     }
 
+    getPostResponse(input) {
+        let endpoint = "http://fashionapi.herokuapp.com/api/user/product_action";
+        return this.http.post(endpoint, input, 
+          {responseType: "text", observe: "response"});
+    }
+
+    getUserData(input) {
+        let endpoint = "http://fashionapi.herokuapp.com/api/user/get_user_data";
+        return this.http.post(endpoint, input, 
+          {responseType: "text", observe: "response"});
+    }
+
 }

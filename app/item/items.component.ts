@@ -17,6 +17,7 @@ import { View } from "tns-core-modules/ui/core/view";
 
 import { PanGestureEventData, GestureStateTypes } from "tns-core-modules/ui/gestures";
 import { ActivatedRoute } from "@angular/router";
+import { Image } from "tns-core-modules/ui/image";
 
 
 @Component({
@@ -38,6 +39,9 @@ export class ItemsComponent implements OnInit {
     public totalLoaded = 0;
     public leftThresholdPassed = false;
     public rightThresholdPassed = false;
+    public likedItems = [];
+    public dislikedItems = [];
+    public userIcon: Image;
 
     private token: string;
 
@@ -59,9 +63,14 @@ export class ItemsComponent implements OnInit {
             cat.unshift("Any");
             this.categories = cat;
         });
-
-        this.searchText = "";
-        
+        let input={"token": this.token};
+        this.itemService.getUserData(input).subscribe((res) =>{
+            let data = JSON.parse(res['body']);
+            this.likedItems = data['likes'];
+            this.dislikedItems = data['dislikes'];
+            this.userIcon = data['img'];
+        });
+        this.searchText = "";        
     }
 
     addItemsToView() {

@@ -1,4 +1,4 @@
-<ActionBar title="Details" (loaded)="actionBarLoaded($event)">
+<ActionBar title="Details">
     <ActionItem (tap)="onItemLike($event)" ios.position="right" text="search" android.position="popup">
         <Image (loaded)="checkLikeActive($event)" src = "font://&#xf004;" class="{{liked ? 'fas t-36 active' : 'far t-36 inactive'}}"></Image>    
     </ActionItem>

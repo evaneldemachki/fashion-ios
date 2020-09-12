@@ -8,6 +8,7 @@ import { ItemsRoutingModule } from "./items-routing.module";
 import { ItemDetailComponent } from "./item-detail.component";
 import { ItemReferenceComponent } from "./item-reference.component";
 import { ItemService } from "./item.service";
+import { ProfileComponent } from "./profile-page";
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { ItemService } from "./item.service";
     declarations: [
         ItemsComponent,
         ItemDetailComponent,
-        ItemReferenceComponent
+        ItemReferenceComponent,
+        ProfileComponent,
     ],
     providers: [
         ItemService
