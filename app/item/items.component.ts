@@ -28,6 +28,8 @@ import { Image } from "tns-core-modules/ui/image";
 export class ItemsComponent implements OnInit {
     items: ObservableArray<Item>;
     itemsShown = new ObservableArray<Item>();
+    userLikes = new ObservableArray();
+    userDislikes = new ObservableArray();
     searchBar: SearchBar;
     listPicker: ListPicker;
     searchText: string;
@@ -67,14 +69,18 @@ export class ItemsComponent implements OnInit {
             cat.unshift("Any");
             this.categories = cat;
         });
+        this.refreshUserData();
+        this.searchText = "";        
+    }
+
+    refreshUserData(){
         let input={"token": this.token};
         this.itemService.getUserData(input).subscribe((res) =>{
             let data = JSON.parse(res['body']);
-            this.likes = data['likes'];
-            this.dislikes = data['dislikes'];
+            this.userLikes = data['likes'];
+            this.userDislikes = data['dislikes'];
             this.userIcon = data['img'];
         });
-        this.searchText = "";        
     }
 
     addItemsToView() {
@@ -252,14 +258,14 @@ export class ItemsComponent implements OnInit {
         //console.log(this.itemsShown)
         let thisItem=this.itemsShown.getItem(currentItemIndex);
         var index=0;
-        for(var i=0;i<this.likes.length;i++){
-            if(this.likes[i]==thisItem['_id']){
+        for(var i=0;i<this.userLikes.length;i++){
+            if(this.userLikes[i]['_id']==thisItem['_id']){
                 liked = true;
                 index=i;
             }
         }
-        for(var i=0;i<this.dislikes.length;i++){
-            if(this.dislikes[i]==thisItem['_id']){
+        for(var i=0;i<this.userDislikes.length;i++){
+            if(this.userDislikes[i]['_id']==thisItem['_id']){
                 disliked = true;
                 index=i;
             }        
@@ -270,7 +276,7 @@ export class ItemsComponent implements OnInit {
                 disliked=false;
                 liked=false;
                 this.sendResetRequest(currentItemIndex);
-                this.dislikes.splice(index,0);
+                this.userDislikes.splice(index,0);
             }else{
                 disliked=true;
                 if(liked==true){
@@ -286,7 +292,7 @@ export class ItemsComponent implements OnInit {
                 disliked=false;
                 liked=false;
                 this.sendResetRequest(currentItemIndex);
-                this.likes.splice(index,0);
+                this.userLikes.splice(index,0);
             }else{
                 liked=true;
                 if(disliked==true){

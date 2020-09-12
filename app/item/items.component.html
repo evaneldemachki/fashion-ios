@@ -1,4 +1,4 @@
-<ActionBar title="Explore Items">
+<ActionBar title="Explore Items" (loaded)="refreshUserData()">
     <ActionItem tap="onShare" ios.systemIcon="9" ios.position="left" android.systemIcon="res://ic_menu_share" android.position="actionBar"></ActionItem>
     <ActionItem (tap)="onSearch($event)" ios.systemIcon="12" ios.position="right" text="search" android.position="popup"></ActionItem>
 </ActionBar>
@@ -86,7 +86,7 @@
             <ScrollView row="1" rowspan="2" orientation="vertical">
                 <StackLayout>
                         <Button class="profile" textAlignment = "center" text="My Liked"></Button>
-                        <RadListView height ="200" row="0" orientation="horizontal" [items]="items" margin-left = "2" margin-right="2">
+                        <RadListView height ="200" row="0" orientation="horizontal" [items]="userLikes" margin-left = "2" margin-right="2">
                             <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal"></ListViewLinearLayout>
                             <ng-template let-item="item" let-index="index">
                                 <StackLyout [nsRouterLink]="['detail', index]">
