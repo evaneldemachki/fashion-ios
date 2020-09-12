@@ -61,8 +61,6 @@ export class ItemDetailComponent implements OnInit {
                     this.disliked = true;
                 }        
             }
-            console.log(this.likes)
-            console.log(this.dislikes)
         })
     }
 
@@ -84,26 +82,32 @@ export class ItemDetailComponent implements OnInit {
 
     onItemLike(args){
         if(this.liked==true){
-            this.activedislikedIcon.visibility="visible";
+            //this.activedislikedIcon.visibility="visible";
             this.disliked=false;
             this.liked=false;
             this.sendResetRequest();
         }else{
             this.liked=true;
-            this.activedislikedIcon.visibility="hidden";
+            if(this.disliked==true){
+                this.disliked=false;
+            }
+            //this.activedislikedIcon.visibility="hidden";
             this.sendLikeRequest();
         }
     }
 
     onItemDislike(args){
         if(this.disliked==true){
-            this.activelikedIcon.visibility="visible";
+            //this.activelikedIcon.visibility="visible";
             this.disliked=false;
             this.liked=false;
             this.sendResetRequest();
         }else{
             this.disliked=true;
-            this.activelikedIcon.visibility="hidden";
+            if(this.liked==true){
+                this.liked=false;
+            }
+            //this.activelikedIcon.visibility="hidden";
             this.sendDislikeRequest();
         }
     }
@@ -134,7 +138,6 @@ export class ItemDetailComponent implements OnInit {
             "action": "like"
         }
         this.itemService.getPostResponse(input).subscribe((res) =>{
-            console.log(res);
         })
     }
 
@@ -145,7 +148,6 @@ export class ItemDetailComponent implements OnInit {
             "action": "dislike"
         }
         this.itemService.getPostResponse(input).subscribe((res) =>{
-            console.log(res);
         })
     }
 
@@ -156,7 +158,6 @@ export class ItemDetailComponent implements OnInit {
             "action": "reset"
         }
         this.itemService.getPostResponse(input).subscribe((res) =>{
-            console.log(res);
         })
     }
 

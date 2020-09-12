@@ -39,9 +39,10 @@ export class ItemsComponent implements OnInit {
     public totalLoaded = 0;
     public leftThresholdPassed = false;
     public rightThresholdPassed = false;
-    public likedItems = [];
-    public dislikedItems = [];
+    public likes = [];
+    public dislikes = [];
     public userIcon: Image;
+    public liked = false;
 
     private token: string;
 
@@ -66,8 +67,8 @@ export class ItemsComponent implements OnInit {
         let input={"token": this.token};
         this.itemService.getUserData(input).subscribe((res) =>{
             let data = JSON.parse(res['body']);
-            this.likedItems = data['likes'];
-            this.dislikedItems = data['dislikes'];
+            this.likes = data['likes'];
+            this.dislikes = data['dislikes'];
             this.userIcon = data['img'];
         });
         this.searchText = "";        
@@ -191,11 +192,13 @@ export class ItemsComponent implements OnInit {
         swipeLimits.threshold = swipeView.getMeasuredWidth();
     }
 
-    onLeftSwipeClick() {
+    
+
+    onLeftSwipeClick(args) {
         console.log("Left swipe click");
     }
     
-    onRightSwipeClick() {
+    onRightSwipeClick(args) {
         console.log("Right swipe click");
     }
 
@@ -233,12 +236,86 @@ export class ItemsComponent implements OnInit {
     
     onSwipeCellFinished(args: SwipeActionsEventData) {
         const swipeLimits = args.data.swipeLimits;
-        const currentItemView = args.object;
-        if (args.data.x > swipeLimits.left/3) {
-            console.log("Notify perform left action");
-        } else if (args.data.x < (swipeLimits.right/3)*-1) {
-            console.log("Notify perform right action");
+        const currentItemIndex = args.index;
+        var liked = false;
+        var disliked = false;
+        //console.log(this.itemsShown)
+        let thisItem=this.itemsShown.getItem(currentItemIndex);
+        var index=0;
+        for(var i=0;i<this.likes.length;i++){
+            if(this.likes[i]==thisItem['_id']){
+                liked = true;
+                index=i;
+            }
         }
+        for(var i=0;i<this.dislikes.length;i++){
+            if(this.dislikes[i]==thisItem['_id']){
+                disliked = true;
+                index=i;
+            }        
+        }
+        if (args.data.x > swipeLimits.left/3) {
+            if(disliked==true){
+                //this.activelikedIcon.visibility="visible";
+                disliked=false;
+                liked=false;
+                this.sendResetRequest(currentItemIndex);
+                this.dislikes.splice(index,0);
+            }else{
+                disliked=true;
+                if(liked==true){
+                    liked=false;
+                }
+                //this.activelikedIcon.visibility="hidden";
+                this.sendDislikeRequest(currentItemIndex);
+            }
+            
+        } else if (args.data.x < (swipeLimits.right/3)*-1) {
+            if(liked==true){
+                //this.activedislikedIcon.visibility="visible";
+                disliked=false;
+                liked=false;
+                this.sendResetRequest(currentItemIndex);
+                this.likes.splice(index,0);
+            }else{
+                liked=true;
+                if(disliked==true){
+                    disliked=false;
+                }
+                //this.activedislikedIcon.visibility="hidden";
+                this.sendLikeRequest(currentItemIndex);
+            }
+        }
+    }
+
+    sendLikeRequest(index){
+        let input = {
+            "token": this.token,
+            "item_id": this.itemsShown.getItem(index)['_id'],
+            "action": "like"
+        }
+        this.itemService.getPostResponse(input).subscribe((res) =>{
+        })
+    }
+
+    sendDislikeRequest(index){
+        let input = {
+            "token": this.token,
+            "item_id": this.itemsShown.getItem(index)['_id'],
+            "action": "dislike"
+        }
+        this.itemService.getPostResponse(input).subscribe((res) =>{
+        })
+    }
+
+    sendResetRequest(index){
+        let input = {
+            "token": this.token,
+            "item_id": this.itemsShown.getItem(index)['_id'],
+            "action": "reset"
+        }
+        this.itemService.getPostResponse(input).subscribe((res) =>{
+        })
     }
 
     onItemLike(args){
