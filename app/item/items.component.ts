@@ -31,6 +31,7 @@ export class ItemsComponent implements OnInit {
     searchBar: SearchBar;
     listPicker: ListPicker;
     searchText: string;
+    //categories = new ObservableArray()
 
     public categories = [];
     public loadMore = false;
@@ -56,9 +57,11 @@ export class ItemsComponent implements OnInit {
         
         this.itemService.getCategories().subscribe((res) =>{
             let cat = JSON.parse(res);
+            //this.categories.push({"name" : "Any"});
             for(let i=0; i < cat.length; i++) {
                 // capitalize first letter of category
                 cat[i] = cat[i].charAt(0).toUpperCase() + cat[i].slice(1);
+                //this.categories.push({"name" : cat[i]});
             }
             // add 'Any' category to search all items
             cat.unshift("Any");
@@ -117,6 +120,15 @@ export class ItemsComponent implements OnInit {
         this.refreshSearch()
     }
 
+    categorySelected(args){
+        const item = this.categories[args.index];
+    }
+
+    categoryDeselected(args){
+        const item = this.categories[args.index];
+        console.log("Category selected " + item);
+    }
+
     scrollStartedEvent(args) {
         this.searchBar.dismissSoftInput();
     }
@@ -161,10 +173,8 @@ export class ItemsComponent implements OnInit {
     onSearch() {
         if(this.searchBar.visibility=="collapse") {
             this.searchBar.visibility = "visible";
-            this.listPicker.visibility = "visible";
         } else {
             this.searchBar.visibility = "collapse";
-            this.listPicker.visibility = "collapse";
         }
 
     }

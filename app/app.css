@@ -21,7 +21,7 @@ Button {
     width: 200;
     height: 75;
     vertical-align: middle;
-    visibility: collapse;
+    visibility: hidden;
 }
 
 .searchMenu {
@@ -61,4 +61,8 @@ Button {
 
 .inactive {
     color: white;
+}
+
+.categories {
+    text-align: middle;
 }

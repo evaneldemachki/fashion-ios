@@ -22,10 +22,19 @@
     <!-- The number of TabContentItem components should corespond to the number of TabStripItem components -->
     <TabContentItem>
         <StackLayout padding="2 0 2 2" backgroundColor="gray" margin="0">
-            <SearchBar class="searchMenu" hint="Enter search term here ..." (textChange)="onTextChanged($event)"
+            <SearchBar class="searchMenu" hint="Search for items ..." (textChange)="onTextChanged($event)"
             [text]="searchPhrase" (clear)="onClear($event)" (submit)="onSubmit($event)">
             </SearchBar>
-            <ListPicker class="picker"
+            <RadListView [items]="categories" orientation="horizontal" height=50 
+            multipleSelection="true" selectionBehavior="Press"
+            (itemSelected)="categorySelected($event)" (itemDeselected)="categoryDeselected($event)">
+                <ListViewGridLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="80" itemHeight="60" spanCount="1"></ListViewGridLayout>
+                    <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
+                <ng-template let-item="item">
+                        <label textAlignment = "center" paddingTop="20" text= {{item}}></label>
+                </ng-template>
+            </RadListView>
+            <ListPicker class="picker" style="visibility: collapse;"
             [items]="categories" (selectedIndexChange)="categoryPicker($event)">
             </ListPicker>
           
