@@ -54,7 +54,7 @@
                         </GridLayout>
                     </ng-template>
                     <lv:RadListView.itemSwipeTemplate>
-                        <GridLayout *tkListItemSwipeTemplate columns="auto, *, auto" backgroundColor="white">
+                        <GridLayout *tkListItemSwipeTemplate columns="auto, *, auto" style="background-color: white;">
                             <StackLayout id="mark-view" col="0" style="background-color:green;" (tap)="onLeftSwipeClick($event)" paddingRight="16" orientation="horizontal">
                                 <Label horizontalAlignment="center" class="far" style="font-size: 50em; color: black" text="&#xf165;"></Label>
                             </StackLayout>
@@ -96,8 +96,8 @@
                                 </StackLyout>
                             </ng-template>
                         </RadListView>
-                        <Button text = "My Friend's Likes"></Button>
-                        <Button text = "Recently Viewed"></Button>
+                        <Button text = "My Saved Items"></Button>
+                        <Button text = "My Outfits"></Button>
                 </StackLayout>
             </ScrollView>
         </Gridlayout>
