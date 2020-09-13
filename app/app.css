@@ -66,3 +66,7 @@ Button {
 .categories {
     text-align: middle;
 }
+
+.invisible {
+    visibility: hidden;
+}

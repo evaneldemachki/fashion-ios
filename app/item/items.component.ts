@@ -82,7 +82,10 @@ export class ItemsComponent implements OnInit {
             this.userLikes = data['likes'];
             this.userDislikes = data['dislikes'];
             this.userIcon = data['img'];
+            this.itemsLiked = [];
+            this.findLiked();
         });
+
     }
 
     addItemsToView() {
@@ -189,6 +192,10 @@ export class ItemsComponent implements OnInit {
         console.log(this.itemsLiked);
     }
 
+    removeFromLiked(index){
+
+    }
+
     onSearch() {
         if(this.searchBar.visibility=="collapse") {
             this.searchBar.visibility = "visible";
@@ -291,6 +298,7 @@ export class ItemsComponent implements OnInit {
                 disliked=true;
                 if(liked==true){
                     liked=false;
+                    this.userLikes[currentItemIndex] = false;
                 }
                 //this.activelikedIcon.visibility="hidden";
                 this.sendDislikeRequest(currentItemIndex);
@@ -303,11 +311,13 @@ export class ItemsComponent implements OnInit {
                 liked=false;
                 this.sendResetRequest(currentItemIndex);
                 this.userLikes.splice(index,0);
+                this.userLikes[currentItemIndex] = false;
             }else{
                 liked=true;
                 if(disliked==true){
                     disliked=false;
                 }
+                this.userLikes[currentItemIndex] = true;
                 //this.activedislikedIcon.visibility="hidden";
                 this.sendLikeRequest(currentItemIndex);
             }

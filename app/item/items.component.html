@@ -50,7 +50,7 @@
                     <ng-template horizontalAlignment="center" let-item="item" let-index="index">
                         <GridLayout columns="*,*,*" [nsRouterLink]="['detail', index]" padding="0 0 0 0" >
                             <Image colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
-                            <Label column="2" class="far" [style]="itemsLiked[index] ? 'font-size: 40em; color: red;' : 'visibility: hidden'" text="&#xf004;" verticalAlignment="top"></Label>
+                            <Label column="2" [class]="itemsLiked[index] ? 'far t-36' : 'invisible'" style="color: red;" text="&#xf004;" verticalAlignment="top"></Label>
                         </GridLayout>
                     </ng-template>
                     <lv:RadListView.itemSwipeTemplate>
