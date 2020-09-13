@@ -47,18 +47,19 @@
                 (itemSwiping)="onItemSwiping" 
                 swipeActions="true">
                     <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
-                    <ng-template let-item="item" let-index="index">
-                        <StackLayout [nsRouterLink]="['detail', index]" padding="0 2 2 0">
-                            <Image [src]="item.img[0]" height="180" ios:stretch="aspectFill"></Image>
-                        </StackLayout>
+                    <ng-template horizontalAlignment="center" let-item="item" let-index="index">
+                        <GridLayout columns="*,*,*" [nsRouterLink]="['detail', index]" padding="0 0 0 0" >
+                            <Image colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
+                            <Label column="2" [class]="itemsLiked[index] ? 'far t-36' : 'invisible'" style="color: red;" text="&#xf004;" verticalAlignment="top"></Label>
+                        </GridLayout>
                     </ng-template>
                     <lv:RadListView.itemSwipeTemplate>
-                        <GridLayout *tkListItemSwipeTemplate columns="auto, *, auto" backgroundColor="White">
-                            <StackLayout id="mark-view" col="0" style="background-color:white;" (tap)="onLeftSwipeClick($event)" paddingLeft="16" paddingRight="16" orientation="horizontal">
-                                <Label class="far" style="font-size: 50em; color: black" text="&#xf165;"></Label>
+                        <GridLayout *tkListItemSwipeTemplate columns="auto, *, auto" backgroundColor="white">
+                            <StackLayout id="mark-view" col="0" style="background-color:green;" (tap)="onLeftSwipeClick($event)" paddingRight="16" orientation="horizontal">
+                                <Label horizontalAlignment="center" class="far" style="font-size: 50em; color: black" text="&#xf165;"></Label>
                             </StackLayout>
-                            <StackLayout id="delete-view" col="2" style="background-color: white;" (tap)="onRightSwipeClick($event)"  paddingLeft="16" paddingRight="16" orientation="horizontal">
-                                <Label class="far" style="font-size: 50em; color: black" text="&#xf004;"></Label>
+                            <StackLayout id="delete-view" col="2" style="background-color: red;" (tap)="onRightSwipeClick($event)"  paddingLeft="23" paddingRight="2" orientation="horizontal">
+                                <Label horizontalAlignment="center" class="far" style="font-size: 50em; color: black" text="&#xf004;"></Label>
                             </StackLayout>
                         </GridLayout>
                     </lv:RadListView.itemSwipeTemplate>

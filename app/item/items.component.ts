@@ -28,6 +28,7 @@ import { Image } from "tns-core-modules/ui/image";
 export class ItemsComponent implements OnInit {
     items: ObservableArray<Item>;
     itemsShown = new ObservableArray<Item>();
+    itemsLiked = []
     userLikes = new ObservableArray();
     userDislikes = new ObservableArray();
     searchBar: SearchBar;
@@ -46,7 +47,7 @@ export class ItemsComponent implements OnInit {
     public dislikes = [];
     public userIcon: Image;
     public liked = false;
-
+    public disliked = false;
     private token: string;
 
     constructor(
@@ -70,7 +71,8 @@ export class ItemsComponent implements OnInit {
             this.categories = cat;
         });
         this.refreshUserData();
-        this.searchText = "";        
+        this.searchText = "";     
+   
     }
 
     refreshUserData(){
@@ -80,7 +82,10 @@ export class ItemsComponent implements OnInit {
             this.userLikes = data['likes'];
             this.userDislikes = data['dislikes'];
             this.userIcon = data['img'];
+            this.itemsLiked = [];
+            this.findLiked();
         });
+
     }
 
     addItemsToView() {
@@ -97,6 +102,7 @@ export class ItemsComponent implements OnInit {
             this.itemsShown.push(newitems[i]);
         }
         this.currentlyLoaded = this.itemsShown.length;
+        this.findLiked();
     }
 
     refreshView() {
@@ -168,7 +174,7 @@ export class ItemsComponent implements OnInit {
 
         itemsRequest.subscribe((res) => {
             this.items = JSON.parse(res);
-            this.totalLoaded = this.items.length
+            this.totalLoaded = this.items.length;
             this.itemService.items = this.items;
             this.itemsShown.length = 0;
             this.currentlyLoaded = 0;
@@ -176,6 +182,20 @@ export class ItemsComponent implements OnInit {
         });
     }
     
+    findLiked(){
+        for(var i=0; i<this.userLikes.length;i++){
+            for(var j =0; j<this.items.length;j++){
+                if(this.userLikes[i]['_id']==this.items[j]['_id'])
+                    this.itemsLiked[j] = true;
+            }
+        }
+        console.log(this.itemsLiked);
+    }
+
+    removeFromLiked(index){
+
+    }
+
     onSearch() {
         if(this.searchBar.visibility=="collapse") {
             this.searchBar.visibility = "visible";
@@ -195,7 +215,6 @@ export class ItemsComponent implements OnInit {
         }else{
             this.addItemsToView();
         }   
-
         args.returnValue = false;
     }
     
@@ -207,8 +226,6 @@ export class ItemsComponent implements OnInit {
         swipeLimits.left = swipeLimits.right = args.data.x > 0 ? swipeView.getMeasuredWidth() / 2 : swipeView.getMeasuredWidth() / 2;
         swipeLimits.threshold = swipeView.getMeasuredWidth();
     }
-
-    
 
     onLeftSwipeClick(args) {
         console.log("Left swipe click");
@@ -281,6 +298,7 @@ export class ItemsComponent implements OnInit {
                 disliked=true;
                 if(liked==true){
                     liked=false;
+                    this.userLikes[currentItemIndex] = false;
                 }
                 //this.activelikedIcon.visibility="hidden";
                 this.sendDislikeRequest(currentItemIndex);
@@ -293,11 +311,13 @@ export class ItemsComponent implements OnInit {
                 liked=false;
                 this.sendResetRequest(currentItemIndex);
                 this.userLikes.splice(index,0);
+                this.userLikes[currentItemIndex] = false;
             }else{
                 liked=true;
                 if(disliked==true){
                     disliked=false;
                 }
+                this.userLikes[currentItemIndex] = true;
                 //this.activedislikedIcon.visibility="hidden";
                 this.sendLikeRequest(currentItemIndex);
             }
