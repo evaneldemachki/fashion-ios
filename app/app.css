@@ -74,3 +74,11 @@ Button {
 .invisible {
     visibility: hidden;
 }
+
+.likedBackground{
+    background-color: green;
+}
+
+.dislikedBackground{
+    background-color: red;
+}

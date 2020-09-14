@@ -26,7 +26,7 @@
             [text]="searchPhrase" (clear)="onClear($event)" (submit)="onSubmit($event)">
             </SearchBar>
             <RadListView [items]="categories" orientation="horizontal" height=50 
-            multipleSelection="true" selectionBehavior="Press"
+            multipleSelection="true" selectionBehavior="Press" 
             (itemSelected)="categorySelected($event)" (itemDeselected)="categoryDeselected($event)">
                 <ListViewGridLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="80" itemHeight="60" spanCount="1"></ListViewGridLayout>
                     <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
@@ -40,19 +40,22 @@
           
             <StackLayout>
                 <RadListView row="0" orientation="vertical" [items]="itemsShown"
-                width="100%" height="100%" (scrolled)="scrollStartedEvent($event)" loadOnDemandMode="Auto" (loadMoreDataRequested)="onLoadMoreItemsRequested($event)" loadOnDemandBufferSize="2"
+                width="100%" height="100%" (scrolled)="scrollStartedEvent($event)" loadOnDemandMode="Auto" (loadMoreDataRequested)="onLoadMoreItemsRequested($event)" loadOnDemandBufferSize="1"
                 id="listView" selectionBehavior="None" 
                 (itemSwipeProgressEnded)="onSwipeCellFinished($event)"
                 (itemSwipeProgressStarted)="onSwipeCellStarted($event)" 
                 (itemSwiping)="onItemSwiping" 
                 swipeActions="true">
-                    <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
+                    <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
                     <ng-template horizontalAlignment="center" let-item="item" let-index="index">
+                        <GridLayout [class] = "itemsLiked[index] ? 'likedBackground' : 'dislikedBackground'">
                         <GridLayout columns="*,*,*" [nsRouterLink]="['detail', index]" padding="0 0 0 0" >
                             <Image colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
                             <Label column="2" [class]="itemsLiked[index] ? 'far t-36' : 'invisible'" style="color: red;" text="&#xf004;" verticalAlignment="top"></Label>
                         </GridLayout>
+                    </GridLayout>
                     </ng-template>
+                    
                     <lv:RadListView.itemSwipeTemplate>
                         <GridLayout *tkListItemSwipeTemplate columns="auto, *, auto" style="background-color: white;">
                             <StackLayout id="mark-view" col="0" style="background-color:green;" (tap)="onLeftSwipeClick($event)" paddingRight="16" orientation="horizontal">
