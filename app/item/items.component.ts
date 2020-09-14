@@ -58,7 +58,7 @@ export class ItemsComponent implements OnInit {
 
     ngOnInit(): void {
         this.token = this.route.snapshot.params.token;
-        
+        this.itemService.setToken(this.token);
         this.itemService.getCategories().subscribe((res) =>{
             let cat = JSON.parse(res);
             //this.categories.push({"name" : "Any"});
@@ -72,17 +72,16 @@ export class ItemsComponent implements OnInit {
             this.categories = cat;
         });
         this.refreshUserData();
-        this.searchText = "";     
+        this.searchText = "";
    
     }
 
     refreshUserData(){
         let input={"token": this.token};
         this.itemService.getUserData(input).subscribe((res) =>{
-            let data = JSON.parse(res['body']);
-            this.userLikes = data['likes'];
-            this.userDislikes = data['dislikes'];
-            this.userIcon = data['img'];
+            this.userLikes = res['likes'];
+            this.userDislikes = res['dislikes'];
+            this.userIcon = res['img'];
             this.itemsLiked = [];
             this.findLiked();
         });
@@ -323,11 +322,11 @@ export class ItemsComponent implements OnInit {
             }
         }
     }
-
+    //save and unsave action
     sendLikeRequest(index){
+        console.log(this.itemsShown.getItem(index));
         let input = {
-            "token": this.token,
-            "item_id": this.itemsShown.getItem(index)['_id'],
+            "item": this.itemsShown.getItem(index)['_id'],
             "action": "like"
         }
         this.itemService.getPostResponse(input).subscribe((res) =>{
@@ -336,8 +335,7 @@ export class ItemsComponent implements OnInit {
 
     sendDislikeRequest(index){
         let input = {
-            "token": this.token,
-            "item_id": this.itemsShown.getItem(index)['_id'],
+            "item": this.itemsShown.getItem(index)['_id'],
             "action": "dislike"
         }
         this.itemService.getPostResponse(input).subscribe((res) =>{
@@ -346,8 +344,7 @@ export class ItemsComponent implements OnInit {
 
     sendResetRequest(index){
         let input = {
-            "token": this.token,
-            "item_id": this.itemsShown.getItem(index)['_id'],
+            "item": this.itemsShown.getItem(index)['_id'],
             "action": "reset"
         }
         this.itemService.getPostResponse(input).subscribe((res) =>{

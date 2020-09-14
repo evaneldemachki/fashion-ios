@@ -49,9 +49,8 @@ export class ItemDetailComponent implements OnInit {
         this.item = this.itemService.getItem(i);
         let input = {"token": this.token}
         this.itemService.getUserData(input).subscribe((res) =>{
-            let data = JSON.parse(res['body']);
-            this.userLikes = data['likes'];
-            this.userDislikes = data['dislikes'];
+            this.userLikes = res['likes'];
+            this.userDislikes = res['dislikes'];
             for(var i=0;i<this.userLikes.length;i++){
                 if(this.userLikes[i]['_id']==this.item._id){
                     this.liked = true;
@@ -134,8 +133,7 @@ export class ItemDetailComponent implements OnInit {
 
     sendLikeRequest(){
         let input = {
-            "token": this.token,
-            "item_id": this.item._id,
+            "item": this.item._id,
             "action": "like"
         }
         this.itemService.getPostResponse(input).subscribe((res) =>{
@@ -144,8 +142,7 @@ export class ItemDetailComponent implements OnInit {
 
     sendDislikeRequest(){
         let input = {
-            "token": this.token,
-            "item_id": this.item._id,
+            "item": this.item._id,
             "action": "dislike"
         }
         this.itemService.getPostResponse(input).subscribe((res) =>{
@@ -154,8 +151,7 @@ export class ItemDetailComponent implements OnInit {
 
     sendResetRequest(){
         let input = {
-            "token": this.token,
-            "item_id": this.item._id,
+            "item": this.item._id,
             "action": "reset"
         }
         this.itemService.getPostResponse(input).subscribe((res) =>{

@@ -39,13 +39,13 @@ export class LoginComponent {
     }
 
     validateLogin() {
-        let endpoint = "http://fashionapi.herokuapp.com/api/user/verify";
+        let endpoint = "http://fashionapi.herokuapp.com/user/login";
         return this.http.post(endpoint, this.credentials, 
             {responseType: "text", observe: "response"});
     }
 
     createUser() {
-        let endpoint = "http://fashionapi.herokuapp.com/api/user/create";
+        let endpoint = "http://fashionapi.herokuapp.com/user/register";
         return this.http.post(endpoint, this.credentials,
             {responseType: "text", observe: "response"});
     }
