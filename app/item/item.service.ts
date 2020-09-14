@@ -15,6 +15,7 @@ export class ItemService {
     search = new ObservableArray();
     lastSearch = "";
     limit=500;
+    token: String;
 
     constructor(private http: HttpClient) { }
 
@@ -82,15 +83,21 @@ export class ItemService {
     }
 
     getPostResponse(input) {
-        let endpoint = "http://fashionapi.herokuapp.com/api/user/product_action";
+        let endpoint = "http://fashionapi.herokuapp.com/user/action";
+        let header = {"Authorization": "Bearer " + this.token}
         return this.http.post(endpoint, input, 
-          {responseType: "text", observe: "response"});
+          {headers: header, responseType: "text", observe: "response"});
+    }
+
+    setToken(data){
+        this.token = data;
     }
 
     getUserData(input) {
-        let endpoint = "http://fashionapi.herokuapp.com/api/user/get_user_data";
+        let endpoint = "http://fashionapi.herokuapp.com/user/data/";
+        let header = {"Authorization": "Bearer " + this.token}
         return this.http.post(endpoint, input, 
-          {responseType: "text", observe: "response"});
+          {headers: header, responseType: "json", observe: "body"});
     }
 
 }
