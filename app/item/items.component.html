@@ -93,10 +93,10 @@
                         <RadListView height ="200" row="0" orientation="horizontal" [items]="userLikes" margin-left = "2" margin-right="2">
                             <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal"></ListViewLinearLayout>
                             <ng-template let-item="item" let-index="index">
-                                <StackLyout [nsRouterLink]="['detail', index]">
+                                <StackLayout [nsRouterLink]="['detail', item['_id']]">
                                     <Image [src]="item.img[0]" height="80%" width = "80%" ios:stretch="aspectFill"></Image>
                                     <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
-                                </StackLyout>
+                                </StackLayout>
                             </ng-template>
                         </RadListView>
                         <Button text = "My Saved Items"></Button>

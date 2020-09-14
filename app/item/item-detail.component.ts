@@ -44,8 +44,8 @@ export class ItemDetailComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.token = this.route.snapshot.params.token;
-        const i = +this.route.snapshot.params.id;
+        const i = this.route.snapshot.params.id;
+        console.log(i);
         this.item = this.itemService.getItem(i);
         let input = {"token": this.token}
         this.itemService.getUserData(input).subscribe((res) =>{
