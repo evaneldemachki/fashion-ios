@@ -34,6 +34,7 @@ export class ItemsComponent implements OnInit {
     searchBar: SearchBar;
     listPicker: ListPicker;
     searchText: string;
+    categoryView: RadListView;
     //categories = new ObservableArray()
 
     public categories = [];
@@ -91,12 +92,12 @@ export class ItemsComponent implements OnInit {
     addItemsToView() {
         let newitems = [];
         let tobeLoaded = 0
-        if(this.currentlyLoaded + 20 > this.totalLoaded) {
+        if(this.currentlyLoaded + 1 > this.totalLoaded) {
             newitems = this.items.slice(this.currentlyLoaded, this.totalLoaded);
             tobeLoaded = this.totalLoaded - this.currentlyLoaded;
         } else {
-            newitems = this.items.slice(this.currentlyLoaded, this.currentlyLoaded + 20);
-            tobeLoaded = 20;
+            newitems = this.items.slice(this.currentlyLoaded, this.currentlyLoaded + 1);
+            tobeLoaded = 1;
         }
         for(let i = 0; i < tobeLoaded; i++) {
             this.itemsShown.push(newitems[i]);
@@ -108,8 +109,6 @@ export class ItemsComponent implements OnInit {
     refreshView() {
         this.itemsShown = this.items;
     }
-
-
 
     onSubmit(args) {
         this.refreshSearch();
@@ -143,6 +142,8 @@ export class ItemsComponent implements OnInit {
 
     scrollStartedEvent(args) {
         this.searchBar.dismissSoftInput();
+        
+        //console.log(args.scrollOffset);
     }
 
     searchRouter() {
@@ -189,7 +190,6 @@ export class ItemsComponent implements OnInit {
                     this.itemsLiked[j] = true;
             }
         }
-        console.log(this.itemsLiked);
     }
 
     removeFromLiked(index){
