@@ -21,16 +21,11 @@ import { ObservableArray } from 'tns-core-modules/data/observable-array';
 export class ItemDetailComponent implements OnInit {
     item: Item;
     focus: number = 0;
+    token: String;
     liked: boolean = false;
     disliked: boolean = false;
-    token: String;
+    
     activelikedIcon: Image;
-    likes=[];
-    dislikes=[];
-    userLikes = new ObservableArray();
-    userDislikes = new ObservableArray();
-
-
     activedislikedIcon: Image;
     Color = require("tns-core-modules/color").Color;
     colors = require("tns-core-modules/color/known-colors");
@@ -45,23 +40,19 @@ export class ItemDetailComponent implements OnInit {
 
     ngOnInit(): void {
         const i = this.route.snapshot.params.id;
-        console.log(i);
-        this.item = this.itemService.getItem(i);
-        let input = {"token": this.token}
-        this.itemService.getUserData(input).subscribe((res) =>{
-            this.userLikes = res['likes'];
-            this.userDislikes = res['dislikes'];
-            for(var i=0;i<this.userLikes.length;i++){
-                if(this.userLikes[i]['_id']==this.item._id){
-                    this.liked = true;
-                }
+
+        this.route.queryParams.subscribe(params => {
+            // convert string parameters to boolean:
+            this.liked = (params.liked == true);
+            this.disliked = (params.disliked == true);
+
+            if(params.source == "itemsShown") {
+                this.item = this.itemService.itemsShown['_array'][i];
+            } else if(params.source == "userLikes") {
+                this.item = this.itemService.userLikes[i];
             }
-            for(var i=0;i<this.userDislikes.length;i++){
-                if(this.userDislikes[i]['_id']==this.item._id){
-                    this.disliked = true;
-                }        
-            }
-        })
+        });
+
     }
 
     onScrollEnded(event) {
@@ -81,15 +72,15 @@ export class ItemDetailComponent implements OnInit {
     }
 
     onItemLike(args){
-        if(this.liked==true){
+        if(this.liked == true) {
             //this.activedislikedIcon.visibility="visible";
             this.disliked=false;
             this.liked=false;
             this.sendResetRequest();
-        }else{
-            this.liked=true;
-            if(this.disliked==true){
-                this.disliked=false;
+        } else {
+            this.liked = true;
+            if (this.disliked == true){
+                this.disliked = false;
             }
             //this.activedislikedIcon.visibility="hidden";
             this.sendLikeRequest();
@@ -121,11 +112,11 @@ export class ItemDetailComponent implements OnInit {
     }
     
     checkLikeDislikeStatus(){
-        if(this.disliked==true){
+        if(this.disliked == true) {
             this.activedislikedIcon.visibility="visible";
             this.activelikedIcon.visibility="collapse";
         }
-        if(this.liked==true){
+        if(this.liked == true) {
             this.activelikedIcon.visibility="visible";
             this.activedislikedIcon.visibility="collapse";
         }

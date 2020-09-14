@@ -11,11 +11,14 @@ export class ItemService {
     private serverUrl = "https://fashionapi.herokuapp.com/api/";
     
     //items: Item[];
-    items = new ObservableArray();
-    search = new ObservableArray();
-    lastSearch = "";
-    limit=500;
-    token: String;
+    public items = new ObservableArray();
+    public search = new ObservableArray();
+    public lastSearch = "";
+    public limit = 500;
+    public token: String;
+    public userLikes = new ObservableArray();
+    public userDislikes = new ObservableArray();
+    public itemsShown = new ObservableArray<Item>();
 
     constructor(private http: HttpClient) { }
 
@@ -42,7 +45,6 @@ export class ItemService {
     }
 
     getItem(i) {
-        console.log(i)
         return this.items[i];
     }
 
@@ -51,6 +53,14 @@ export class ItemService {
             this.serverUrl + "categories", {
                 responseType: "text"
             });
+    }
+
+    getOne(itemID) {
+        var query = "grab?item=" + itemID;
+        return this.http.get(
+            this.serverUrl + query, {
+                responseType: "json"
+            });        
     }
 
     getFromCategory(category){

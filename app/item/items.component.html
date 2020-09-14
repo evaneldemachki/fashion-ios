@@ -1,4 +1,4 @@
-<ActionBar title="Explore Items" (loaded)="refreshUserData()">
+<ActionBar title="Explore Items" (loaded)="loadUserData()">
     <ActionItem tap="onShare" ios.systemIcon="9" ios.position="left" android.systemIcon="res://ic_menu_share" android.position="actionBar"></ActionItem>
     <ActionItem (tap)="onSearch($event)" ios.systemIcon="12" ios.position="right" text="search" android.position="popup"></ActionItem>
 </ActionBar>
@@ -49,7 +49,9 @@
                     <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
                     <ng-template horizontalAlignment="center" let-item="item" let-index="index">
                         <GridLayout [class] = "itemsLiked[index] ? 'likedBackground' : 'dislikedBackground'">
-                        <GridLayout columns="*,*,*" [nsRouterLink]="['detail', index]" padding="0 0 0 0" >
+                        <GridLayout columns="*,*,*" [nsRouterLink]="['detail', index]" 
+                        [queryParams]="{ source: 'itemsShown', liked: itemsLiked[index], disliked: itemsDisliked[index]}" 
+                        padding="0 0 0 0" >
                             <Image colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
                             <Label column="2" [class]="itemsLiked[index] ? 'far t-36' : 'invisible'" style="color: red;" text="&#xf004;" verticalAlignment="top"></Label>
                         </GridLayout>
@@ -93,7 +95,8 @@
                         <RadListView height ="200" row="0" orientation="horizontal" [items]="userLikes" margin-left = "2" margin-right="2">
                             <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal"></ListViewLinearLayout>
                             <ng-template let-item="item" let-index="index">
-                                <StackLayout [nsRouterLink]="['detail', item['_id']]">
+                                <StackLayout [nsRouterLink]="['detail', index]" 
+                                [queryParams]="{ source: 'userLikes', liked: true, disliked: false }">
                                     <Image [src]="item.img[0]" height="80%" width = "80%" ios:stretch="aspectFill"></Image>
                                     <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
                                 </StackLayout>

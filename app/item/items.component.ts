@@ -26,11 +26,11 @@ import { Image } from "tns-core-modules/ui/image";
     templateUrl: "./items.component.html"
 })
 export class ItemsComponent implements OnInit {
-    items: ObservableArray<Item>;
-    itemsShown = new ObservableArray<Item>();
-    itemsLiked = []
-    userLikes = new ObservableArray();
-    userDislikes = new ObservableArray();
+    public items: ObservableArray<Item> = new ObservableArray();
+    public itemsLiked = [];
+    public itemsDisliked = [];
+    public itemsSaved = [];
+
     searchBar: SearchBar;
     listPicker: ListPicker;
     searchText: string;
@@ -44,17 +44,34 @@ export class ItemsComponent implements OnInit {
     public totalLoaded = 0;
     public leftThresholdPassed = false;
     public rightThresholdPassed = false;
-    public likes = [];
-    public dislikes = [];
+
     public userIcon: Image;
-    public liked = false;
-    public disliked = false;
+
     private token: string;
 
     constructor(
         private itemService: ItemService,
         private route: ActivatedRoute
         ) { }
+
+    set userLikes(value) {
+        this.itemService.userLikes = value;
+    }
+    set userDislikes(value) {
+        this.itemService.userDislikes = value;
+    }
+    get userLikes() {
+        return this.itemService.userLikes;
+    }
+    get userDislikes() {
+        return this.itemService.userDislikes;
+    }
+    set itemsShown(value) {
+        this.itemService.itemsShown = value;
+    }
+    get itemsShown() {
+        return this.itemService.itemsShown;
+    }
 
     ngOnInit(): void {
         this.token = this.route.snapshot.params.token;
@@ -71,19 +88,18 @@ export class ItemsComponent implements OnInit {
             cat.unshift("Any");
             this.categories = cat;
         });
-        this.refreshUserData();
+        this.loadUserData();
         this.searchText = "";
    
     }
 
-    refreshUserData(){
-        let input={"token": this.token};
+    loadUserData(){
+        let input = { "token": this.token };
         this.itemService.getUserData(input).subscribe((res) =>{
             this.userLikes = res['likes'];
             this.userDislikes = res['dislikes'];
             this.userIcon = res['img'];
-            this.itemsLiked = [];
-            this.findLiked();
+            this.findUserActions();
         });
 
     }
@@ -102,7 +118,7 @@ export class ItemsComponent implements OnInit {
             this.itemsShown.push(newitems[i]);
         }
         this.currentlyLoaded = this.itemsShown.length;
-        this.findLiked();
+        this.findUserActions();
     }
 
     refreshView() {
@@ -182,18 +198,26 @@ export class ItemsComponent implements OnInit {
         });
     }
     
-    findLiked(){
-        for(var i=0; i<this.userLikes.length;i++){
-            for(var j =0; j<this.items.length;j++){
-                if(this.userLikes[i]['_id']==this.items[j]['_id'])
+    findUserActions() {
+        for(let i = 0; i < this.userLikes.length; i++){
+            for(let j =0; j < this.items.length; j++){
+                if(this.userLikes[i]['_id'] == this.items[j]['_id']) {
                     this.itemsLiked[j] = true;
+                }
+            }
+        }
+        for(let i = 0; i < this.userDislikes.length; i++){
+            for(let j =0; j < this.items.length; j++){
+                if(this.userLikes[i]['_id'] == this.items[j]['_id']) {
+                    this.itemsDisliked[j] = true;
+                }
             }
         }
     }
 
-    removeFromLiked(index){
+    // removeFromLiked(index){
 
-    }
+    // }
 
     onSearch() {
         if(this.searchBar.visibility=="collapse") {
@@ -269,52 +293,56 @@ export class ItemsComponent implements OnInit {
     onSwipeCellFinished(args: SwipeActionsEventData) {
         const swipeLimits = args.data.swipeLimits;
         const currentItemIndex = args.index;
-        var liked = false;
-        var disliked = false;
-        //console.log(this.itemsShown)
-        let thisItem=this.itemsShown.getItem(currentItemIndex);
-        var index=0;
-        for(var i=0;i<this.userLikes.length;i++){
-            if(this.userLikes[i]['_id']==thisItem['_id']){
+
+        let liked = false;
+        let disliked = false;
+
+        let thisItem = this.itemsShown.getItem(currentItemIndex);
+        let index = 0;
+        for(var i = 0; i < this.userLikes.length; i++) {
+            if(this.userLikes[i]['_id'] == thisItem['_id']) {
                 liked = true;
-                index=i;
+                index = i;
             }
         }
-        for(var i=0;i<this.userDislikes.length;i++){
-            if(this.userDislikes[i]['_id']==thisItem['_id']){
+        for(var i = 0; i < this.userDislikes.length; i++){
+            if(this.userDislikes[i]['_id'] == thisItem['_id']) {
                 disliked = true;
-                index=i;
+                index = i;
             }        
         }
-        if (args.data.x > swipeLimits.left/3) {
-            if(disliked==true){
+        console.log(args.data.x)
+        console.log(swipeLimits.left)
+        if(args.data.x > (swipeLimits.left / 3) - 10) {
+            console.log("oooo")
+            if(disliked == true){
                 //this.activelikedIcon.visibility="visible";
-                disliked=false;
-                liked=false;
+                disliked = false;
+                liked = false;
                 this.sendResetRequest(currentItemIndex);
-                this.userDislikes.splice(index,0);
+                this.userDislikes.splice(index, 0);
             }else{
-                disliked=true;
-                if(liked==true){
-                    liked=false;
+                disliked = true;
+                if(liked == true){
+                    liked = false;
                     this.userLikes[currentItemIndex] = false;
                 }
                 //this.activelikedIcon.visibility="hidden";
                 this.sendDislikeRequest(currentItemIndex);
             }
             
-        } else if (args.data.x < (swipeLimits.right/3)*-1) {
-            if(liked==true){
+        } else if (args.data.x < ((swipeLimits.right / 3) * -1) + 10) {
+            if(liked == true) {
                 //this.activedislikedIcon.visibility="visible";
-                disliked=false;
-                liked=false;
+                disliked = false;
+                liked = false;
                 this.sendResetRequest(currentItemIndex);
                 this.userLikes.splice(index,0);
                 this.userLikes[currentItemIndex] = false;
-            }else{
-                liked=true;
-                if(disliked==true){
-                    disliked=false;
+            } else {
+                liked = true;
+                if(disliked == true) {
+                    disliked = false;
                 }
                 this.userLikes[currentItemIndex] = true;
                 //this.activedislikedIcon.visibility="hidden";
@@ -323,8 +351,10 @@ export class ItemsComponent implements OnInit {
         }
     }
     //save and unsave action
-    sendLikeRequest(index){
-        console.log(this.itemsShown.getItem(index));
+    sendLikeRequest(index) {
+        console.log("ping")
+        this.itemsLiked[index] = true;
+        this.itemsDisliked[index] = false;
         let input = {
             "item": this.itemsShown.getItem(index)['_id'],
             "action": "like"
@@ -334,6 +364,8 @@ export class ItemsComponent implements OnInit {
     }
 
     sendDislikeRequest(index){
+        this.itemsLiked[index] = false;
+        this.itemsDisliked[index] = true;
         let input = {
             "item": this.itemsShown.getItem(index)['_id'],
             "action": "dislike"
@@ -343,6 +375,8 @@ export class ItemsComponent implements OnInit {
     }
 
     sendResetRequest(index){
+        this.itemsLiked[index] = false;
+        this.itemsDisliked[index] = false;
         let input = {
             "item": this.itemsShown.getItem(index)['_id'],
             "action": "reset"
