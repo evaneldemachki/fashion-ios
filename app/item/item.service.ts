@@ -114,21 +114,20 @@ export class ItemService {
 
     processAction(action, index) {
         let thisItem = this.itemsShown.getItem(index);
-        // swiped to dislike item:
         if(action == "like") {
-            // send RESET if already disliked
-            if(this.itemsDisliked[index]) {
+            if(this.itemsLiked[index]) {
+                // send RESET if already disliked
                 this.sendResetRequest(index);
             } else { // send DISLIKE
-                this.sendDislikeRequest(index);       
+                this.sendLikeRequest(index);       
             } 
         } // swipe to like item
         else if (action == "dislike") {
-            // send RESET if already liked
-            if(this.itemsLiked[index]) {
+            // send RESET if already disliked
+            if(this.itemsDisliked[index]) {
                 this.sendResetRequest(index);
             } else { // send LIKE
-                this.sendLikeRequest(index);       
+                this.sendDislikeRequest(index);       
             } 
         }
     }
@@ -148,7 +147,7 @@ export class ItemService {
 
         this.userLikes.push(this.itemsShown[index]);
 
-        let input = { item, "action": "like" }
+        let input = { item: item._id, "action": "like" }
 
         this.getPostResponse(input).subscribe((res) =>{
         })
@@ -166,9 +165,9 @@ export class ItemService {
             }
         }
 
-        this.userLikes.push(this.itemsShown[index]);
+        this.userDislikes.push(this.itemsShown[index]);
 
-        let input = { item, "action": "dislike" };
+        let input = { item: item._id, "action": "dislike" };
 
         this.getPostResponse(input).subscribe(res => {
         })
@@ -185,10 +184,14 @@ export class ItemService {
                 break;
             }
         }
+        for(let i=0; i < this.userDislikes.length; i++) {
+            if(this.userDislikes["_id"] == item._id) {
+                this.userDislikes.splice(i, 0);
+                break;
+            }
+        }
 
-        this.userLikes.push(this.itemsShown[index]);
-
-        let input = { item, "action": "dislike" };
+        let input = { item: item._id, "action": "reset" };
 
         this.getPostResponse(input).subscribe(res => {
         })

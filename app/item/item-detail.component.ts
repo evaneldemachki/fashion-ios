@@ -74,11 +74,24 @@ export class ItemDetailComponent implements OnInit {
         event.object.scrollToIndex(this.focus, true);
     }
 
-    onItemLike(args){
-        this.itemService.processAction("dislike", this.index);
+    onItemLike(args) {
+        if(this.liked) {
+            this.liked = false;
+        } else {
+            this.liked = true;
+        }
+        this.disliked = false;
+        this.itemService.processAction("like", this.index);
     }
 
-    onItemDislike(args){
+
+    onItemDislike(args) {
+        if(this.disliked) {
+            this.disliked = false;
+        } else {
+            this.disliked = true;
+        }
+        this.liked = false;
         this.itemService.processAction("dislike", this.index);
     }
 
