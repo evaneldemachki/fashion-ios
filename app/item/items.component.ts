@@ -27,8 +27,6 @@ import { Image } from "tns-core-modules/ui/image";
 })
 export class ItemsComponent implements OnInit {
     public items: ObservableArray<Item> = new ObservableArray();
-    public itemsLiked = [];
-    public itemsDisliked = [];
     public itemsSaved = [];
 
     searchBar: SearchBar;
@@ -71,6 +69,18 @@ export class ItemsComponent implements OnInit {
     }
     get itemsShown() {
         return this.itemService.itemsShown;
+    }
+    set itemsLiked(value) {
+        this.itemService.itemsLiked = value;
+    }
+    get itemsLiked() {
+        return this.itemService.itemsLiked;
+    }
+    set itemsDisliked(value) {
+        this.itemService.itemsLiked = value;
+    }
+    get itemsDisliked() {
+        return this.itemService.itemsDisliked;
     }
 
     ngOnInit(): void {
@@ -199,13 +209,14 @@ export class ItemsComponent implements OnInit {
     }
     
     findUserActions() {
-        for(let i = 0; i < this.userLikes.length; i++){
-            for(let j =0; j < this.items.length; j++){
+        for(let i = 0; i < this.userLikes.length; i++) {
+            for(let j =0; j < this.items.length; j++) {
                 if(this.userLikes[i]['_id'] == this.items[j]['_id']) {
                     this.itemsLiked[j] = true;
                 }
             }
         }
+
         for(let i = 0; i < this.userDislikes.length; i++){
             for(let j =0; j < this.items.length; j++){
                 if(this.userDislikes[i]['_id'] == this.items[j]['_id']) {
@@ -294,94 +305,19 @@ export class ItemsComponent implements OnInit {
         const swipeLimits = args.data.swipeLimits;
         const currentItemIndex = args.index;
 
-        let liked = false;
-        let disliked = false;
-
         let thisItem = this.itemsShown.getItem(currentItemIndex);
-        let index = 0;
-        for(var i = 0; i < this.userLikes.length; i++) {
-            if(this.userLikes[i]['_id'] == thisItem['_id']) {
-                liked = true;
-                index = i;
-            }
-        }
-        for(var i = 0; i < this.userDislikes.length; i++){
-            if(this.userDislikes[i]['_id'] == thisItem['_id']) {
-                disliked = true;
-                index = i;
-            }        
-        }
-        console.log(args.data.x)
-        console.log(swipeLimits.left)
+        // swiped to dislike item:
         if(args.data.x > (swipeLimits.left / 3) - 10) {
-            console.log("oooo")
-            if(disliked == true){
-                //this.activelikedIcon.visibility="visible";
-                disliked = false;
-                liked = false;
-                this.sendResetRequest(currentItemIndex);
-                this.userDislikes.splice(index, 0);
-            } else {
-                disliked = true;
-                if(liked == true){
-                    liked = false;
-                    this.userLikes[currentItemIndex] = false;
-                }
-                //this.activelikedIcon.visibility="hidden";
-                this.sendDislikeRequest(currentItemIndex);
-            }
-            
-        } else if (args.data.x < ((swipeLimits.right / 3) * -1) + 10) {
-            if(liked == true) {
-                //this.activedislikedIcon.visibility="visible";
-                disliked = false;
-                liked = false;
-                this.sendResetRequest(currentItemIndex);
-                this.userLikes.splice(index,0);
-                this.userLikes[currentItemIndex] = false;
-            } else {
-                liked = true;
-                if(disliked == true) {
-                    disliked = false;
-                }
-                this.userLikes[currentItemIndex] = true;
-                //this.activedislikedIcon.visibility="hidden";
-                this.sendLikeRequest(currentItemIndex);
-            }
+            this.itemService.processAction("dislike", currentItemIndex);
+        } // swipe to like item
+        else if (args.data.x < ((swipeLimits.right / 3) * -1) + 10) {
+            // send RESET if already liked
+            if(this.itemsLiked[currentItemIndex]) {
+                this.itemService.processAction("reset", currentItemIndex);
+            } else { // send LIKE
+                this.itemService.processAction("like", currentItemIndex);    
+            } 
         }
-    }
-    //save and unsave action
-    sendLikeRequest(index) {
-        this.itemsLiked[index] = true;
-        this.itemsDisliked[index] = false;
-        let input = {
-            "item": this.itemsShown.getItem(index)['_id'],
-            "action": "like"
-        }
-        this.itemService.getPostResponse(input).subscribe((res) =>{
-        })
-    }
-
-    sendDislikeRequest(index){
-        this.itemsLiked[index] = false;
-        this.itemsDisliked[index] = true;
-        let input = {
-            "item": this.itemsShown.getItem(index)['_id'],
-            "action": "dislike"
-        }
-        this.itemService.getPostResponse(input).subscribe((res) =>{
-        })
-    }
-
-    sendResetRequest(index){
-        this.itemsLiked[index] = false;
-        this.itemsDisliked[index] = false;
-        let input = {
-            "item": this.itemsShown.getItem(index)['_id'],
-            "action": "reset"
-        }
-        this.itemService.getPostResponse(input).subscribe((res) =>{
-        })
     }
 
     onItemLike(args){
