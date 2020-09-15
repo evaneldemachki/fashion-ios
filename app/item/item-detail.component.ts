@@ -24,6 +24,7 @@ export class ItemDetailComponent implements OnInit {
     token: String;
     liked: boolean;
     disliked: boolean;
+    index: number;
     
     activelikedIcon: Image;
     activedislikedIcon: Image;
@@ -40,6 +41,7 @@ export class ItemDetailComponent implements OnInit {
 
     ngOnInit(): void {
         const i = this.route.snapshot.params.id;
+        this.index = i;
 
         this.route.queryParams.subscribe(params => {
             // convert string parameters to boolean:
@@ -73,62 +75,11 @@ export class ItemDetailComponent implements OnInit {
     }
 
     onItemLike(args){
-        if(this.liked == true) {
-            //this.activedislikedIcon.visibility="visible";
-            this.disliked = false;
-            this.liked = false;
-            this.sendResetRequest();
-        } else {
-            this.liked = true;
-            if (this.disliked == true){
-                this.disliked = false;
-            }
-            //this.activedislikedIcon.visibility="hidden";
-            this.sendLikeRequest();
-        }
+        this.itemService.processAction("dislike", this.index);
     }
 
     onItemDislike(args){
-        if(this.disliked==true){
-            //this.activelikedIcon.visibility="visible";
-            this.disliked=false;
-            this.liked=false;
-            this.sendResetRequest();
-        }else{
-            this.disliked=true;
-            if(this.liked==true){
-                this.liked=false;
-            }
-            //this.activelikedIcon.visibility="hidden";
-            this.sendDislikeRequest();
-        }
-    }
-
-    sendLikeRequest(){
-        let input = {
-            "item": this.item._id,
-            "action": "like"
-        }
-        this.itemService.getPostResponse(input).subscribe((res) =>{
-        })
-    }
-
-    sendDislikeRequest(){
-        let input = {
-            "item": this.item._id,
-            "action": "dislike"
-        }
-        this.itemService.getPostResponse(input).subscribe((res) =>{
-        })
-    }
-
-    sendResetRequest(){
-        let input = {
-            "item": this.item._id,
-            "action": "reset"
-        }
-        this.itemService.getPostResponse(input).subscribe((res) =>{
-        })
+        this.itemService.processAction("dislike", this.index);
     }
 
       /*
