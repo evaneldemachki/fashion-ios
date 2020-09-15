@@ -22,8 +22,8 @@ export class ItemDetailComponent implements OnInit {
     item: Item;
     focus: number = 0;
     token: String;
-    liked: boolean = false;
-    disliked: boolean = false;
+    liked: boolean;
+    disliked: boolean;
     
     activelikedIcon: Image;
     activedislikedIcon: Image;
@@ -43,9 +43,10 @@ export class ItemDetailComponent implements OnInit {
 
         this.route.queryParams.subscribe(params => {
             // convert string parameters to boolean:
-            this.liked = (params.liked == true);
-            this.disliked = (params.disliked == true);
+            this.liked = (params.liked == "true");
+            this.disliked = (params.disliked === "true");
 
+            console.log("liked: " + this.liked + ", disliked: "  + this.disliked);
             if(params.source == "itemsShown") {
                 this.item = this.itemService.itemsShown['_array'][i];
             } else if(params.source == "userLikes") {
@@ -74,8 +75,8 @@ export class ItemDetailComponent implements OnInit {
     onItemLike(args){
         if(this.liked == true) {
             //this.activedislikedIcon.visibility="visible";
-            this.disliked=false;
-            this.liked=false;
+            this.disliked = false;
+            this.liked = false;
             this.sendResetRequest();
         } else {
             this.liked = true;
@@ -100,25 +101,6 @@ export class ItemDetailComponent implements OnInit {
             }
             //this.activelikedIcon.visibility="hidden";
             this.sendDislikeRequest();
-        }
-    }
-
-    checkLikeActive(args){
-        this.activelikedIcon = args.object;
-    }
-
-    checkDislikeActive(args){
-        this.activedislikedIcon = args.object;  
-    }
-    
-    checkLikeDislikeStatus(){
-        if(this.disliked == true) {
-            this.activedislikedIcon.visibility="visible";
-            this.activelikedIcon.visibility="collapse";
-        }
-        if(this.liked == true) {
-            this.activelikedIcon.visibility="visible";
-            this.activedislikedIcon.visibility="collapse";
         }
     }
 

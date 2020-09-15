@@ -208,7 +208,7 @@ export class ItemsComponent implements OnInit {
         }
         for(let i = 0; i < this.userDislikes.length; i++){
             for(let j =0; j < this.items.length; j++){
-                if(this.userLikes[i]['_id'] == this.items[j]['_id']) {
+                if(this.userDislikes[i]['_id'] == this.items[j]['_id']) {
                     this.itemsDisliked[j] = true;
                 }
             }
@@ -321,7 +321,7 @@ export class ItemsComponent implements OnInit {
                 liked = false;
                 this.sendResetRequest(currentItemIndex);
                 this.userDislikes.splice(index, 0);
-            }else{
+            } else {
                 disliked = true;
                 if(liked == true){
                     liked = false;
@@ -352,7 +352,6 @@ export class ItemsComponent implements OnInit {
     }
     //save and unsave action
     sendLikeRequest(index) {
-        console.log("ping")
         this.itemsLiked[index] = true;
         this.itemsDisliked[index] = false;
         let input = {
