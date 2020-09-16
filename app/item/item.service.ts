@@ -16,8 +16,7 @@ export class ItemService {
     public lastSearch = "";
     public limit = 500;
     public token: String;
-    public userLikes = new ObservableArray();
-    public userDislikes = new ObservableArray();
+    public userLikes = [];
     public itemsShown = new ObservableArray<Item>();
     public itemsLiked = [];
     public itemsDisliked = [];
@@ -112,89 +111,114 @@ export class ItemService {
           {headers: header, responseType: "json", observe: "body"});
     }
 
-    processAction(action, index) {
-        let thisItem = this.itemsShown.getItem(index);
+    processAction(action, source, index) {
+        console.log("GOT ACTION: " + action + ", " + source)
         if(action == "like") {
-            if(this.itemsLiked[index]) {
-                // send RESET if already disliked
-                this.sendResetRequest(index);
-            } else { // send DISLIKE
-                this.sendLikeRequest(index);       
-            } 
-        } // swipe to like item
+            if(source == "itemsShown") {
+                this.itemsLiked[index] = true;
+                this.itemsDisliked[index] = false;
+
+                let thisItem = this.itemsShown.getItem(index);
+                this.userLikes.push(thisItem);
+
+                let itemID = thisItem["_id"];
+
+                this.sendUserAction(itemID, action);
+            } else if(source == "userLikes") {
+                let thisItem = this.userLikes[index];
+                this.userLikes.push(thisItem);
+
+                let itemID = thisItem["_id"];
+
+                let newIndex = null;
+                for(let i = 0; i < this.itemsShown.length; i++) {
+                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
+                        newIndex = i;
+                        console.log("Found: " + itemID)
+                    }
+                }
+                if(newIndex) {
+                    this.itemsLiked[newIndex] = true;
+                    this.itemsDisliked[newIndex] = false;                    
+                }
+
+                this.sendUserAction(itemID, action);
+            }
+        }
         else if (action == "dislike") {
-            // send RESET if already disliked
-            if(this.itemsDisliked[index]) {
-                this.sendResetRequest(index);
-            } else { // send LIKE
-                this.sendDislikeRequest(index);       
+            if(source == "itemsShown") {
+                let itemID = this.itemsShown.getItem(index)["_id"];
+
+                this.itemsLiked[index] = false;
+                this.itemsDisliked[index] = true;
+
+                for(let i = 0; i < this.userLikes.length; i++) {
+                    if(this.userLikes[i]["_id"] == itemID) {
+                        this.userLikes.splice(i, 1);
+                        break;
+                    }
+                }
+    
+                this.sendUserAction(itemID, action);
+            } else if(source == "userLikes") {
+                let itemID = this.userLikes[index]["_id"];
+                this.userLikes.splice(index, 1);
+
+                let newIndex = null;
+                for(let i = 0; i < this.itemsShown.length; i++) {
+                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
+                        newIndex = i;
+                        console.log("Found: " + itemID)
+                    }
+                }
+                if(newIndex) {
+                    this.itemsLiked[newIndex] = false;
+                    this.itemsDisliked[newIndex] = true;                    
+                }
+                this.sendUserAction(itemID, action);
             } 
+        }
+        else if (action == "reset") {
+            if(source == "itemsShown") {
+                let itemID = this.itemsShown.getItem(index)["_id"];
+
+                this.itemsLiked[index] = false;
+                this.itemsDisliked[index] = false;
+
+                for(let i = 0; i < this.userLikes.length; i++) {
+                    if(this.userLikes[i]["_id"] == itemID) {
+                        this.userLikes.splice(i, 1);
+                        break;
+                    }
+                }
+    
+                this.sendUserAction(itemID, action);
+            } else if(source == "userLikes") {
+                let itemID = this.userLikes[index]["_id"];
+                this.userLikes.splice(index, 1);
+
+                let newIndex = null;
+                for(let i = 0; i < this.itemsShown.length; i++) {
+                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
+                        newIndex = i;
+                        console.log("Found: " + itemID)
+                    }
+                }
+                if(newIndex) {
+                    this.itemsLiked[newIndex] = false;
+                    this.itemsDisliked[newIndex] = false;                    
+                }
+                this.sendUserAction(itemID, action);
+            } 
+        } else {
+            throw new Error("invalid action specified");
         }
     }
 
     //save and unsave action
-    sendLikeRequest(index) {
-        this.itemsLiked[index] = true;
-        this.itemsDisliked[index] = false;
-
-        let item = this.itemsShown.getItem(index)
-        for(let i=0; i < this.userDislikes.length; i++) {
-            if(this.userDislikes["_id"] == item._id) {
-                this.userDislikes.splice(i, 0);
-                break;
-            }
-        }
-
-        this.userLikes.push(this.itemsShown[index]);
-
-        let input = { item: item._id, "action": "like" }
-
+    sendUserAction(item, action) {
+        let input = { item, action }
         this.getPostResponse(input).subscribe((res) =>{
         })
     }
-
-    sendDislikeRequest(index) {
-        this.itemsLiked[index] = false;
-        this.itemsDisliked[index] = true;
-
-        let item = this.itemsShown.getItem(index)
-        for(let i=0; i < this.userLikes.length; i++) {
-            if(this.userLikes["_id"] == item._id) {
-                this.userLikes.splice(i, 0);
-                break;
-            }
-        }
-
-        this.userDislikes.push(this.itemsShown[index]);
-
-        let input = { item: item._id, "action": "dislike" };
-
-        this.getPostResponse(input).subscribe(res => {
-        })
-    }
-
-    sendResetRequest(index) {
-        this.itemsLiked[index] = false;
-        this.itemsDisliked[index] = false;
-
-        let item = this.itemsShown.getItem(index)
-        for(let i=0; i < this.userLikes.length; i++) {
-            if(this.userLikes["_id"] == item._id) {
-                this.userLikes.splice(i, 0);
-                break;
-            }
-        }
-        for(let i=0; i < this.userDislikes.length; i++) {
-            if(this.userDislikes["_id"] == item._id) {
-                this.userDislikes.splice(i, 0);
-                break;
-            }
-        }
-
-        let input = { item: item._id, "action": "reset" };
-
-        this.getPostResponse(input).subscribe(res => {
-        })
-    }
-
 }
