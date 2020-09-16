@@ -9,6 +9,7 @@ import { ItemDetailComponent } from "./item-detail.component";
 import { ItemReferenceComponent } from "./item-reference.component";
 import { ItemService } from "./item.service";
 import { ProfileComponent } from "./profile-page";
+import { OutfitComponent } from "./outfit.component";
 
 
 @NgModule({
@@ -23,6 +24,7 @@ import { ProfileComponent } from "./profile-page";
         ItemDetailComponent,
         ItemReferenceComponent,
         ProfileComponent,
+        OutfitComponent
     ],
     providers: [
         ItemService
