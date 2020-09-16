@@ -1,0 +1,112 @@
+<ActionBar title="Outfit Creator" (loaded)="loadUserData()">
+    <ActionItem tap="onShare" ios.systemIcon="9" ios.position="left" android.systemIcon="res://ic_menu_share" android.position="actionBar"></ActionItem>
+    <ActionItem (tap)="onSearch($event)" ios.systemIcon="12" ios.position="right" text="search" android.position="popup"></ActionItem>
+</ActionBar>
+
+<BottomNavigation selectedIndex="0">
+    <!-- The bottom tab UI is created via TabStrip (the containier) and TabStripItem (for each tab)-->
+    <TabStrip>
+        <TabStripItem>
+            <Label text="My Outfits"></Label>
+            <Image src="font://&#xf553;" class="fas t-36"></Image>
+        </TabStripItem>
+        <TabStripItem class="special">
+            <Label text="Creator"></Label>
+            <Image src="font://&#xf0fe;" class="fas t-36"></Image>
+        </TabStripItem>
+        <TabStripItem class="special">
+            <Label text="Browse Top Outfits"></Label>
+            <Image src="font://&#xf005;" class="far t-36"></Image>
+        </TabStripItem>
+    </TabStrip>
+
+    <TabContentItem>
+        <!--My Outfits-->
+        <GridLayout columns = "*,*">
+            <StackLayout column="1" padding="2 0 2 2" backgroundColor="gray" margin="0">
+                <RadListView [items]="myOutfits" orientation="Vertical" height=50 
+                multipleSelection="false" selectionBehavior="Press" 
+                (itemSelected)="outfitSelected($event)" (itemDeselected)="outfitDeselected($event)">
+                    <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" itemWidth="80" itemHeight="60" spanCount="1"></ListViewGridLayout>
+                        <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
+                    <ng-template let-item="item">
+                        <Image [src]="item.img[0]" height="50%" width = "50%%" ios:stretch="aspectFill"></Image>
+                        <label textAlignment = "center" paddingTop="20" text= {{item}}></label>
+                    </ng-template>
+                </RadListView>
+            </StackLayout>
+
+            <StackLayout column="0">
+                <Label size = "30" textWrap="true" [class]="myOutfits ? 'visible' : 'invisible'" [text]="myOutfits ? 'Select any of your outfits from the side menu!' : 'Please first create an outfit from the menu down below or click here'"></Label>
+                <RadListView [class]="indexSelected ? 'visible' : 'invisible'" [items]="myOutfits[indexSelected]">
+                    <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" itemWidth="80" itemHeight="60" spanCount="1"></ListViewGridLayout>
+                    <ng-template let-item="item">
+                        <Image [src]="item.img[0]" height="50%" width = "50%%" ios:stretch="aspectFill"></Image>
+                        <label textAlignment = "center" paddingTop="20" text= {{item}}></label>
+                    </ng-template>    
+                </RadListView>
+            </StackLayout>
+        </GridLayout>
+    </TabContentItem>
+
+        <!--Creator-->
+    <TabContentItem>
+        <Gridlayout columns = "*,*" id="accountMenu" margin="0">
+           <StackLayout column="0">
+                <RadListView [items] = "currentlyChosen" multipleSelection="false" selectionBehavior="Press" 
+                (itemSelected)="outfitSelected($event)">
+                    <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" itemWidth="80" itemHeight="60" spanCount="1"></ListViewGridLayout>
+                    <ng-template let-item="item">
+                        <Image [src]="item.img[0]" height="50%" width = "50%%" ios:stretch="aspectFill"></Image>
+                        <label textAlignment = "center" paddingTop="20" text= {{item}}></label>
+                    </ng-template> 
+                </RadListView>
+            </StackLayout>
+            <StackLayout column="1">
+                <GridLayout rows="*,*,*">
+                    <GridLayout row="0">
+                        <RadListView [items] = "likedItems" multipleSelection="false" selectionBehavior="Press" 
+                        (itemSelected)="outfitSelected($event)">
+                            <ng-template let-item="item">
+                                <Image [src]="item.img[0]" height="50%" width = "50%%" ios:stretch="aspectFill"></Image>
+                                <label textAlignment = "center" paddingTop="20" text= {{item}}></label>
+                            </ng-template> 
+                        </RadListView>
+                    </GridLayout>
+                    <GridLayout row="1">
+                        <RadListView [items] = "savedItems" multipleSelection="false" selectionBehavior="Press" 
+                        (itemSelected)="outfitSelected($event)">
+                            <ng-template let-item="item">
+                                <Image [src]="item.img[0]" height="50%" width = "50%%" ios:stretch="aspectFill"></Image>
+                                <label textAlignment = "center" paddingTop="20" text= {{item}}></label>
+                            </ng-template>
+                        </RadListView>
+                    </GridLayout>
+                    <StackLayout row = "2">
+                        <button text="Save Outfit"></button>
+                    </StackLayout>
+                </GridLayout>
+            </StackLayout>
+        </Gridlayout>
+    </TabContentItem>
+
+    <!--Top Outfits-->
+    <TabContentItem>
+        <Gridlayout padding="2 0 2 2" rows = "*,*,*" id="accountMenu" margin="0"> 
+            <RadListView [items] = "topOutfits">
+                <ng-template let-item="item" let-index="i">
+                    <ListViewLinearLayout tkListViewLayout scrollDirection="Vertical"></ListViewLinearLayout>
+                    <RadListView height ="200" row="0" orientation="horizontal" [items]="topOutfits[i]" margin-left = "2" margin-right="2">
+                        <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal"></ListViewLinearLayout>
+                        <ng-template let-item="outfitItem" let-index="outfitIndex">
+                            <RadListView height ="200" row="0" orientation="horizontal" [items]="topOutfits[i][outfitIndex]" margin-left = "2" margin-right="2">
+                                <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal"></ListViewLinearLayout>
+                                <Image [src]="outfitItem" height="80%" width = "80%" ios:stretch="aspectFill"></Image>
+                            </RadListView>
+                        </ng-template>
+                    </RadListView>
+                </ng-template>
+            </RadListView>
+        </Gridlayout>
+    </TabContentItem>
+</BottomNavigation>
