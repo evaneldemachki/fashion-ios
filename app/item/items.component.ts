@@ -55,14 +55,8 @@ export class ItemsComponent implements OnInit {
     set userLikes(value) {
         this.itemService.userLikes = value;
     }
-    set userDislikes(value) {
-        this.itemService.userDislikes = value;
-    }
     get userLikes() {
         return this.itemService.userLikes;
-    }
-    get userDislikes() {
-        return this.itemService.userDislikes;
     }
     set itemsShown(value) {
         this.itemService.itemsShown = value;
@@ -103,11 +97,10 @@ export class ItemsComponent implements OnInit {
    
     }
 
-    loadUserData(){
+    loadUserData() {
         let input = { "token": this.token };
-        this.itemService.getUserData(input).subscribe((res) =>{
+        this.itemService.getUserData(input).subscribe(res => {
             this.userLikes = res['likes'];
-            this.userDislikes = res['dislikes'];
             this.userIcon = res['img'];
             this.findUserActions();
         });
@@ -167,8 +160,6 @@ export class ItemsComponent implements OnInit {
 
     scrollStartedEvent(args) {
         this.searchBar.dismissSoftInput();
-        
-        //console.log(args.scrollOffset);
     }
 
     searchRouter() {
@@ -216,19 +207,7 @@ export class ItemsComponent implements OnInit {
                 }
             }
         }
-
-        for(let i = 0; i < this.userDislikes.length; i++){
-            for(let j =0; j < this.items.length; j++){
-                if(this.userDislikes[i]['_id'] == this.items[j]['_id']) {
-                    this.itemsDisliked[j] = true;
-                }
-            }
-        }
     }
-
-    // removeFromLiked(index){
-
-    // }
 
     onSearch() {
         if(this.searchBar.visibility=="collapse") {
@@ -246,7 +225,7 @@ export class ItemsComponent implements OnInit {
                 this.itemService.items = this.items;
                 this.addItemsToView();
             });
-        }else{
+        } else {
             this.addItemsToView();
         }   
         args.returnValue = false;
@@ -259,14 +238,6 @@ export class ItemsComponent implements OnInit {
         const rightItem = swipeView.getViewById('delete-view');
         swipeLimits.left = swipeLimits.right = args.data.x > 0 ? swipeView.getMeasuredWidth() / 2 : swipeView.getMeasuredWidth() / 2;
         swipeLimits.threshold = swipeView.getMeasuredWidth();
-    }
-
-    onLeftSwipeClick(args) {
-        console.log("Left swipe click");
-    }
-    
-    onRightSwipeClick(args) {
-        console.log("Right swipe click");
     }
 
     onItemSwiping(args: any) {
@@ -308,24 +279,16 @@ export class ItemsComponent implements OnInit {
         let thisItem = this.itemsShown.getItem(currentItemIndex);
         // swiped to dislike item:
         if(args.data.x > (swipeLimits.left / 3) - 10) {
-            this.itemService.processAction("dislike", currentItemIndex);
+            // send DISLIKE
+            this.itemService.processAction("dislike", "itemsShown", currentItemIndex);
         } // swipe to like item
         else if (args.data.x < ((swipeLimits.right / 3) * -1) + 10) {
             // send RESET if already liked
             if(this.itemsLiked[currentItemIndex]) {
-                this.itemService.processAction("reset", currentItemIndex);
+                this.itemService.processAction("reset", "itemsShown", currentItemIndex);
             } else { // send LIKE
-                this.itemService.processAction("like", currentItemIndex);    
+                this.itemService.processAction("like", "itemsShown", currentItemIndex);    
             } 
         }
-    }
-
-    onItemLike(args){
-        console.log(args.object.src);
-    }
-
-    onItemDislike(args){
-        console.log(args.object.src);
-
     }
 }

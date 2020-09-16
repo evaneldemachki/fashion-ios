@@ -25,6 +25,7 @@ export class ItemDetailComponent implements OnInit {
     liked: boolean;
     disliked: boolean;
     index: number;
+    source: string;
     
     activelikedIcon: Image;
     activedislikedIcon: Image;
@@ -46,13 +47,14 @@ export class ItemDetailComponent implements OnInit {
         this.route.queryParams.subscribe(params => {
             // convert string parameters to boolean:
             this.liked = (params.liked == "true");
-            this.disliked = (params.disliked === "true");
+            this.disliked = (params.disliked == "true");
+            this.source = params.source;
 
             console.log("liked: " + this.liked + ", disliked: "  + this.disliked);
-            if(params.source == "itemsShown") {
-                this.item = this.itemService.itemsShown['_array'][i];
-            } else if(params.source == "userLikes") {
-                this.item = this.itemService.userLikes[i];
+            if(this.source == "itemsShown") {
+                this.item = <Item>this.itemService.itemsShown.getItem(i);
+            } else if(this.source == "userLikes") {
+                this.item = <Item>this.itemService.userLikes[i];
             }
         });
 
@@ -76,23 +78,27 @@ export class ItemDetailComponent implements OnInit {
 
     onItemLike(args) {
         if(this.liked) {
+            this.disliked = false;
             this.liked = false;
+            this.itemService.processAction("reset", this.source, this.index);
         } else {
+            this.disliked = false;
             this.liked = true;
+            this.itemService.processAction("like", this.source, this.index);
         }
-        this.disliked = false;
-        this.itemService.processAction("like", this.index);
     }
 
 
     onItemDislike(args) {
         if(this.disliked) {
             this.disliked = false;
+            this.liked = false;
+            this.itemService.processAction("reset", this.source, this.index);
         } else {
             this.disliked = true;
+            this.liked = false;
+            this.itemService.processAction("dislike", this.source, this.index);
         }
-        this.liked = false;
-        this.itemService.processAction("dislike", this.index);
     }
 
       /*
