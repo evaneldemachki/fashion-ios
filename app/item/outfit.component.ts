@@ -33,11 +33,11 @@ export class OutfitComponent implements OnInit {
 
     ngOnInit(): void {
 
-        //this.myOutfits = this.itemService.getOutfits();
+        //this.myOutfits = this.itemService.wardrobe;
+        this.savedItems = this.itemService.userSaved;
         //this.topOutfits = this.itemService.getTopOutfits();
         this.likedItems = this.itemService.userLikes;
         //this.savedItems = this.itemService.savedItems;
-
 
     }
 }

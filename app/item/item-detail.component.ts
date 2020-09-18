@@ -26,6 +26,7 @@ export class ItemDetailComponent implements OnInit {
     disliked: boolean;
     index: number;
     source: string;
+    saved: boolean;
     
     activelikedIcon: Image;
     activedislikedIcon: Image;
@@ -48,6 +49,7 @@ export class ItemDetailComponent implements OnInit {
             // convert string parameters to boolean:
             this.liked = (params.liked == "true");
             this.disliked = (params.disliked == "true");
+            this.saved = (params.saved == "true");
             this.source = params.source;
 
             console.log("liked: " + this.liked + ", disliked: "  + this.disliked);
@@ -101,6 +103,13 @@ export class ItemDetailComponent implements OnInit {
         }
     }
 
+    onItemSave(args) {
+        if(this.saved) {
+            this.itemService.processAction("save", this.source, this.index);
+        } else {
+            this.itemService.processAction("unsave", this.source, this.index);
+        }
+    }
       /*
     input = {
         "token": "token12345",

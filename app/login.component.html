@@ -8,6 +8,7 @@
   
       <StackLayout class="input-field">
         <TextField [(ngModel)]="credentials.password" autocorrect="false" secure="true" autocapitalizationType="none" hint="Password" ...></TextField>
+        <Label text="&#xf058; Save Password?" [class]="checkYesPW ? 'fas' : 'far'" (tap)="savePWOption()"></Label>
       </StackLayout>
   
       <StackLayout *ngIf="!isLoggingIn" class="input-field">
