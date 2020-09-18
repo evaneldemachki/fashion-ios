@@ -223,10 +223,13 @@ export class ItemsComponent implements OnInit {
             this.itemsShown.length = 0;
             this.currentlyLoaded = 0;
             this.addItemsToView();
+            this.findUserActions();
         });
     }
     
     findUserActions() {
+        this.itemsLiked=[]
+        this.itemsDisliked=[];
         for(let i = 0; i < this.userLikes.length; i++) {
             for(let j =0; j < this.items.length; j++) {
                 if(this.userLikes[i]['_id'] == this.items[j]['_id']) {
@@ -336,16 +339,30 @@ export class ItemsComponent implements OnInit {
 
     createrSelected(args){
         let i = args.index;
+        var exists =false;
         if(this.filterBySaved==true){
-            this.currentlyChosen.push(this.userSaved[i]);
+            for(var j=0;j<this.currentlyChosen.length;j++){
+                if(this.userSaved[i]==this.currentlyChosen[j]){
+                    exists = true;
+                }
+            }
+            if(exists==false){
+                this.currentlyChosen.push(this.userSaved[i]);
+            }
         }else{
-            this.currentlyChosen.push(this.userLikes[i]);
+            for(var j=0;j<this.currentlyChosen.length;j++){
+                if(this.userLikes[i]==this.currentlyChosen[j]){
+                    exists = true;
+                }
+            }
+            if(exists==false){
+                this.currentlyChosen.push(this.userLikes[i]);
+            }
         }
-        console.log(this.currentlyChosen);
     }
 
     createrDeselected(args){
-        let item = args.object;
+        let item = this.currentlyChosen[args.index];
         for(var i=0; i<this.currentlyChosen.length; i++){
             if(this.currentlyChosen[i]==item){
                 this.currentlyChosen.splice(i,1);
