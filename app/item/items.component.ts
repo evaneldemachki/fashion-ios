@@ -57,6 +57,8 @@ export class ItemsComponent implements OnInit {
     public savedItems = [];
     public filterBySaved = true;
     public searchCategories =[];
+    public tutorialHide = false;
+    public outfitTutorialHide = false;
 
     constructor(
         private itemService: ItemService,
@@ -139,6 +141,10 @@ export class ItemsComponent implements OnInit {
         }
         for(let i = 0; i < tobeLoaded; i++) {
             this.itemsShown.push(newitems[i]);
+        }
+
+        if(this.itemsShown.length > 2){
+            this.tutorialHide = true;
         }
         this.currentlyLoaded = this.itemsShown.length;
         this.findUserActions();
@@ -338,6 +344,7 @@ export class ItemsComponent implements OnInit {
     }
 
     createrSelected(args){
+        this.outfitTutorialHide = true;
         let i = args.index;
         var exists =false;
         if(this.filterBySaved==true){
