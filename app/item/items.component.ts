@@ -333,6 +333,25 @@ export class ItemsComponent implements OnInit {
             this.filterBySaved=true;
         }
     }
+
+    createrSelected(args){
+        let i = args.index;
+        if(this.filterBySaved==true){
+            this.currentlyChosen.push(this.userSaved[i]);
+        }else{
+            this.currentlyChosen.push(this.userLikes[i]);
+        }
+        console.log(this.currentlyChosen);
+    }
+
+    createrDeselected(args){
+        let item = args.object;
+        for(var i=0; i<this.currentlyChosen.length; i++){
+            if(this.currentlyChosen[i]==item){
+                this.currentlyChosen.splice(i,1);
+            }
+        }
+    }
    
 
 }

@@ -89,7 +89,7 @@
                     </RadListView>
                 
                 <!--Liked or Saved List-->
-                <RadListView col="0" colspan="10" row="1" rowspan="5" [items]="filterBySaved ? userSaved : userLikes" orientation="Horizontal" height=50 
+                <RadListView col="0" colspan="10" row="1" rowspan="3" [items]="filterBySaved ? userSaved : userLikes" orientation="Horizontal" height=50 
                     multipleSelection="false" selectionBehavior="Press" height ="200"
                     (itemSelected)="createrSelected($event)" (itemDeselected)="createrDeselected($event)">
                         <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal"></ListViewLinearLayout>
@@ -101,7 +101,13 @@
                         </ng-template>
                 </RadListView>    
                 
-                <RadListView [items]="currentlyChosen" orientation="Vertical" height="100%"></RadListView>
+                <RadListView row="5" rowspan="3" col="0" colspan="10" [items]="currentlyChosen" orientation="Vertical" height="100%">
+                    <ListViewGridLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="80" itemHeight="60" spanCount="1"></ListViewGridLayout>
+                    <ng-template let-item="item" height="60%" width="60%">
+                        <Image [src]="item.img[0]" height="125" width = "125" ios:stretch="aspectFill"></Image>
+                        <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
+                     </ng-template>
+                </RadListView>
 
                 <StackLayout row="9" col="0" colspan="10">
                     <button verticalAlignment = "bottom" text="Save Outfit"></button>
