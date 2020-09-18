@@ -20,6 +20,9 @@ export class ItemService {
     public itemsShown = new ObservableArray<Item>();
     public itemsLiked = [];
     public itemsDisliked = [];
+    public itemsSaved = [];
+    public userSaved = [];
+    public wardrobe = [];
 
     constructor(private http: HttpClient) { }
 
@@ -65,8 +68,14 @@ export class ItemService {
     }
 
     getFromCategory(category){
-        var query = "search?category="+category+"&limit="+this.limit;
-        this.lastSearch = query
+        let categories=category[0].toLowerCase();
+        for(var i=1; i<category.length; i++){
+            categories = categories+","+category[i].toLowerCase();
+        }
+        var query = "search?category="+categories+"&limit="+this.limit;
+        console.log(query);
+        console.log("Searching for <all> in category '"+categories+"'");
+        this.lastSearch = query;
         return this.http.get(
             this.serverUrl + query, {
                 responseType: "text"
@@ -74,7 +83,12 @@ export class ItemService {
     }
 
     getFromNameAndCategory(name, category){
-        var basequery = "search?category="+category+"&"+"name="+name+"&limit="+this.limit
+        let categories=category[0].toLowerCase();
+        for(var i=1; i<category.length; i++){
+            categories = categories+","+category[i].toLowerCase();
+        }
+
+        var basequery = "search?category="+categories+"&"+"name="+name+"&limit="+this.limit
         this.lastSearch = basequery;
 
         this.lastSearch = basequery;
@@ -210,6 +224,35 @@ export class ItemService {
                 }
                 this.sendUserAction(itemID, action);
             } 
+        }else if(action=="unsave"){
+            if(source == "itemsShown") {
+                let thisItem = this.itemsShown.getItem(index);
+                let itemID = this.itemsShown.getItem(index)["_id"];
+                this.userSaved.splice(index, 1);
+                let newIndex = null;
+                this.itemsSaved[index] = false
+                this.sendUserAction(itemID, action);
+            } else if(source == "userLikes") {
+                let thisItem = this.itemsShown.getItem(index);
+                let itemID = this.userLikes[index]["_id"];
+                this.itemsSaved[index] = false
+                this.itemsSaved.splice(index, 1);
+                this.sendUserAction(itemID, action);
+            }
+        }else if(action=="save"){
+            if(source == "itemsShown") {
+                let thisItem = this.itemsShown.getItem(index);
+                let itemID = this.itemsShown.getItem(index)["_id"];
+                this.itemsSaved[index] = true
+                this.userSaved.push(thisItem);
+                this.sendUserAction(itemID, action);
+            } else if(source == "userLikes") {
+                let thisItem = this.itemsShown.getItem(index);
+                let itemID = this.userLikes[index]["_id"];
+                this.itemsSaved[index] = true
+                this.userSaved.push(thisItem);
+                this.sendUserAction(itemID, action);
+            }
         } else {
             throw new Error("invalid action specified");
         }

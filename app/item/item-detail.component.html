@@ -25,6 +25,10 @@
             <Label [text]="item.name" class="listing-left" textAlignment="left" textWrap="true"></Label>
             <Label [text]="'$' + item.price" class="listing-right" textAlignment="center" textWrap="true"></Label>
         </StackLayout>
-        <Button text="Buy This Product" width="100%" margin="10 0 10 0" backgroundColor="blue" height="100px" [nsRouterLink]="index"></Button>
+        <StackLayout orientation="Horizontal">
+        <Button text="Save This Product" width="50%" margin="10 0 10 0" backgroundColor="black" height="100px" (tap)=onItemSave()></Button>
+        <Button text="Buy This Product" width="50%" margin="10 0 10 0" backgroundColor="blue" height="100px" [nsRouterLink]="index"></Button>
+        </StackLayout>
+        <Lable [text]="saved ? 'Saved' : ''"></Lable>
     </FlexboxLayout>
 </FlexboxLayout>

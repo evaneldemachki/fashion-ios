@@ -9,9 +9,9 @@
             <Label text="Home"></Label>
             <Image src="font://&#xf015;" class="fas t-36"></Image>
         </TabStripItem>
-        <TabStripItem class="special" [nsRouterLink]="'outfit'">
-            <Label text="Account"></Label>
-            <Image src="font://&#xf007;" class="fas t-36"></Image>
+        <TabStripItem class="special">
+            <Label text="Outfits"></Label>
+            <Image src="font://&#xf553;" class="fas t-36"></Image>
         </TabStripItem>
         <TabStripItem class="special">
             <Label text="Profile"></Label>
@@ -19,7 +19,7 @@
         </TabStripItem>
     </TabStrip>
 
-    <!-- The number of TabContentItem components should corespond to the number of TabStripItem components -->
+    <!--Main Feed-->
     <TabContentItem>
         <StackLayout padding="2 0 2 2" backgroundColor="gray" margin="0">
             <SearchBar class="searchMenu" hint="Search for items ..." (textChange)="onTextChanged($event)"
@@ -50,7 +50,7 @@
                     <ng-template horizontalAlignment="center" let-item="item" let-index="index">
                         <GridLayout [class] = "itemsLiked[index] ? 'likedBackground' : 'dislikedBackground'">
                         <GridLayout columns="*,*,*" [nsRouterLink]="['detail', index]" 
-                        [queryParams]="{ source: 'itemsShown', liked: itemsLiked[index], disliked: itemsDisliked[index]}" 
+                        [queryParams]="{ source: 'itemsShown', liked: itemsLiked[index], disliked: itemsDisliked[index], saved: itemsSaved[index]}" 
                         padding="0 0 0 0" >
                             <Image colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
                             <Label column="2" [class]="itemsLiked[index] ? 'far t-36' : 'invisible'" style="color: red;" text="&#xf004;" verticalAlignment="top"></Label>
@@ -72,17 +72,50 @@
             </StackLayout>
         </StackLayout>
     </TabContentItem>
-    <TabContentItem>
-            <Label text="Account Page" class="h2 text-center"></Label>
-            <Gridlayout padding="2 0 2 2" rows = "*,*" id="accountMenu" margin="0">     
-                <Stacklayout row = 1>        
-                    <Button text="My Likes" tap="myLikes"></Button>
-                    <Button text="Find My Style" tap="findMyStyle"></Button>
-                    <Button text="Latest and Greatest" tap="Latest"></Button>
-                    <Button text="Edit Account Details" tap="editAccount"></Button>
-                </Stacklayout>   
-            </Gridlayout>
 
+    <!--Outfit Creator-->
+    <TabContentItem>
+        <StackLayout padding="2 0 2 2" backgroundColor="gray" margin="0">
+            <GridLayout rows="*,*,*,*,*,*,*,*,*,*" columns="*,*,*,*,*,*,*,*,*,*">
+                    <Button row="0" column="0" colspan="3" [text]="filterBySaved? 'Saved' : 'Likes'" (tap)="swapFilterSaved()"></Button>
+                    <RadListView row="0" column="3" colspan="6" [items]="categories" orientation="horizontal" height=50 
+                    multipleSelection="false" selectionBehavior="Press" 
+                    (itemSelected)="outfitCategorySelected($event)" (itemDeselected)="outfitCategoryDeselected($event)">
+                    <ListViewGridLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="80" itemHeight="60" spanCount="1"></ListViewGridLayout>
+                        <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
+                    <ng-template let-item="item" height=50>
+                            <label verticalAlignment="center" textAlignment = "center" padding="20" text= {{item}}></label>
+                    </ng-template>
+                    </RadListView>
+                
+                <!--Liked or Saved List-->
+                <RadListView col="0" colspan="10" row="1" rowspan="3" [items]="filterBySaved ? userSaved : userLikes" orientation="Horizontal" height=50 
+                    multipleSelection="false" selectionBehavior="Press" height ="200"
+                    (itemSelected)="createrSelected($event)" (itemDeselected)="createrDeselected($event)">
+                        <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal"></ListViewLinearLayout>
+                        <ng-template let-item="item" let-index="index" height="60%" width="60%">
+                            <StackLayout>
+                                <Image [src]="item.img[0]" height="125" width = "125" ios:stretch="aspectFill"></Image>
+                                <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
+                            </StackLayout>
+                        </ng-template>
+                </RadListView>    
+                
+                <RadListView row="5" rowspan="3" col="0" colspan="10" [items]="currentlyChosen" orientation="Vertical" height="100%">
+                    <ListViewGridLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="80" itemHeight="60" spanCount="1"></ListViewGridLayout>
+                    <ng-template let-item="item" height="60%" width="60%">
+                        <Image [src]="item.img[0]" height="125" width = "125" ios:stretch="aspectFill"></Image>
+                        <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
+                     </ng-template>
+                </RadListView>
+
+                <StackLayout row="9" col="0" colspan="10">
+                    <button verticalAlignment = "bottom" text="Save Outfit"></button>
+                </StackLayout>
+            </GridLayout>
+        </StackLayout>
+
+    <!--Profile Screen-->
     </TabContentItem>
     <TabContentItem>
         <Gridlayout padding="2 0 2 2" rows = "*,*,*" id="accountMenu" margin="0"> 

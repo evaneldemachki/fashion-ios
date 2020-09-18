@@ -1,4 +1,4 @@
-<ActionBar title="Outfit Creator" (loaded)="loadUserData()">
+<ActionBar title="Outfit Creator" >
     <ActionItem tap="onShare" ios.systemIcon="9" ios.position="left" android.systemIcon="res://ic_menu_share" android.position="actionBar"></ActionItem>
     <ActionItem (tap)="onSearch($event)" ios.systemIcon="12" ios.position="right" text="search" android.position="popup"></ActionItem>
 </ActionBar>
@@ -38,7 +38,7 @@
 
             <StackLayout column="0">
                 <Label size = "30" textWrap="true" [class]="myOutfits ? 'visible' : 'invisible'" [text]="myOutfits ? 'Select any of your outfits from the side menu!' : 'Please first create an outfit from the menu down below or click here'"></Label>
-                <RadListView [class]="indexSelected ? 'visible' : 'invisible'" [items]="myOutfits[indexSelected]">
+                <RadListView [class]="indexSelected ? 'visible' : 'invisible'" [items]="myOutfits[indexSelected]" height="200">
                     <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" itemWidth="80" itemHeight="60" spanCount="1"></ListViewGridLayout>
                     <ng-template let-item="item">
                         <Image [src]="item.img[0]" height="50%" width = "50%%" ios:stretch="aspectFill"></Image>
@@ -54,36 +54,50 @@
         <Gridlayout columns = "*,*" id="accountMenu" margin="0">
            <StackLayout column="0">
                 <RadListView [items] = "currentlyChosen" multipleSelection="false" selectionBehavior="Press" 
-                (itemSelected)="outfitSelected($event)">
+                (itemSelected)="outfitSelected($event)" height="50">
                     <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" itemWidth="80" itemHeight="60" spanCount="1"></ListViewGridLayout>
                     <ng-template let-item="item">
-                        <Image [src]="item.img[0]" height="50%" width = "50%%" ios:stretch="aspectFill"></Image>
-                        <label textAlignment = "center" paddingTop="20" text= {{item}}></label>
+                        <StackLayout>
+                            <Image [src]="item.img[0]" height="50%" width = "50%" ios:stretch="aspectFill"></Image>
+                            <label textAlignment = "center" paddingTop="20" text= {{item}}></label>
+                        </StackLayout>
                     </ng-template> 
                 </RadListView>
             </StackLayout>
             <StackLayout column="1">
-                <GridLayout rows="*,*,*">
-                    <GridLayout row="0">
-                        <RadListView [items] = "likedItems" multipleSelection="false" selectionBehavior="Press" 
-                        (itemSelected)="outfitSelected($event)">
-                            <ng-template let-item="item">
-                                <Image [src]="item.img[0]" height="50%" width = "50%%" ios:stretch="aspectFill"></Image>
-                                <label textAlignment = "center" paddingTop="20" text= {{item}}></label>
-                            </ng-template> 
-                        </RadListView>
+                <GridLayout rows="*,*,*,*,*,*,*">
+                    <GridLayout row="0" rowspan=3>
+                        <StackLayout>
+                            <Button text= "Pick from Liked" textSize="20" wrapText="true" padding-top="10"></Button>
+                            <RadListView [items] = "likedItems" multipleSelection="false" selectionBehavior="Press" 
+                            (itemSelected)="outfitSelected($event)" height = "260" >
+                                <ListViewGridLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="200" itemHeight="200" spanCount="1"></ListViewGridLayout>
+                                <ng-template let-item="item">
+                                    <StackLayout>
+                                        <Image [src]="item.img[0]" height="80%" width = "80%" ios:stretch="aspectFill"></Image>
+                                        <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
+                                    </StackLayout>
+                                </ng-template>s
+                            </RadListView>
+                        </StackLayout>
                     </GridLayout>
-                    <GridLayout row="1">
-                        <RadListView [items] = "savedItems" multipleSelection="false" selectionBehavior="Press" 
-                        (itemSelected)="outfitSelected($event)">
-                            <ng-template let-item="item">
-                                <Image [src]="item.img[0]" height="50%" width = "50%%" ios:stretch="aspectFill"></Image>
-                                <label textAlignment = "center" paddingTop="20" text= {{item}}></label>
-                            </ng-template>
-                        </RadListView>
+                    <GridLayout row="3" rowspan=3>
+                        <StackLayout verticalAlignment="center">
+                            <Button text= "Pick from Saved" textSize="20" wrapText="true" padding-top="10"></Button>
+                            <RadListView [items] = "savedItems" multipleSelection="false" selectionBehavior="Press" 
+                            (itemSelected)="outfitSelected($event)" height="260">
+                                <ListViewGridLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="200" itemHeight="200" spanCount="1"></ListViewGridLayout>
+                                <ng-template let-item="item">
+                                    <StackLayout>
+                                        <Image [src]="item.img[0]" height="80%" width = "80%" ios:stretch="aspectFill"></Image>
+                                        <Label  textAlignment = "center" size="15" width=100% textAlignment = "center" [text]= "item.name" textWrap="true"></Label>
+                                    </StackLayout>
+                                </ng-template>
+                            </RadListView>
+                        </StackLayout>
                     </GridLayout>
-                    <StackLayout row = "2">
-                        <button text="Save Outfit"></button>
+                    <StackLayout row = "6">
+                        <button verticalAlignment = "bottom" text="Save Outfit"></button>
                     </StackLayout>
                 </GridLayout>
             </StackLayout>

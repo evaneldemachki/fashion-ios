@@ -23,6 +23,7 @@ export class LoginComponent {
     public isBusy: boolean = false;
     public confirm: string = "";
     public checkYes: Boolean = false;
+    public checkYesPW: Boolean = false;
 
 
     constructor(
@@ -32,6 +33,9 @@ export class LoginComponent {
     ngOnInit(): void {
         this.checkYes = getBoolean("checkYes");
         this.credentials.username = getString("email");
+        this.checkYesPW = getBoolean("checkYesPW");
+        this.credentials.password = getString("password")
+
     }
 
     toggleForm() {
@@ -57,7 +61,11 @@ export class LoginComponent {
                 let token = res.body; // return token if verification successful
                 if(this.checkYes==true){
                     setBoolean("checkYes", true);
-                    setString("email", this.credentials.username)
+                    setString("email", this.credentials.username);
+                }
+                if(this.checkYesPW==true){
+                    setBoolean("checkYesPW", true);
+                    setString("password", this.credentials.password);
                 }
                 this.routerExtensions.navigate(["items", token], { clearHistory: true });
             }, err => { // alert with error message if verification failed
@@ -100,6 +108,15 @@ export class LoginComponent {
             remove("checkYes")
         }else{
             this.checkYes = true;
+        }
+    }
+
+    savePWOption(){
+        if(this.checkYesPW==true){
+            this.checkYesPW=false;
+            remove("checkYesPW");
+        }else{
+            this.checkYesPW = true;
         }
     }
 

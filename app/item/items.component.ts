@@ -19,6 +19,12 @@ import { PanGestureEventData, GestureStateTypes } from "tns-core-modules/ui/gest
 import { ActivatedRoute } from "@angular/router";
 import { Image } from "tns-core-modules/ui/image";
 
+import { Button } from "tns-core-modules/ui/button";
+import { ShowModalOptions } from "tns-core-modules/ui/core/view";
+const modalViewModulets = "ns-ui-category/modal-view/basics/modal-ts-view-page";
+
+
+
 
 @Component({
     selector: "ns-items",
@@ -42,10 +48,15 @@ export class ItemsComponent implements OnInit {
     public totalLoaded = 0;
     public leftThresholdPassed = false;
     public rightThresholdPassed = false;
-
     public userIcon: Image;
-
     private token: string;
+
+    //Outfit Creator
+    public myOutfits = [];
+    public currentlyChosen = [];
+    public savedItems = [];
+    public filterBySaved = true;
+    public searchCategories =[];
 
     constructor(
         private itemService: ItemService,
@@ -76,6 +87,12 @@ export class ItemsComponent implements OnInit {
     get itemsDisliked() {
         return this.itemService.itemsDisliked;
     }
+    set userSaved(value) {
+        this.itemService.userSaved = value;
+    }
+    get userSaved() {
+        return this.itemService.userSaved;
+    }
 
     ngOnInit(): void {
         this.token = this.route.snapshot.params.token;
@@ -94,6 +111,7 @@ export class ItemsComponent implements OnInit {
         });
         this.loadUserData();
         this.searchText = "";
+        console.log(this.userSaved);
    
     }
 
@@ -102,6 +120,8 @@ export class ItemsComponent implements OnInit {
         this.itemService.getUserData(input).subscribe(res => {
             this.userLikes = res['likes'];
             this.userIcon = res['img'];
+            this.itemService.userSaved = res['wardrobe']
+            this.userSaved = this.itemService.userSaved;
             this.findUserActions();
         });
 
@@ -151,11 +171,20 @@ export class ItemsComponent implements OnInit {
 
     categorySelected(args){
         const item = this.categories[args.index];
+        this.searchCategories.push(this.categories[args.index]);
+        console.log(this.searchCategories);
+        this.refreshSearch();
     }
 
     categoryDeselected(args){
         const item = this.categories[args.index];
         console.log("Category selected " + item);
+        for(var i=0; i<this.searchCategories.length;i++){
+            if(this.searchCategories[i]==this.categories[args.index]){
+                this.searchCategories.splice(i,1);
+            }
+        }
+        this.refreshSearch();
     }
 
     scrollStartedEvent(args) {
@@ -166,21 +195,19 @@ export class ItemsComponent implements OnInit {
         let itemsRequest;
 
         if (this.searchText == "") {
-            if(this.selectedIndex == 0) {
+            if(this.searchCategories.length == 0) {
                 console.log("Searching for <all>");
                 itemsRequest = this.itemService.getItems();         
             } else {
-                console.log("Searching for <all> in category '" + this.categories[this.selectedIndex] + "'");
-                itemsRequest = this.itemService.getFromCategory(this.categories[this.selectedIndex].toLowerCase());
+                itemsRequest = this.itemService.getFromCategory(this.searchCategories);
             }
         } else {
-            if(this.selectedIndex==0) {
+            if(this.searchCategories.length==0) {
                 console.log("Searching for '" + this.searchText + "'");
                 itemsRequest = this.itemService.getFromName(this.searchText);
             } else {
-                console.log("Searching for '" + this.searchText + "' in category: '"+ this.categories[this.selectedIndex] + "'");
-                itemsRequest = this.itemService.getFromNameAndCategory(
-                    this.searchText, this.categories[this.selectedIndex].toLowerCase());
+                console.log("Searching for '" + this.searchText + "' in category: '"+ this.searchCategories + "'");
+                itemsRequest = this.itemService.getFromNameAndCategory(this.searchText, this.searchCategories);
             }
         }
         return itemsRequest;
@@ -204,6 +231,13 @@ export class ItemsComponent implements OnInit {
             for(let j =0; j < this.items.length; j++) {
                 if(this.userLikes[i]['_id'] == this.items[j]['_id']) {
                     this.itemsLiked[j] = true;
+                }
+            }
+        }
+        for(let i = 0; i < this.userSaved.length; i++) {
+            for(let j =0; j < this.items.length; j++) {
+                if(this.userSaved[i]['_id'] == this.items[j]['_id']) {
+                    this.itemsSaved[j] = true;
                 }
             }
         }
@@ -291,4 +325,33 @@ export class ItemsComponent implements OnInit {
             } 
         }
     }
+
+    swapFilterSaved(){
+        if(this.filterBySaved==true){
+            this.filterBySaved = false;
+        }else{
+            this.filterBySaved=true;
+        }
+    }
+
+    createrSelected(args){
+        let i = args.index;
+        if(this.filterBySaved==true){
+            this.currentlyChosen.push(this.userSaved[i]);
+        }else{
+            this.currentlyChosen.push(this.userLikes[i]);
+        }
+        console.log(this.currentlyChosen);
+    }
+
+    createrDeselected(args){
+        let item = args.object;
+        for(var i=0; i<this.currentlyChosen.length; i++){
+            if(this.currentlyChosen[i]==item){
+                this.currentlyChosen.splice(i,1);
+            }
+        }
+    }
+   
+
 }
