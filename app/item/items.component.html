@@ -47,8 +47,8 @@
                 (itemSwiping)="onItemSwiping" 
                 swipeActions="true">
                     <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
-                    <ng-template horizontalAlignment="center" let-item="item" let-index="index">
-                        <GridLayout [class] = "itemsLiked[index] ? 'likedBackground' : 'dislikedBackground'">
+                    <ng-template horizontalAlignment="center" let-item="item" let-index="index" >
+                        <GridLayout style="background-image: ~/item/backgroundShadow.png;" [class] = "itemsLiked[index] ? 'likedBackground' : 'dislikedBackground'">
                         <GridLayout columns="*,*,*" [nsRouterLink]="['detail', index]" 
                         [queryParams]="{ source: 'itemsShown', liked: itemsLiked[index], disliked: itemsDisliked[index], saved: itemsSaved[index]}" 
                         padding="0 0 0 0" >
@@ -59,7 +59,7 @@
                     </ng-template>
                     
                     <lv:RadListView.itemSwipeTemplate>
-                        <GridLayout *tkListItemSwipeTemplate columns="auto, *, auto" style="background-color: white;">
+                        <GridLayout *tkListItemSwipeTemplate columns="auto, *, auto">
                             <StackLayout id="mark-view" col="0" style="background-color:green;" (tap)="onLeftSwipeClick($event)" paddingRight="16" orientation="horizontal">
                                 <Label horizontalAlignment="center" class="far" style="font-size: 50em; color: black" text="&#xf165;"></Label>
                             </StackLayout>
@@ -81,7 +81,7 @@
                     <RadListView row="0" column="3" colspan="6" [items]="categories" orientation="horizontal" height=50 
                     multipleSelection="false" selectionBehavior="Press" 
                     (itemSelected)="outfitCategorySelected($event)" (itemDeselected)="outfitCategoryDeselected($event)">
-                    <ListViewGridLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="80" itemHeight="60" spanCount="1"></ListViewGridLayout>
+                    <ListViewGridLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="90" itemHeight="60" spanCount="1"></ListViewGridLayout>
                         <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
                     <ng-template let-item="item" height=50>
                             <label verticalAlignment="center" textAlignment = "center" padding="20" text= {{item}} textWrap="true"></label>
@@ -91,9 +91,9 @@
                 <!--Liked or Saved List-->
                 <RadListView col="0" colspan="10" row="1" rowspan="3" [items]="filterBySaved ? userSaved : userLikes" orientation="Horizontal" height=50 
                     multipleSelection="false" selectionBehavior="Press" height ="200"
-                    (itemSelected)="createrSelected($event)" (itemDeselected)="createrDeselected($event)">
+                    (itemSelected)="createrSelected($event)">
                         <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal"></ListViewLinearLayout>
-                        <ng-template let-item="item" let-index="index" height="60%" width="60%">
+                        <ng-template let-item="item" let-index="index" height="60%" width="60%" style="background-image: ~/item/backgroundShadow.png;">
                             <StackLayout>
                                 <Image [src]="item.img[0]" height="125" width = "125" ios:stretch="aspectFill"></Image>
                                 <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
@@ -101,7 +101,7 @@
                         </ng-template>
                 </RadListView>    
                 
-                <RadListView row="5" rowspan="3" col="0" colspan="10" [items]="currentlyChosen" orientation="Vertical" height="200">
+                <RadListView row="5" rowspan="3" col="0" colspan="10" [items]="currentlyChosen" orientation="Vertical" height="200" selectionBehavior="Press" (itemSelected)="createrDeselected($event)">
                     <ListViewGridLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="150" itemHeight="150" spanCount="1"></ListViewGridLayout>
                     <ng-template let-item="item">
                         <StackLayout>

@@ -223,10 +223,13 @@ export class ItemsComponent implements OnInit {
             this.itemsShown.length = 0;
             this.currentlyLoaded = 0;
             this.addItemsToView();
+            this.findUserActions();
         });
     }
     
     findUserActions() {
+        this.itemsLiked=[]
+        this.itemsDisliked=[];
         for(let i = 0; i < this.userLikes.length; i++) {
             for(let j =0; j < this.items.length; j++) {
                 if(this.userLikes[i]['_id'] == this.items[j]['_id']) {
@@ -338,8 +341,8 @@ export class ItemsComponent implements OnInit {
         let i = args.index;
         var exists =false;
         if(this.filterBySaved==true){
-            for(var j=0;j<this.currentlyChosen[j];j++){
-                if(this.userSaved[i]['_id']==this.currentlyChosen[j]['_id']){
+            for(var j=0;j<this.currentlyChosen.length;j++){
+                if(this.userSaved[i]==this.currentlyChosen[j]){
                     exists = true;
                 }
             }
@@ -347,8 +350,8 @@ export class ItemsComponent implements OnInit {
                 this.currentlyChosen.push(this.userSaved[i]);
             }
         }else{
-            for(var j=0;j<this.currentlyChosen[j];j++){
-                if(this.userLikes[i]['_id']==this.currentlyChosen[j]['_id']){
+            for(var j=0;j<this.currentlyChosen.length;j++){
+                if(this.userLikes[i]==this.currentlyChosen[j]){
                     exists = true;
                 }
             }
@@ -359,7 +362,7 @@ export class ItemsComponent implements OnInit {
     }
 
     createrDeselected(args){
-        let item = args.object;
+        let item = this.currentlyChosen[args.index];
         for(var i=0; i<this.currentlyChosen.length; i++){
             if(this.currentlyChosen[i]==item){
                 this.currentlyChosen.splice(i,1);
