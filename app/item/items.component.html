@@ -84,7 +84,7 @@
                     <ListViewGridLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="80" itemHeight="60" spanCount="1"></ListViewGridLayout>
                         <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
                     <ng-template let-item="item" height=50>
-                            <label verticalAlignment="center" textAlignment = "center" padding="20" text= {{item}}></label>
+                            <label verticalAlignment="center" textAlignment = "center" padding="20" text= {{item}} textWrap="true"></label>
                     </ng-template>
                     </RadListView>
                 
@@ -101,12 +101,14 @@
                         </ng-template>
                 </RadListView>    
                 
-                <RadListView row="5" rowspan="3" col="0" colspan="10" [items]="currentlyChosen" orientation="Vertical" height="100%">
-                    <ListViewGridLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="80" itemHeight="60" spanCount="1"></ListViewGridLayout>
-                    <ng-template let-item="item" height="60%" width="60%">
-                        <Image [src]="item.img[0]" height="125" width = "125" ios:stretch="aspectFill"></Image>
-                        <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
-                     </ng-template>
+                <RadListView row="5" rowspan="3" col="0" colspan="10" [items]="currentlyChosen" orientation="Vertical" height="200">
+                    <ListViewGridLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="150" itemHeight="150" spanCount="1"></ListViewGridLayout>
+                    <ng-template let-item="item">
+                        <StackLayout>
+                            <Image [src]="item.img[0]" height="100" width = "100" ios:stretch="aspectFill"></Image>
+                            <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
+                        </StackLayout>
+                    </ng-template>
                 </RadListView>
 
                 <StackLayout row="9" col="0" colspan="10">

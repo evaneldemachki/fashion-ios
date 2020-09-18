@@ -336,12 +336,26 @@ export class ItemsComponent implements OnInit {
 
     createrSelected(args){
         let i = args.index;
+        var exists =false;
         if(this.filterBySaved==true){
-            this.currentlyChosen.push(this.userSaved[i]);
+            for(var j=0;j<this.currentlyChosen[j];j++){
+                if(this.userSaved[i]['_id']==this.currentlyChosen[j]['_id']){
+                    exists = true;
+                }
+            }
+            if(exists==false){
+                this.currentlyChosen.push(this.userSaved[i]);
+            }
         }else{
-            this.currentlyChosen.push(this.userLikes[i]);
+            for(var j=0;j<this.currentlyChosen[j];j++){
+                if(this.userLikes[i]['_id']==this.currentlyChosen[j]['_id']){
+                    exists = true;
+                }
+            }
+            if(exists==false){
+                this.currentlyChosen.push(this.userLikes[i]);
+            }
         }
-        console.log(this.currentlyChosen);
     }
 
     createrDeselected(args){
