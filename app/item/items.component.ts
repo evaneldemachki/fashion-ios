@@ -55,6 +55,7 @@ export class ItemsComponent implements OnInit {
     public myOutfits = [];
     public currentlyChosen = [];
     public savedItems = [];
+    public outfitCreaterList = [];
     public filterBySaved = true;
     public searchCategories =[];
     public tutorialHide = false;
@@ -113,7 +114,6 @@ export class ItemsComponent implements OnInit {
         });
         this.loadUserData();
         this.searchText = "";
-        console.log(this.userSaved);
    
     }
 
@@ -124,6 +124,9 @@ export class ItemsComponent implements OnInit {
             this.userIcon = res['img'];
             this.itemService.userSaved = res['wardrobe']
             this.userSaved = this.itemService.userSaved;
+            this.outfitCreaterList = this.userSaved;
+            this.myOutfits = res['outfits']
+            console.log(this.myOutfits);
             this.findUserActions();
         });
 
@@ -236,6 +239,7 @@ export class ItemsComponent implements OnInit {
     findUserActions() {
         this.itemsLiked=[]
         this.itemsDisliked=[];
+        this.itemsSaved = [];
         for(let i = 0; i < this.userLikes.length; i++) {
             for(let j =0; j < this.items.length; j++) {
                 if(this.userLikes[i]['_id'] == this.items[j]['_id']) {
@@ -338,8 +342,10 @@ export class ItemsComponent implements OnInit {
     swapFilterSaved(){
         if(this.filterBySaved==true){
             this.filterBySaved = false;
+            this.outfitCreaterList = this.userLikes;
         }else{
             this.filterBySaved=true;
+            this.outfitCreaterList = this.userSaved;
         }
     }
 
@@ -347,24 +353,13 @@ export class ItemsComponent implements OnInit {
         this.outfitTutorialHide = true;
         let i = args.index;
         var exists =false;
-        if(this.filterBySaved==true){
-            for(var j=0;j<this.currentlyChosen.length;j++){
-                if(this.userSaved[i]==this.currentlyChosen[j]){
-                    exists = true;
-                }
+        for(var j=0;j<this.currentlyChosen.length;j++){
+            if(this.outfitCreaterList[i]==this.currentlyChosen[j]){
+                exists = true;
             }
-            if(exists==false){
-                this.currentlyChosen.push(this.userSaved[i]);
-            }
-        }else{
-            for(var j=0;j<this.currentlyChosen.length;j++){
-                if(this.userLikes[i]==this.currentlyChosen[j]){
-                    exists = true;
-                }
-            }
-            if(exists==false){
-                this.currentlyChosen.push(this.userLikes[i]);
-            }
+        }
+        if(exists==false){
+            this.currentlyChosen.push(this.outfitCreaterList[i]);
         }
     }
 
@@ -376,6 +371,59 @@ export class ItemsComponent implements OnInit {
             }
         }
     }
-   
 
+    saveOutfit(args){
+        let ids = [];
+        for(let i =0;i<this.currentlyChosen.length;i++){
+            ids.push(this.currentlyChosen['_id']);
+        }
+        let input = { "items": ids }
+        let newID = "";
+        this.itemService.addOutfit(input).subscribe((res) =>{
+            newID = res['outfitID'];
+        });
+        console.log(newID);
+    }
+
+    updateOutfit(args){
+        let input = this.currentlyChosen;
+        this.itemService.updateOutfit(input);
+    }
+
+    outfitCategorySelected(args){
+        let index = args.index;
+        let newcategory = this.categories[index].toLowerCase();
+        this.outfitCreaterList = [];
+        if(this.filterBySaved==true){
+            if(newcategory!="any"){
+                for(let i=0;i<this.userSaved.length;i++){
+                    if(this.userSaved[i].category==newcategory){
+                        this.outfitCreaterList.push(this.userSaved[i]);
+                    }
+                }
+            }else{
+                this.outfitCreaterList=this.userSaved;
+            }
+        }else{
+            if(newcategory!="any"){
+                for(let i=0;i<this.userLikes.length;i++){
+                    if(this.userLikes[i].category==newcategory){
+                        this.outfitCreaterList.push(this.userLikes[i]);
+                    }
+                }
+            }else{
+                this.outfitCreaterList=this.userLikes;
+            }
+        }
+
+    }
+
+    outfitCategoryDeselected(args){
+        let index = args.index;
+        if(this.filterBySaved==true){
+            this.outfitCreaterList = this.userSaved;
+        }else{
+            this.outfitCreaterList = this.userLikes;
+        }
+    }
 }
