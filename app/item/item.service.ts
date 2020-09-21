@@ -23,6 +23,7 @@ export class ItemService {
     public itemsSaved = [];
     public userSaved = [];
     public wardrobe = [];
+    public outfits = [];
 
     constructor(private http: HttpClient) { }
 
@@ -263,5 +264,19 @@ export class ItemService {
         let input = { item, action }
         this.getPostResponse(input).subscribe((res) =>{
         })
+    }
+
+    addOutfit(input){
+        let endpoint = "http://fashionapi.herokuapp.com/user/add-outfit";
+        let header = {"Authorization": "Bearer " + this.token}
+        return this.http.post(endpoint, input, 
+          {headers: header, responseType: "text", observe: "response"});
+    }
+
+    updateOutfit(input){
+        let endpoint = "http://fashionapi.herokuapp.com/user/update-outfit";
+        let header = {"Authorization": "Bearer " + this.token}
+        return this.http.post(endpoint, input, 
+          {headers: header, responseType: "text", observe: "response"});
     }
 }

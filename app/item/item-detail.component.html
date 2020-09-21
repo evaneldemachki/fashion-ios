@@ -8,9 +8,9 @@
     </ActionItem>
 </ActionBar>
 
-<FlexboxLayout flexDirection="column">
-    <FlexboxLayout class="m-15" flexDirection="column" flexWrap="wrap" flexDirection="row">
-        <RadListView row="0" orientation="horizontal" [items]="item.img"
+<GridLayout columns="*,*,*,*,*,*,*,*,*,*" rows="*,*,*,*,*,*,*,*,*,*">
+    <StackLayout col="0" colspan="10" row=0 rowspan=10>
+        <RadListView orientation="horizontal" [items]="item.img"
             (scrollDragEnded)="onScrollDragEnded($event)" (scrollEnded)="onScrollEnded($event)"
             width="100%" height="350">
             <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="350" itemHeight="350" [spanCount]="1"></ListViewLinearLayout>
@@ -29,6 +29,8 @@
         <Button text="Save This Product" width="50%" margin="10 0 10 0" backgroundColor="black" height="100px" (tap)=onItemSave()></Button>
         <Button text="Buy This Product" width="50%" margin="10 0 10 0" backgroundColor="blue" height="100px" [nsRouterLink]="index"></Button>
         </StackLayout>
-        <Lable [text]="saved ? 'Saved' : ''"></Lable>
-    </FlexboxLayout>
-</FlexboxLayout>
+    </StackLayout>
+    <StackLayout col="9" row="0">
+        <Label [class]="saved ? 'far t-36' : 'invisible'" style="color: green;" text="&#xf0c7;" horizontalAlignment="center"></Label>
+    </StackLayout>
+</GridLayout>

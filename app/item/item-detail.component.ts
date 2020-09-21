@@ -57,6 +57,8 @@ export class ItemDetailComponent implements OnInit {
                 this.item = <Item>this.itemService.itemsShown.getItem(i);
             } else if(this.source == "userLikes") {
                 this.item = <Item>this.itemService.userLikes[i];
+            }else if(this.source == "userSaved"){
+                this.item = <Item>this.itemService.userSaved[i];
             }
         });
 
@@ -105,9 +107,11 @@ export class ItemDetailComponent implements OnInit {
 
     onItemSave(args) {
         if(this.saved) {
-            this.itemService.processAction("save", this.source, this.index);
-        } else {
             this.itemService.processAction("unsave", this.source, this.index);
+            this.saved = false;
+        } else {
+            this.itemService.processAction("save", this.source, this.index);
+            this.saved = true;
         }
     }
       /*

@@ -70,7 +70,11 @@ Button {
 }
 
 .invisible {
-    visibility: hidden;
+    visibility: collapse;
+}
+
+.visible {
+    visibility: visible;
 }
 
 .likedBackground{
