@@ -60,6 +60,8 @@ export class ItemsComponent implements OnInit {
     public searchCategories =[];
     public tutorialHide = false;
     public outfitTutorialHide = false;
+    public outfitCost = 0;
+    public outfitCostLabel = "";
 
     constructor(
         private itemService: ItemService,
@@ -126,7 +128,6 @@ export class ItemsComponent implements OnInit {
             this.userSaved = this.itemService.userSaved;
             this.outfitCreaterList = this.userSaved;
             this.myOutfits = res['outfits']
-            console.log(this.myOutfits);
             this.findUserActions();
         });
 
@@ -360,6 +361,8 @@ export class ItemsComponent implements OnInit {
         }
         if(exists==false){
             this.currentlyChosen.push(this.outfitCreaterList[i]);
+            this.outfitCost = this.outfitCost + Number(this.outfitCreaterList[i]['price']);
+            this.outfitCostLabel = "Total cost of this outfit is: $" + this.outfitCost.toFixed(2);
         }
     }
 
@@ -367,6 +370,12 @@ export class ItemsComponent implements OnInit {
         let item = this.currentlyChosen[args.index];
         for(var i=0; i<this.currentlyChosen.length; i++){
             if(this.currentlyChosen[i]==item){
+                if(this.currentlyChosen.length==0){
+                    this.outfitCost = 0;
+                }else{
+                    this.outfitCost = this.outfitCost - Number(this.currentlyChosen[i]['price']);
+                }                
+                this.outfitCostLabel = "Total cost of this outfit is: $" + this.outfitCost.toFixed(2);
                 this.currentlyChosen.splice(i,1);
             }
         }
