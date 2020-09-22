@@ -5,12 +5,6 @@
     font-family: FontAwesome, fontawesome-webfont;
 }
 
-Button {
-    border-width: 3;
-    border-color: white;
-    border-radius: 50%;
-}
-
 #accountMenu {
     background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
 }
@@ -83,4 +77,69 @@ Button {
 
 .dislikedBackground{
     background-color: red;
+}
+
+activity-indicator{
+    color: red;
+}
+
+label{
+    color: #E7EBC5
+}
+
+GridLayout{
+    color: #8D99AE
+}
+
+.Tutorials {
+    background-color: #2D232E;
+    border-width: 3;
+    border-radius: 50%;
+
+}
+
+FlexboxLayout{
+    color: #8D99AE
+}
+
+Button {
+    border-width: 3;
+    border-color: #E7EBC5;
+    border-radius: 50%;
+    color: #E7EBC5;
+    font-weight: bold;
+}
+
+.input-field{
+    border-width: 3;
+    border-color: #E7EBC5;
+    border-radius: 50%;
+    color: #E7EBC5;
+    font-weight: bold;
+    
+}
+
+#login{
+    border-width: 3;
+    border-color: white;
+    border-radius: 50%;
+    background-color: #E7EBC5;
+    color: #474448;
+    font-weight: bold;
+}
+
+#swapLogin{
+    border-width: 3;
+    border-color: #E7EBC5;
+    border-radius: 50%;
+    color: #E7EBC5;
+    font-weight: bold;
+}
+
+#StyleImage{
+    border-radius:50%;
+}
+
+#radListSelected{
+    border-radius: 50%;
 }

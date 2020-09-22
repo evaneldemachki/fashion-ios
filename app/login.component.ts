@@ -7,12 +7,32 @@ import { ActivityIndicator } from "tns-core-modules/ui/activity-indicator";
 import { EventData } from "tns-core-modules/data/observable";
 import { getBoolean, setBoolean, getNumber, setNumber, getString, setString, hasKey, remove, clear} from "tns-core-modules/application-settings";
 import { topmost } from '@nativescript/core/ui/frame';
-
+import { trigger, state, style, animate, transition, } from '@angular/animations';
+import { View } from "tns-core-modules/ui/core/view";
 
 @Component({
     selector: "ns-login",
     templateUrl: "./login.component.html",
-    styleUrls: ["./login-style.css"]
+    styleUrls: ["./login-style.css"],
+    animations: [
+        trigger('openClose', [
+          // ...
+          state('open', style({
+            opacity: 1,
+            backgroundColor: 'yellow'
+          })),
+          state('closed', style({
+            opacity: 0.5,
+            backgroundColor: 'green'
+          })),
+          transition('open => closed', [
+            animate('1s')
+          ]),
+          transition('closed => open', [
+            animate('0.5s')
+          ]),
+        ]),
+      ],
 })
 export class LoginComponent {
     public isLoggingIn = true;
@@ -24,7 +44,7 @@ export class LoginComponent {
     public confirm: string = "";
     public checkYes: Boolean = false;
     public checkYesPW: Boolean = false;
-
+    public isOpen = true;
 
     constructor(
         private routerExtensions: RouterExtensions,
@@ -36,6 +56,10 @@ export class LoginComponent {
         this.checkYesPW = getBoolean("checkYesPW");
         this.credentials.password = getString("password")
 
+    }
+
+    toggle() {
+        this.isOpen = !this.isOpen;
     }
 
     toggleForm() {
@@ -120,6 +144,9 @@ export class LoginComponent {
         }
     }
 
+    startAnimation(target: View){
+
+    }
 }
 
 export interface User {

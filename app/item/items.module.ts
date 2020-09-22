@@ -10,7 +10,8 @@ import { ItemReferenceComponent } from "./item-reference.component";
 import { ItemService } from "./item.service";
 import { ProfileComponent } from "./profile-page";
 import { OutfitComponent } from "./outfit.component";
-import {tutorialComponent } from "./tutorial";
+import { tutorialComponent } from "./tutorial";
+import { friendsComponent } from "./friends";
 
 
 @NgModule({
@@ -27,6 +28,7 @@ import {tutorialComponent } from "./tutorial";
         ProfileComponent,
         OutfitComponent,
         tutorialComponent,
+        friendsComponent,
     ],
     providers: [
         ItemService

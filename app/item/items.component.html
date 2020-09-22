@@ -74,8 +74,7 @@
                 </RadListView>
 
                 <!--Tutorial Scroll-->
-                <StackLayout row="5" rowspan="3" col="2" colspan="6" [class]="tutorialHide ? 'invisible' : 'visible'" style="background-image: ~/item/tutorialBackground.png; background-repeat: no-repeat;
-                background-size: 100% 100%; padding-bottom: 10">
+                <StackLayout row="0" rowspan="3" col="5" colspan="6" [class]="tutorialHide ? 'invisible Tutorials' : 'visible Tutorials'">
                     <Label textAlignment="center" text="Quick Tutorial:" style="font-size: 20; padding-top: 10;" ></Label>
                     <Label style="font-size: 14" textAlignment="center" textWrap="true" text="Your feed never runs out! Just keep scrolling!"></Label>
                     <Label style="font-size: 14" textAlignment="center" textWrap="true" text="Each item can be swiped Right (Like)"></Label>
@@ -83,16 +82,11 @@
                 </StackLayout>
 
                 <!--Tutorial Scroll-->
-                <StackLayout row="9" rowspan="2" col="1" colspan="8" [class]="tutorialHide ? 'invisible' : 'visible'" style="background-image: ~/item/tutorialBackground.png; background-repeat: no-repeat;
-                background-size: 100% 100%; padding-bottom: 10">
+                <StackLayout class="Tutorials" row="9" rowspan="2" col="1" colspan="8" [class]="tutorialHide ? 'invisible Tutorials' : 'visible Tutorials'">
                     <Label style="font-size: 17; padding-top: 10;" textAlignment="center" textWrap="true" text="The more you rate the clothes that come, the better our algorithm will match you with your perfect style"></Label>
                 </StackLayout>
 
-                <!--Category Tutorial-->
-                <StackLayout row="0" rowspan="1" col="6" colspan="3" [class]="tutorialHide ? 'invisible' : 'visible'" style="font-weight: bold; color: black; background-image: ~/item/tutorialBackground2.png; background-repeat: no-repeat;
-                background-size: 100% 100%;">
-                    <Label size="20" textWrap="true" textAlignment="center" text="You can sort by any category up here" style="padding-top: 10"></Label>
-                </StackLayout>
+                
             </GridLayout>
         </StackLayout>
     </TabContentItem>
@@ -116,16 +110,16 @@
                 <RadListView col="0" colspan="4" row="1" rowspan="11" [items]="outfitCreaterList" orientation="Vertical" height=50 
                     multipleSelection="false" selectionBehavior="Press" height ="100%"
                     (itemSelected)="createrSelected($event)">
-                        <ListViewLinearLayout tkListViewLayout scrollDirection="Vertical"></ListViewLinearLayout>
+                        <ListViewLinearLayout id="radListSelected" tkListViewLayout scrollDirection="Vertical"></ListViewLinearLayout>
                         <ng-template let-item="item" let-index="index">
                             <StackLayout>
-                                <Image [src]="item.img[0]" height="100" width = "100" ios:stretch="aspectFill"></Image>
+                                <Image id="StyleImage" [src]="item.img[0]" height="100" width = "100" ios:stretch="aspectFill"></Image>
                                 <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
                             </StackLayout>
                         </ng-template>
                 </RadListView>    
                 
-                <RadListView row="1" rowspan="10" col="4" colspan="10" style="margin-right: 5;" [items]="currentlyChosen" orientation="Vertical" height="100%" selectionBehavior="Press" (itemSelected)="createrDeselected($event)">
+                <RadListView row="1" rowspan="9" col="4" colspan="10" style="margin-right: 5;" [items]="currentlyChosen" orientation="Vertical" height="100%" selectionBehavior="Press" (itemSelected)="createrDeselected($event)">
                     <ListViewGridLayout style="padding-right: 10;" tkListViewLayout scrollDirection="Vertical" itemWidth="120" itemHeight="150" spanCount="2"></ListViewGridLayout>
                     <ng-template let-item="item">
                         <StackLayout>
@@ -135,13 +129,12 @@
                     </ng-template>
                 </RadListView>
 
-                <StackLayout row="11" col="4" colspan="10" style="padding-bottom: 10;">
+                <StackLayout row="10" rowspan="2" col="4" colspan="10" style="padding-bottom: 10;">
                     <button verticalAlignment = "bottom" text="Save Outfit" (tap)="saveOutfit()"></button>
+                    <Label size="16" textAlignment = "center" [text] = "outfitCostLabel"></Label>
                 </StackLayout>
                 <!--[class]="outfitTutorialHide ? 'invisible' : 'visible'"-->
-                <StackLayout [class]="outfitTutorialHide ? 'invisible' : 'visible'" row="1" rowspan="1" col="4" colspan="8" style="font-weight: bold; color: black; padding-left: 5;padding-right: 5; padding-bottom: 10; background-image:  ~/item/tutorialBackground2.png; background-repeat: no-repeat; background-size: 100% 100%;">
-                    <Label style="font-size: 12; padding-top: 10;" textAlignment="center" textWrap="true" text="Tap your clothes, build your perfect outfit"></Label>
-                </StackLayout>
+                <Label row="1" rowspan="2" col="4" colspan="8" [class]="outfitTutorialHide ? 'invisible Tutorials' : 'visible Tutorials'" style="font-size: 12; padding-top: 10;" textAlignment="center" textWrap="true" text="Tap your clothes, build your perfect outfit"></Label>
 
             </GridLayout>
         </StackLayout>
@@ -152,6 +145,10 @@
         <Gridlayout padding="2 0 2 2" rows = "*,*,*" id="accountMenu" margin="0"> 
             <StackLayout row="0">
                 <Image [src] = "userIcon" height="70%" width = "70%"></Image>
+                <GridLayout columns="*,*,*,*,*">
+                    <button col="0" colspan="2" width="100%" text="See Top Outfits" (tap)="browseTopOutfits()"></button>
+                    <button col="3" colspan="2" width="100%" text="Friends"  [nsRouterLink]="['friends']" ></button>
+                </GridLayout>
             </StackLayout>    
             <ScrollView row="1" rowspan="2" orientation="vertical">
                 <StackLayout>
@@ -181,7 +178,7 @@
                         <RadListView height ="200" row="0" orientation="horizontal" [items]="myOutfits" margin-left = "2" margin-right="2">
                             <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal"></ListViewLinearLayout>
                             <ng-template let-item="item" let-index="index">
-                                <StackLayout [nsRouterLink]="['detail', index]" 
+                                <StackLayout 
                                 [queryParams]="{ source: 'userSaved', liked: true, disliked: false }">
                                     <Image [src]="item.img[0]" height="80%" width = "80%" ios:stretch="aspectFill"></Image>
                                     <Label textAlignment = "center" size = "15" width="100%" [text]="item.outfitID" textWrap="true"></Label>
