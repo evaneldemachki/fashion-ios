@@ -132,17 +132,17 @@ export class ItemService {
             if(source == "itemsShown") {
                 this.itemsLiked[index] = true;
                 this.itemsDisliked[index] = false;
-
-                let thisItem = this.itemsShown.getItem(index);
+                let thisItem = this.itemsShown[index];
                 this.userLikes.push(thisItem);
 
                 let itemID = thisItem["_id"];
-
                 this.sendUserAction(itemID, action);
             } else if(source == "userLikes") {
+                this.itemsLiked[index] = true;
+                this.itemsDisliked[index] = false;
+
                 let thisItem = this.userLikes[index];
                 this.userLikes.push(thisItem);
-
                 let itemID = thisItem["_id"];
 
                 let newIndex = null;
@@ -162,10 +162,12 @@ export class ItemService {
         }
         else if (action == "dislike") {
             if(source == "itemsShown") {
-                let itemID = this.itemsShown.getItem(index)["_id"];
+                this.itemsLiked[index] = false;
+                this.itemsDisliked[index] = true;
 
                 this.itemsLiked[index] = false;
                 this.itemsDisliked[index] = true;
+                let itemID = this.itemsShown[index]["_id"];
 
                 for(let i = 0; i < this.userLikes.length; i++) {
                     if(this.userLikes[i]["_id"] == itemID) {
@@ -173,15 +175,17 @@ export class ItemService {
                         break;
                     }
                 }
-    
                 this.sendUserAction(itemID, action);
             } else if(source == "userLikes") {
+                this.itemsLiked[index] = false;
+                this.itemsDisliked[index] = true;
+
                 let itemID = this.userLikes[index]["_id"];
                 this.userLikes.splice(index, 1);
 
                 let newIndex = null;
                 for(let i = 0; i < this.itemsShown.length; i++) {
-                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
+                    if(this.itemsShown[i]["_id"] == itemID) {
                         newIndex = i;
                         console.log("Found: " + itemID)
                     }
@@ -195,7 +199,7 @@ export class ItemService {
         }
         else if (action == "reset") {
             if(source == "itemsShown") {
-                let itemID = this.itemsShown.getItem(index)["_id"];
+                let itemID = this.itemsShown[index]["_id"];
 
                 this.itemsLiked[index] = false;
                 this.itemsDisliked[index] = false;
@@ -211,10 +215,9 @@ export class ItemService {
             } else if(source == "userLikes") {
                 let itemID = this.userLikes[index]["_id"];
                 this.userLikes.splice(index, 1);
-
                 let newIndex = null;
                 for(let i = 0; i < this.itemsShown.length; i++) {
-                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
+                    if(this.itemsShown[i]["_id"] == itemID) {
                         newIndex = i;
                         console.log("Found: " + itemID)
                     }
@@ -227,14 +230,14 @@ export class ItemService {
             } 
         }else if(action=="unsave"){
             if(source == "itemsShown") {
-                let thisItem = this.itemsShown.getItem(index);
-                let itemID = this.itemsShown.getItem(index)["_id"];
+                let thisItem = this.itemsShown[index];
+                let itemID = this.itemsShown[index]["_id"];
                 this.userSaved.splice(index, 1);
                 let newIndex = null;
                 this.itemsSaved[index] = false
                 this.sendUserAction(itemID, action);
             } else if(source == "userLikes") {
-                let thisItem = this.itemsShown.getItem(index);
+                let thisItem = this.itemsShown[index];
                 let itemID = this.userLikes[index]["_id"];
                 this.itemsSaved[index] = false
                 this.itemsSaved.splice(index, 1);
@@ -242,13 +245,13 @@ export class ItemService {
             }
         }else if(action=="save"){
             if(source == "itemsShown") {
-                let thisItem = this.itemsShown.getItem(index);
-                let itemID = this.itemsShown.getItem(index)["_id"];
+                let thisItem = this.itemsShown[index];
+                let itemID = this.itemsShown[index]["_id"];
                 this.itemsSaved[index] = true
                 this.userSaved.push(thisItem);
                 this.sendUserAction(itemID, action);
             } else if(source == "userLikes") {
-                let thisItem = this.itemsShown.getItem(index);
+                let thisItem = this.itemsShown[index];
                 let itemID = this.userLikes[index]["_id"];
                 this.itemsSaved[index] = true
                 this.userSaved.push(thisItem);
