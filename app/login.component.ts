@@ -9,6 +9,15 @@ import { getBoolean, setBoolean, getNumber, setNumber, getString, setString, has
 import { topmost } from '@nativescript/core/ui/frame';
 import { trigger, state, style, animate, transition, } from '@angular/animations';
 import { View } from "tns-core-modules/ui/core/view";
+import { Color } from "tns-core-modules/color";
+import { FlexboxLayout } from "@nativescript/core/ui/layouts/flexbox-layout";
+import * as viewModule from 'tns-core-modules/ui/core/view';
+import { Observable } from 'tns-core-modules/data/observable';
+import { Image } from "tns-core-modules/ui/image";
+import { Page } from "tns-core-modules/ui/page";
+import { Animation } from "tns-core-modules/ui/animation";
+import {GridLayout} from "@nativescript/core/ui/layouts//grid-layout";
+
 
 @Component({
     selector: "ns-login",
@@ -45,6 +54,11 @@ export class LoginComponent {
     public checkYes: Boolean = false;
     public checkYesPW: Boolean = false;
     public isOpen = true;
+    public flexBox: FlexboxLayout;
+    public landingImages = ['~/images/IMG_6513.png','~/images/IMG_6514.png','~/images/IMG_6515.png','~/images/IMG_6516.png','~/images/IMG_6517.png','~/images/IMG_6518.png','~/images/IMG_6519.png','~/images/IMG_6520.png','~/images/IMG_6521.png','~/images/IMG_6522.png']
+    public firstImageSpot: Image;
+    public secondImageSpot: Image;
+
 
     constructor(
         private routerExtensions: RouterExtensions,
@@ -144,8 +158,81 @@ export class LoginComponent {
         }
     }
 
-    startAnimation(target: View){
+    startAnimations(args){
+        const container = <GridLayout>args.object;
+        const newImage = new Image();
+        newImage.style.width = 160;
+        newImage.style.height = 180;
+        newImage.order=1;
+        let imageIndex = Math.floor(Math.random()*(9-0)+0);
+        newImage.src = this.landingImages[imageIndex];
+        container.addChild(newImage);
+        let imageX = 0;
+        this.animateFalling(newImage);
+    }
+    
+    firstImage(args){
+        let image: Image = <Image>args.object;
+        let secondImage: Image = <Image>this.secondImageSpot;
+        args.object.originY = 0;
+        let page: Page =  <Page>args.page;
+        this.firstImageSpot = args.object;
+        let imageIndex = Math.floor(Math.random()*(9-0)+0);
+        args.object.src = this.landingImages[imageIndex];
+        let negative = 0;
+        image.scaleX = 5;
+        image.scaleY = 5;
+        image.translateY = -5000;
+        image.opacity = .3;
+        this.animateFalling(image);
+        
+    }
 
+    secondImage(args){
+        let image: Image = <Image>args.object;
+        let secondImage: Image = <Image>this.secondImageSpot;
+        args.object.originY = 0;
+        let page: Page =  <Page>args.page;
+        this.firstImageSpot = args.object;
+        let imageIndex = Math.floor(Math.random()*(9-0)+0);
+        args.object.src = this.landingImages[imageIndex];
+        let negative = 0;
+        image.scaleX = 5;
+        image.scaleY = 5;
+        image.translateY = -5000;
+        image.opacity = .3;
+        setTimeout(() => {
+            this.animateFalling(image);
+        }, 4000)
+    }
+
+    animateFalling(image: Image){
+        let imageIndex = Math.floor(Math.random()*(9-0)+0);
+        image.src = this.landingImages[imageIndex];
+        let imageX = 0;
+        if(Math.random()>.5){
+            imageX = Math.floor(Math.random()*(50))*-1
+        }else{
+            imageX = Math.floor(Math.random()*(50))
+        }
+
+        image.translateX = imageX;
+        image.translateY = -1200;
+        let animation = new Animation([
+            {
+                translate: { x: imageX, y: 1000 },
+                duration: 8000,
+                target: image,
+                delay: 0,
+                scale: { x: 5, y: 5}
+            }
+        ]);
+        
+        setTimeout(() => {
+            animation.play().then(()=>{
+                this.animateFalling(image);
+            });
+        }, 100)
     }
 }
 
