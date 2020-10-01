@@ -132,7 +132,7 @@ export class ItemService {
             if(source == "itemsShown") {
                 this.itemsLiked[index] = true;
                 this.itemsDisliked[index] = false;
-                let thisItem = this.itemsShown[index];
+                let thisItem = this.itemsShown.getItem(index);
                 this.userLikes.push(thisItem);
 
                 let itemID = thisItem["_id"];
@@ -167,8 +167,7 @@ export class ItemService {
 
                 this.itemsLiked[index] = false;
                 this.itemsDisliked[index] = true;
-                let itemID = this.itemsShown[index]["_id"];
-
+                let itemID = this.itemsShown.getItem(index)["_id"];
                 for(let i = 0; i < this.userLikes.length; i++) {
                     if(this.userLikes[i]["_id"] == itemID) {
                         this.userLikes.splice(i, 1);
@@ -185,7 +184,7 @@ export class ItemService {
 
                 let newIndex = null;
                 for(let i = 0; i < this.itemsShown.length; i++) {
-                    if(this.itemsShown[i]["_id"] == itemID) {
+                    if(this.itemsShown.getItem(index)["_id"] == itemID) {
                         newIndex = i;
                         console.log("Found: " + itemID)
                     }
@@ -199,7 +198,7 @@ export class ItemService {
         }
         else if (action == "reset") {
             if(source == "itemsShown") {
-                let itemID = this.itemsShown[index]["_id"];
+                let itemID = this.itemsShown.getItem(index)["_id"];
 
                 this.itemsLiked[index] = false;
                 this.itemsDisliked[index] = false;
@@ -231,7 +230,7 @@ export class ItemService {
         }else if(action=="unsave"){
             if(source == "itemsShown") {
                 let thisItem = this.itemsShown[index];
-                let itemID = this.itemsShown[index]["_id"];
+                let itemID = this.itemsShown.getItem(index)["_id"];
                 this.userSaved.splice(index, 1);
                 let newIndex = null;
                 this.itemsSaved[index] = false
@@ -246,7 +245,7 @@ export class ItemService {
         }else if(action=="save"){
             if(source == "itemsShown") {
                 let thisItem = this.itemsShown[index];
-                let itemID = this.itemsShown[index]["_id"];
+                let itemID = this.itemsShown.getItem(index)["_id"];
                 this.itemsSaved[index] = true
                 this.userSaved.push(thisItem);
                 this.sendUserAction(itemID, action);

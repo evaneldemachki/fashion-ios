@@ -1,8 +1,7 @@
 <GridLayout rows="*,*,*,*,*,*,*,*,*,*" cols="*,*,*,*,*,*,*,*,*,*" loaded="startAnimations($event)">
   <Image order="1" (loaded)="firstImage($event)" row="0" rowspan="10" col="0" colspan="10" loadMode="async" height="25%" width="25%" stretch="aspectFit"></Image>
   <Image order="1" (loaded)="secondImage($event)" row="0" rowspan="10" col="0" colspan="10" loadMode="async" height="25%" width="25%" stretch="aspectFit"></Image>
-      <StackLayout order="0" class="form" row="0" rowspan="10" col="0" colspan="10" style="background-image: ~/FashionPic/IMG_6513.PNG">
-        <ActivityIndicator [busy]="isBusy" (busyChange)="onBusyChanged($event)"></ActivityIndicator>
+      <StackLayout order="0" class="form" row="0" rowspan="10" col="0" colspan="10">
         <StackLayout class="input-field" style="padding-top:15;">
           <TextField [(ngModel)]="credentials.username" keyboardType="email" autocorrect="false" autocapitalizationType="none" hint="Email" ...></TextField>
           <Label text="&#xf058; Save Email?" [class]="checkYes ? 'fas' : 'far'" (tap)="saveEmailOption()" style="text-align: center; padding-bottom: 10;"></Label>
@@ -19,9 +18,9 @@
         <StackLayout *ngIf="!isLoggingIn" class="input-field">
           <TextField [(ngModel)]="confirm" autocorrect="false" secure="true" autocapitalizationType="none" hint="Confirm password" ...></TextField>
         </StackLayout>
-    
         <Button id="login" [text]="isLoggingIn ? 'Log In' : 'Sign Up'" (tap)="submit()"></Button>
-      
+        <ActivityIndicator [busy]="isBusy" (busyChange)="onBusyChanged($event)"></ActivityIndicator>
+
         <Label (tap)="toggleForm()" style="text-align: center;">
           <FormattedString id="swapLogin">
             <Span [text]="isLoggingIn ? 'Don’t have an account? ' : 'Back to Login'"></Span>

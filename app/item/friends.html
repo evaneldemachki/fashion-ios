@@ -3,6 +3,17 @@
     <ActionItem (tap)="onSearch($event)" ios.systemIcon="12" ios.position="right" text="search" android.position="popup"></ActionItem>
 </ActionBar>
 
-<GridLayout columns="*,*,*,*,*,*,*,*,*,*" rows="*,*,*,*,*,*,*,*,*,*">
-    
+<GridLayout columns="*,*,*,*,*,*,*,*,*,*" rows="*,*,*,*,*,*,*,*,*,*" (loaded)="gridInitialized($event)">
+    <SearchBar row=0 column=4 colspan=6 hint="Search for Users ..." (loaded)="searchStart($event)" (textChange)="onTextChanged($event)"
+            [text]="searchPhrase" (clear)="onClear($event)" (submit)="onSubmit($event)">
+    </SearchBar>
+    <RadListView id="Main" column=0 colspan="10" row=0 rowspan=10 [items]="usersCurrentlyChosen" orientation="horizontal" height=50 
+            multipleSelection="true" selectionBehavior="Press" (loaded)="listInitialized($event)"
+            (itemSelected)="categorySelected($event)" (itemDeselected)="categoryDeselected($event)">
+                <ListViewGridLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="80" itemHeight="60" spanCount="1"></ListViewGridLayout>
+                    <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
+                <ng-template let-item="item">
+                        <label textAlignment = "center" paddingTop="20" text= {{item}}></label>
+                </ng-template>
+    </RadListView>
 </GridLayout>
