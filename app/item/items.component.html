@@ -1,4 +1,4 @@
-<ActionBar title="Explore Items">
+<ActionBar title="Explore Items" (loaded)="findUserActions()">
     <ActionItem tap="openSideMenu($event)" ios.systemIcon="9" ios.position="left" android.systemIcon="res://ic_menu_share" android.position="actionBar"></ActionItem>
     <ActionItem (tap)="openSideMenu($event)" ios.systemIcon="12" ios.position="right" text="search" android.position="popup"></ActionItem>
 </ActionBar>
@@ -81,9 +81,9 @@
                     [text]="searchPhrase" (clear)="onClear($event)" (submit)="onSubmit($event)" row=0 column=0 colspan=10>
                     </SearchBar>
 
-                    <Button text="Categories" row=1 column=0 colspan=10 style="font-size:15"></Button>
+                    <Button text="Categories" row=1 column=0 colspan=10 style="font-size:15" (tap)="showCategories()"></Button>
                     
-                    <RadListView [items]="categories" orientation="Vertical" height=30% (loaded)="categoryListLoaded($event)"
+                    <RadListView [class]="categoryVisible ? 'visible' : 'invisible'" [items]="categories" orientation="Vertical" height=30% (loaded)="categoryListLoaded($event)"
                     multipleSelection="true" selectionBehavior="Press" row=2 rowspan=3 column=3 colspan=5
                     (itemSelected)="categorySelected($event)" (itemDeselected)="categoryDeselected($event)">
                         <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" itemWidth="100" itemHeight="60" spanCount="1"></ListViewGridLayout>
@@ -92,6 +92,7 @@
                                 <label textAlignment = "center" paddingLeft="20" text= {{item}}></label>
                         </ng-template>
                     </RadListView>
+
             </GridLayout>
             
         </GridLayout>
@@ -169,12 +170,12 @@
                                 </StackLayout>
                             </ng-template>
                         </RadListView>
-                        <Button text = "My Saved Items"></Button>
+                        <Button text = "Saved for later"></Button>
                         <RadListView height ="200" row="0" orientation="horizontal" [items]="userSaved" margin-left = "2" margin-right="2">
                             <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal"></ListViewLinearLayout>
                             <ng-template let-item="item" let-index="index">
                                 <StackLayout [nsRouterLink]="['detail', index]" 
-                                [queryParams]="{ source: 'userSaved', liked: true, disliked: false }">
+                                [queryParams]="{ source: 'userSaved', saved: true }">
                                     <Image [src]="item.img[0]" height="80%" width = "80%" ios:stretch="aspectFill"></Image>
                                     <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
                                 </StackLayout>

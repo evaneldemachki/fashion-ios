@@ -67,6 +67,7 @@ export class ItemsComponent implements OnInit {
     public outfitCostLabel = "";
     public searchView = 0;
     public sideMenuView = 0;
+    public categoryVisible = false;
 
     constructor(
         private itemService: ItemService,
@@ -78,6 +79,12 @@ export class ItemsComponent implements OnInit {
     }
     get userLikes() {
         return this.itemService.userLikes;
+    }
+    set userDislikes(value) {
+        this.itemService.userDislikes = value;
+    }
+    get userDislikes() {
+        return this.itemService.userDislikes;
     }
     set itemsShown(value) {
         this.itemService.itemsShown = value;
@@ -128,9 +135,11 @@ export class ItemsComponent implements OnInit {
         let input = { "token": this.token };
         this.itemService.getUserData(input).subscribe(res => {
             this.userLikes = res['likes'];
+            this.userLikes.reverse();
+            this.userDislikes = res['dislikes'];
             this.userIcon = res['img'];
-            this.itemService.userSaved = res['wardrobe']
-            this.userSaved = this.itemService.userSaved;
+            this.userSaved = res['wardrobe']
+            this.userSaved.reverse();
             this.outfitCreaterList = this.userSaved;
             this.myOutfits = res['outfits']
             this.itemService.outfits = this.myOutfits;
@@ -256,13 +265,14 @@ export class ItemsComponent implements OnInit {
                 }
             }
         }
-        for(let i = 0; i < this.userSaved.length; i++) {
-            for(let j =0; j < this.items.length; j++) {
-                if(this.userSaved[i]['_id'] == this.items[j]['_id']) {
-                    this.itemsSaved[j] = true;
+        for(let k = 0; k< this.userSaved.length; k++) {
+            for(let l =0; l < this.items.length; l++) {
+                if(this.userSaved[k]['_id'] == this.items[l]['_id']) {
+                    this.itemsSaved[l] = true;
                 }
             }
         }
+        
     }
 
     onSearch() {
@@ -496,6 +506,14 @@ export class ItemsComponent implements OnInit {
         }else{
             closing.play();
             this.sideMenuView = 0;
+        }
+    }
+
+    showCategories(){
+        if(this.categoryVisible==false){
+            this.categoryVisible=true;
+        }else{
+            this.categoryVisible=false;
         }
     }
 }
