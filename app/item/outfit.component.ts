@@ -25,19 +25,20 @@ export class OutfitComponent implements OnInit {
         private http: HttpClient,
     ) { }
 
-    myOutfits = [];
+    outfit = [];
     topOutfits = [];
     likedItems = [];
     savedItems = [];
     currentlyChosen = [];
+    index;
 
     ngOnInit(): void {
-
-        //this.myOutfits = this.itemService.wardrobe;
-        this.savedItems = this.itemService.userSaved;
-        //this.topOutfits = this.itemService.getTopOutfits();
-        this.likedItems = this.itemService.userLikes;
-        //this.savedItems = this.itemService.savedItems;
-
+        this.route.queryParams.subscribe(params => {
+            // convert string parameters to boolean:
+            this.index = params.outfit;
+        });
+        this.outfit = this.itemService.outfits[this.index]['items'];
     }
+    
+
 }

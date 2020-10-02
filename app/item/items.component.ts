@@ -21,7 +21,9 @@ import { Image } from "tns-core-modules/ui/image";
 
 import { Button } from "tns-core-modules/ui/button";
 import { ShowModalOptions } from "tns-core-modules/ui/core/view";
+import { GridLayout, ItemSpec } from "tns-core-modules/ui/layouts/grid-layout";
 const modalViewModulets = "ns-ui-category/modal-view/basics/modal-ts-view-page";
+import { Animation } from "tns-core-modules/ui/animation";
 
 
 
@@ -39,6 +41,7 @@ export class ItemsComponent implements OnInit {
     listPicker: ListPicker;
     searchText: string;
     categoryView: RadListView;
+    sideBarMenu: GridLayout;
     //categories = new ObservableArray()
 
     public categories = [];
@@ -62,6 +65,9 @@ export class ItemsComponent implements OnInit {
     public outfitTutorialHide = false;
     public outfitCost = 0;
     public outfitCostLabel = "";
+    public searchView = 0;
+    public sideMenuView = 0;
+    public categoryVisible = false;
 
     constructor(
         private itemService: ItemService,
@@ -73,6 +79,12 @@ export class ItemsComponent implements OnInit {
     }
     get userLikes() {
         return this.itemService.userLikes;
+    }
+    set userDislikes(value) {
+        this.itemService.userDislikes = value;
+    }
+    get userDislikes() {
+        return this.itemService.userDislikes;
     }
     set itemsShown(value) {
         this.itemService.itemsShown = value;
@@ -123,11 +135,14 @@ export class ItemsComponent implements OnInit {
         let input = { "token": this.token };
         this.itemService.getUserData(input).subscribe(res => {
             this.userLikes = res['likes'];
+            this.userLikes.reverse();
+            this.userDislikes = res['dislikes'];
             this.userIcon = res['img'];
-            this.itemService.userSaved = res['wardrobe']
-            this.userSaved = this.itemService.userSaved;
+            this.userSaved = res['wardrobe']
+            this.userSaved.reverse();
             this.outfitCreaterList = this.userSaved;
             this.myOutfits = res['outfits']
+            this.itemService.outfits = this.myOutfits;
             this.findUserActions();
         });
 
@@ -161,6 +176,10 @@ export class ItemsComponent implements OnInit {
     onSubmit(args) {
         this.refreshSearch();
     }
+    searchBarLoaded(args){
+        this.searchBar = args.object as SearchBar;
+        console.log("open")
+    }
 
     onTextChanged(args) {
         this.searchBar = args.object as SearchBar;
@@ -182,13 +201,11 @@ export class ItemsComponent implements OnInit {
     categorySelected(args){
         const item = this.categories[args.index];
         this.searchCategories.push(this.categories[args.index]);
-        console.log(this.searchCategories);
         this.refreshSearch();
     }
 
     categoryDeselected(args){
         const item = this.categories[args.index];
-        console.log("Category selected " + item);
         for(var i=0; i<this.searchCategories.length;i++){
             if(this.searchCategories[i]==this.categories[args.index]){
                 this.searchCategories.splice(i,1);
@@ -248,22 +265,40 @@ export class ItemsComponent implements OnInit {
                 }
             }
         }
-        for(let i = 0; i < this.userSaved.length; i++) {
-            for(let j =0; j < this.items.length; j++) {
-                if(this.userSaved[i]['_id'] == this.items[j]['_id']) {
-                    this.itemsSaved[j] = true;
+        for(let k = 0; k< this.userSaved.length; k++) {
+            for(let l =0; l < this.items.length; l++) {
+                if(this.userSaved[k]['_id'] == this.items[l]['_id']) {
+                    this.itemsSaved[l] = true;
                 }
             }
         }
+        
     }
 
     onSearch() {
-        if(this.searchBar.visibility=="collapse") {
-            this.searchBar.visibility = "visible";
-        } else {
-            this.searchBar.visibility = "collapse";
+        let opening = new Animation([
+            {
+                translate: { x: this.searchBar.originX, y: this.searchBar.originY+100 },
+                duration: 500,
+                target: this.searchBar,
+                delay: 0,
+            }
+        ]);
+        let closing = new Animation([
+            {
+                translate: { x: this.searchBar.originX, y:this.searchBar.originY-100 },
+                duration: 500,
+                target: this.searchBar,
+                delay: 0,
+            }
+        ]);
+        if(this.searchView==0){
+            opening.play();
+            this.searchView = 1;
+        }else{
+            closing.play();
+            this.searchView = 0;
         }
-
     }
     
     onLoadMoreItemsRequested(args) {
@@ -384,8 +419,9 @@ export class ItemsComponent implements OnInit {
     saveOutfit(args){
         let ids = [];
         for(let i =0;i<this.currentlyChosen.length;i++){
-            ids.push(this.currentlyChosen['_id']);
+            ids.push(this.currentlyChosen[i]['_id']);
         }
+        console.log(ids)
         let input = { "items": ids }
         let newID = "";
         this.itemService.addOutfit(input).subscribe((res) =>{
@@ -433,6 +469,51 @@ export class ItemsComponent implements OnInit {
             this.outfitCreaterList = this.userSaved;
         }else{
             this.outfitCreaterList = this.userLikes;
+        }
+    }
+
+    menuLoaded(args){
+        this.sideBarMenu = args.object as GridLayout;
+        this.sideBarMenu.translateX = this.sideBarMenu.originX - 200;
+    }
+
+    public categoryList: RadListView;
+    categoryListLoaded(args){
+        this.categoryList = args.object as RadListView;
+        this.categoryList.translateX
+    }
+
+    openSideMenu(args){
+        let opening = new Animation([
+            {
+                translate: { x: this.sideBarMenu.originX+200, y: this.sideBarMenu.originY },
+                duration: 300,
+                target: this.sideBarMenu,
+                delay: 0,
+            }
+        ]);
+        let closing = new Animation([
+            {
+                translate: { x: this.sideBarMenu.originX-200, y: this.sideBarMenu.originY },
+                duration: 300,
+                target: this.sideBarMenu,
+                delay: 0,
+            }
+        ]);
+        if(this.sideMenuView==0){
+            opening.play();
+            this.sideMenuView = 1;
+        }else{
+            closing.play();
+            this.sideMenuView = 0;
+        }
+    }
+
+    showCategories(){
+        if(this.categoryVisible==false){
+            this.categoryVisible=true;
+        }else{
+            this.categoryVisible=false;
         }
     }
 }

@@ -17,6 +17,7 @@ export class ItemService {
     public limit = 500;
     public token: String;
     public userLikes = [];
+    public userDislikes = [];
     public itemsShown = new ObservableArray<Item>();
     public itemsLiked = [];
     public itemsDisliked = [];
@@ -132,31 +133,42 @@ export class ItemService {
             if(source == "itemsShown") {
                 this.itemsLiked[index] = true;
                 this.itemsDisliked[index] = false;
-                let thisItem = this.itemsShown[index];
-                this.userLikes.push(thisItem);
 
+                let thisItem = this.itemsShown.getItem(index);
+                this.userLikes.unshift(thisItem)
                 let itemID = thisItem["_id"];
+                
                 this.sendUserAction(itemID, action);
             } else if(source == "userLikes") {
                 this.itemsLiked[index] = true;
                 this.itemsDisliked[index] = false;
 
                 let thisItem = this.userLikes[index];
-                this.userLikes.push(thisItem);
+                this.userLikes.unshift(thisItem)
                 let itemID = thisItem["_id"];
 
-                let newIndex = null;
                 for(let i = 0; i < this.itemsShown.length; i++) {
                     if(this.itemsShown.getItem(i)["_id"] == itemID) {
-                        newIndex = i;
-                        console.log("Found: " + itemID)
+                        this.itemsLiked[i] = true;
+                        this.itemsDisliked[i] = false;
                     }
                 }
-                if(newIndex) {
-                    this.itemsLiked[newIndex] = true;
-                    this.itemsDisliked[newIndex] = false;                    
-                }
 
+                this.sendUserAction(itemID, action);
+            }else if(source == "userSaved") {
+                this.itemsLiked[index] = true;
+                this.itemsDisliked[index] = false;
+
+                let thisItem = this.userSaved[index];
+                this.userLikes.unshift(thisItem)
+                let itemID = thisItem["_id"];
+
+                for(let i = 0; i < this.itemsShown.length; i++) {
+                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
+                        this.itemsLiked[i] = true;
+                        this.itemsDisliked[i] = false;
+                    }
+                }
                 this.sendUserAction(itemID, action);
             }
         }
@@ -164,10 +176,7 @@ export class ItemService {
             if(source == "itemsShown") {
                 this.itemsLiked[index] = false;
                 this.itemsDisliked[index] = true;
-
-                this.itemsLiked[index] = false;
-                this.itemsDisliked[index] = true;
-                let itemID = this.itemsShown[index]["_id"];
+                let itemID = this.itemsShown.getItem(index)["_id"];
 
                 for(let i = 0; i < this.userLikes.length; i++) {
                     if(this.userLikes[i]["_id"] == itemID) {
@@ -183,23 +192,39 @@ export class ItemService {
                 let itemID = this.userLikes[index]["_id"];
                 this.userLikes.splice(index, 1);
 
-                let newIndex = null;
                 for(let i = 0; i < this.itemsShown.length; i++) {
-                    if(this.itemsShown[i]["_id"] == itemID) {
-                        newIndex = i;
-                        console.log("Found: " + itemID)
+                    if(this.itemsShown.getItem(index)["_id"] == itemID) {
+                        this.itemsLiked[i] = false;
+                        this.itemsDisliked[i] = true; 
+                        break;
                     }
                 }
-                if(newIndex) {
-                    this.itemsLiked[newIndex] = false;
-                    this.itemsDisliked[newIndex] = true;                    
+                this.sendUserAction(itemID, action);
+            } else if(source == "userSaved") {
+                this.itemsLiked[index] = false;
+                this.itemsDisliked[index] = true;
+
+                let itemID = this.userSaved[index]["_id"];
+                
+                for(let i = 0; i < this.userLikes.length; i++) {
+                    if(this.userLikes[i]["_id"] == itemID) {
+                        this.userLikes.splice(i, 1);
+                        break;
+                    }
+                }
+                for(let i = 0; i < this.itemsShown.length; i++) {
+                    if(this.itemsShown.getItem(index)["_id"] == itemID) {
+                        this.itemsLiked[i] = false;
+                        this.itemsDisliked[i] = true;
+                        break;
+                    }
                 }
                 this.sendUserAction(itemID, action);
             } 
         }
         else if (action == "reset") {
             if(source == "itemsShown") {
-                let itemID = this.itemsShown[index]["_id"];
+                let itemID = this.itemsShown.getItem(index)["_id"];
 
                 this.itemsLiked[index] = false;
                 this.itemsDisliked[index] = false;
@@ -215,48 +240,111 @@ export class ItemService {
             } else if(source == "userLikes") {
                 let itemID = this.userLikes[index]["_id"];
                 this.userLikes.splice(index, 1);
-                let newIndex = null;
+
                 for(let i = 0; i < this.itemsShown.length; i++) {
-                    if(this.itemsShown[i]["_id"] == itemID) {
-                        newIndex = i;
-                        console.log("Found: " + itemID)
+                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
+                        this.itemsLiked[i] = false;
+                        this.itemsDisliked[i] = false;
+                        break;
                     }
                 }
-                if(newIndex) {
-                    this.itemsLiked[newIndex] = false;
-                    this.itemsDisliked[newIndex] = false;                    
-                }
                 this.sendUserAction(itemID, action);
-            } 
+            }
         }else if(action=="unsave"){
             if(source == "itemsShown") {
-                let thisItem = this.itemsShown[index];
-                let itemID = this.itemsShown[index]["_id"];
-                this.userSaved.splice(index, 1);
-                let newIndex = null;
-                this.itemsSaved[index] = false
+                let thisItem = this.itemsShown.getItem(index);
+                let itemID = this.itemsShown.getItem(index)["_id"];
+
+                for(let i = 0; i < this.itemsShown.length; i++) {
+                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
+                        this.itemsSaved[i] = false;
+                        break;
+                    }
+                }
+                for(let j=0;j<this.userSaved.length;j++){
+                    if(this.userSaved[j]['_id']==itemID){
+                        this.userSaved.splice(j, 1);
+                        break;
+                    }
+                }
                 this.sendUserAction(itemID, action);
             } else if(source == "userLikes") {
-                let thisItem = this.itemsShown[index];
+                let thisItem = this.userLikes[index];
                 let itemID = this.userLikes[index]["_id"];
-                this.itemsSaved[index] = false
-                this.itemsSaved.splice(index, 1);
+
+                for(let i = 0; i < this.itemsShown.length; i++) {
+                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
+                        this.itemsSaved[i] = false
+                        break;
+                    }
+                }
+                for(let j=0;j<this.userSaved.length;j++){
+                    if(this.userSaved[j]['_id']==itemID){
+                        this.userSaved.splice(j, 1);
+                        break;
+                    }
+                }
+                this.sendUserAction(itemID, action);
+            }else if(source == "userSaved") {
+                let thisItem = this.userSaved[index];
+                let itemID = this.userSaved[index]["_id"];
+
+                for(let i = 0; i < this.itemsShown.length; i++) {
+                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
+                        this.itemsSaved[i] = false
+                        break;
+                    }
+                }                
+                for(let j=0;j<this.userSaved.length;j++){
+                    if(this.userSaved[j]['_id']==itemID){
+                        this.userSaved.splice(j, 1);
+                        break;
+                    }
+                }
                 this.sendUserAction(itemID, action);
             }
         }else if(action=="save"){
             if(source == "itemsShown") {
-                let thisItem = this.itemsShown[index];
-                let itemID = this.itemsShown[index]["_id"];
-                this.itemsSaved[index] = true
-                this.userSaved.push(thisItem);
+                let thisItem = this.itemsShown.getItem(index);
+                let itemID = this.itemsShown.getItem(index)["_id"];
+
+                for(let i = 0; i < this.itemsShown.length; i++) {
+                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
+                        this.itemsSaved[i] = true
+                        break;
+                    }
+                }
+                this.userSaved.unshift(thisItem);
                 this.sendUserAction(itemID, action);
+                //this.userSaved.unshift(thisItem)
             } else if(source == "userLikes") {
-                let thisItem = this.itemsShown[index];
+                let thisItem = this.userLikes[index];
                 let itemID = this.userLikes[index]["_id"];
-                this.itemsSaved[index] = true
-                this.userSaved.push(thisItem);
+
+                for(let i = 0; i < this.itemsShown.length; i++) {
+                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
+                        this.itemsSaved[i] = true
+                        break;
+                    }
+                }
+                this.userSaved.unshift(thisItem);
                 this.sendUserAction(itemID, action);
+                //this.userSaved.unshift(thisItem)
+            } else if(source == "userSaved") {
+                let thisItem = this.userSaved[index];
+                let itemID = this.userSaved[index]["_id"];
+
+                for(let i = 0; i < this.itemsShown.length; i++) {
+                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
+                        this.itemsSaved[i] = true
+
+                    }
+                }
+                this.userSaved.unshift(thisItem);
+                this.sendUserAction(itemID, action);
+                //this.userSaved.unshift(thisItem)
             }
+            
         } else {
             throw new Error("invalid action specified");
         }

@@ -44,6 +44,7 @@ export class ItemDetailComponent implements OnInit {
     ngOnInit(): void {
         const i = this.route.snapshot.params.id;
         this.index = i;
+        console.log(this.index)
 
         this.route.queryParams.subscribe(params => {
             // convert string parameters to boolean:
@@ -52,15 +53,31 @@ export class ItemDetailComponent implements OnInit {
             this.saved = (params.saved == "true");
             this.source = params.source;
 
-            console.log("liked: " + this.liked + ", disliked: "  + this.disliked);
             if(this.source == "itemsShown") {
                 this.item = <Item>this.itemService.itemsShown.getItem(i);
             } else if(this.source == "userLikes") {
                 this.item = <Item>this.itemService.userLikes[i];
+                for(var j=0;j<this.itemService.userSaved.length;j++){
+                    if(this.itemService.userSaved[j]['_id']==this.item['_id']){
+                        this.saved = true;  
+                    }
+                }
             }else if(this.source == "userSaved"){
                 this.item = <Item>this.itemService.userSaved[i];
+                for(var j=0;j<this.itemService.userLikes.length;j++){
+                    if(this.itemService.userLikes[j]['_id']==this.item['_id']){
+                        this.liked=true;
+                    }
+                }
+                for(var j=0;j<this.itemService.userDislikes.length;j++){
+                    if(this.itemService.userDislikes[j]['_id']==this.item['_id']){
+                        this.disliked = true;
+                    }
+                }
             }
         });
+        console.log("liked: " + this.liked + ", disliked: "  + this.disliked);
+
 
     }
 

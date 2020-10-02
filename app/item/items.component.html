@@ -1,6 +1,6 @@
-<ActionBar title="Explore Items">
-    <ActionItem tap="onShare" ios.systemIcon="9" ios.position="left" android.systemIcon="res://ic_menu_share" android.position="actionBar"></ActionItem>
-    <ActionItem (tap)="onSearch($event)" ios.systemIcon="12" ios.position="right" text="search" android.position="popup"></ActionItem>
+<ActionBar title="Explore Items" (loaded)="findUserActions()">
+    <ActionItem tap="openSideMenu($event)" ios.systemIcon="9" ios.position="left" android.systemIcon="res://ic_menu_share" android.position="actionBar"></ActionItem>
+    <ActionItem (tap)="openSideMenu($event)" ios.systemIcon="12" ios.position="right" text="search" android.position="popup"></ActionItem>
 </ActionBar>
 <BottomNavigation selectedIndex="0">
     <!-- The bottom tab UI is created via TabStrip (the containier) and TabStripItem (for each tab)-->
@@ -21,74 +21,81 @@
 
     <!--Main Feed-->
     <TabContentItem>
-        <StackLayout padding="2 0 2 2" backgroundColor="gray" margin="0">
-            <SearchBar class="searchMenu" hint="Search for items ..." (textChange)="onTextChanged($event)"
-            [text]="searchPhrase" (clear)="onClear($event)" (submit)="onSubmit($event)">
-            </SearchBar>
-            <RadListView [items]="categories" orientation="horizontal" height=50 
-            multipleSelection="true" selectionBehavior="Press" 
-            (itemSelected)="categorySelected($event)" (itemDeselected)="categoryDeselected($event)">
-                <ListViewGridLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="80" itemHeight="60" spanCount="1"></ListViewGridLayout>
-                    <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
-                <ng-template let-item="item">
-                        <label textAlignment = "center" paddingTop="20" text= {{item}}></label>
-                </ng-template>
-            </RadListView>
+        <GridLayout rows="*,*,*,*,*,*,*,*,*,*,*" columns="*,*,*,*,*,*,*,*,*,*">
             <ListPicker class="picker" style="visibility: collapse;"
             [items]="categories" (selectedIndexChange)="categoryPicker($event)">
             </ListPicker>
           
-            <GridLayout rows="*,*,*,*,*,*,*,*,*,*,*" columns="*,*,*,*,*,*,*,*,*,*">
-                <RadListView row="0" rowspan="11" col="0" colspan="10" orientation="vertical" [items]="itemsShown"
-                width="100%" height="100%" (scrolled)="scrollStartedEvent($event)" loadOnDemandMode="Auto" (loadMoreDataRequested)="onLoadMoreItemsRequested($event)" loadOnDemandBufferSize="1"
-                id="listView" selectionBehavior="None" 
-                (itemSwipeProgressEnded)="onSwipeCellFinished($event)"
-                (itemSwipeProgressStarted)="onSwipeCellStarted($event)" 
-                (itemSwiping)="onItemSwiping" 
-                swipeActions="true">
-                    <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
-                    <ng-template horizontalAlignment="center" let-item="item" let-index="index" >
-                        <GridLayout style="background-image: ~/item/backgroundShadow.png;" [class] = "itemsLiked[index] ? 'likedBackground' : 'dislikedBackground'">
-                        <GridLayout columns="*,*,*" [nsRouterLink]="['detail', index]" 
-                        [queryParams]="{ source: 'itemsShown', liked: itemsLiked[index], disliked: itemsDisliked[index], saved: itemsSaved[index]}" 
-                        padding="0 0 0 0" >
-                            <Image colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
-                            <StackLayout column="2" style="padding-right:2;">
-                            <Label [class]="itemsLiked[index] ? 'far t-36' : 'invisible'" style="color: green;" text="&#xf004;" ></Label>
-                            <Label [class]="itemsSaved[index] ? 'far t-36' : 'invisible'" style="color: green;" text="&#xf0c7;" ></Label>
-                            </StackLayout>
-                        </GridLayout>
+            <RadListView row="0" rowspan="11" col="0" colspan="10" orientation="vertical" [items]="itemsShown"
+            width="100%" height="100%" (scrolled)="scrollStartedEvent($event)" loadOnDemandMode="Auto" (loadMoreDataRequested)="onLoadMoreItemsRequested($event)" loadOnDemandBufferSize="1"
+            id="listView" selectionBehavior="None" 
+            (itemSwipeProgressEnded)="onSwipeCellFinished($event)"
+            (itemSwipeProgressStarted)="onSwipeCellStarted($event)" 
+            (itemSwiping)="onItemSwiping" 
+            swipeActions="true">
+                <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
+                <ng-template horizontalAlignment="center" let-item="item" let-index="index" >
+                    <GridLayout style="background-image: ~/item/backgroundShadow.png;" [class] = "itemsLiked[index] ? 'likedBackground' : 'dislikedBackground'">
+                    <GridLayout columns="*,*,*" [nsRouterLink]="['detail', index]" 
+                    [queryParams]="{ source: 'itemsShown', liked: itemsLiked[index], disliked: itemsDisliked[index], saved: itemsSaved[index]}" 
+                    padding="0 0 0 0" >
+                        <Image colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
+                        <StackLayout column="2" style="padding-right:2;">
+                        <Label [class]="itemsLiked[index] ? 'far t-36' : 'invisible'" style="color: green;" text="&#xf004;" ></Label>
+                        <Label [class]="itemsSaved[index] ? 'far t-36' : 'invisible'" style="color: green;" text="&#xf0c7;" ></Label>
+                        </StackLayout>
                     </GridLayout>
-                    </ng-template>
-                    
-                    <lv:RadListView.itemSwipeTemplate>
-                        <GridLayout *tkListItemSwipeTemplate columns="auto, *, auto">
-                            <StackLayout id="mark-view" col="0" style="background-color:red;" (tap)="onLeftSwipeClick($event)" orientation="horizontal">
-                                <Label horizontalAlignment="center" class="far" style="font-size: 50em; color: black" text="&#xf165;"></Label>
-                            </StackLayout>
-                            <StackLayout id="delete-view" col="2" style="background-color: green;" (tap)="onRightSwipeClick($event)" orientation="horizontal">
-                                <Label horizontalAlignment="center" class="far" style="font-size: 50em; color: black" text="&#xf004;"></Label>
-                            </StackLayout>
-                        </GridLayout>
-                    </lv:RadListView.itemSwipeTemplate>
-                </RadListView>
-
-                <!--Tutorial Scroll-->
-                <StackLayout row="0" rowspan="3" col="5" colspan="6" [class]="tutorialHide ? 'invisible Tutorials' : 'visible Tutorials'">
-                    <Label textAlignment="center" text="Quick Tutorial:" style="font-size: 20; padding-top: 10;" ></Label>
-                    <Label style="font-size: 14" textAlignment="center" textWrap="true" text="Your feed never runs out! Just keep scrolling!"></Label>
-                    <Label style="font-size: 14" textAlignment="center" textWrap="true" text="Each item can be swiped Right (Like)"></Label>
-                    <Label style="font-size: 14" textAlignment="center" textWrap="true" text="or Left (Dislike)"></Label>
-                </StackLayout>
-
-                <!--Tutorial Scroll-->
-                <StackLayout class="Tutorials" row="9" rowspan="2" col="1" colspan="8" [class]="tutorialHide ? 'invisible Tutorials' : 'visible Tutorials'">
-                    <Label style="font-size: 17; padding-top: 10;" textAlignment="center" textWrap="true" text="The more you rate the clothes that come, the better our algorithm will match you with your perfect style"></Label>
-                </StackLayout>
-
+                </GridLayout>
+                </ng-template>
                 
+                <lv:RadListView.itemSwipeTemplate>
+                    <GridLayout *tkListItemSwipeTemplate columns="auto, *, auto">
+                        <StackLayout id="mark-view" col="0" style="background-color:red;" (tap)="onLeftSwipeClick($event)" orientation="horizontal">
+                            <Label horizontalAlignment="center" class="far" style="font-size: 50em; color: black" text="&#xf165;"></Label>
+                        </StackLayout>
+                        <StackLayout id="delete-view" col="2" style="background-color: green;" (tap)="onRightSwipeClick($event)" orientation="horizontal">
+                            <Label horizontalAlignment="center" class="far" style="font-size: 50em; color: black" text="&#xf004;"></Label>
+                        </StackLayout>
+                    </GridLayout>
+                </lv:RadListView.itemSwipeTemplate>
+            </RadListView>
+
+            <!--Tutorial Scroll-->
+            <StackLayout row="0" rowspan="3" col="5" colspan="6" [class]="tutorialHide ? 'invisible Tutorials' : 'visible Tutorials'">
+                <Label textAlignment="center" text="Quick Tutorial:" style="font-size: 20; padding-top: 10;" ></Label>
+                <Label style="font-size: 14" textAlignment="center" textWrap="true" text="Your feed never runs out! Just keep scrolling!"></Label>
+                <Label style="font-size: 14" textAlignment="center" textWrap="true" text="Each item can be swiped Right (Like)"></Label>
+                <Label style="font-size: 14" textAlignment="center" textWrap="true" text="or Left (Dislike)"></Label>
+            </StackLayout>
+
+            <!--Tutorial Scroll-->
+            <StackLayout class="Tutorials" row="9" rowspan="2" col="1" colspan="8" [class]="tutorialHide ? 'invisible Tutorials' : 'visible Tutorials'">
+                <Label style="font-size: 17; padding-top: 10;" textAlignment="center" textWrap="true" text="The more you rate the clothes that come, the better our algorithm will match you with your perfect style"></Label>
+            </StackLayout>
+
+           
+
+            <!--Sidebar Menu-->
+            <GridLayout (loaded)="menuLoaded($event)" row=0 rowspan=12 column=0 colspan=5 style="background-color: gray;" rows="*,*,*,*,*,*,*,*,*,*" columns="*,*,*,*,*,*,*,*,*,*">
+                    <SearchBar class="searchMenu" hint="Search for items ..." (textChange)="onTextChanged($event)"
+                    [text]="searchPhrase" (clear)="onClear($event)" (submit)="onSubmit($event)" row=0 column=0 colspan=10>
+                    </SearchBar>
+
+                    <Button text="Categories" row=1 column=0 colspan=10 style="font-size:15" (tap)="showCategories()"></Button>
+                    
+                    <RadListView [class]="categoryVisible ? 'visible' : 'invisible'" [items]="categories" orientation="Vertical" height=30% (loaded)="categoryListLoaded($event)"
+                    multipleSelection="true" selectionBehavior="Press" row=2 rowspan=3 column=3 colspan=5
+                    (itemSelected)="categorySelected($event)" (itemDeselected)="categoryDeselected($event)">
+                        <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" itemWidth="100" itemHeight="60" spanCount="1"></ListViewGridLayout>
+                            <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
+                        <ng-template let-item="item">
+                                <label textAlignment = "center" paddingLeft="20" text= {{item}}></label>
+                        </ng-template>
+                    </RadListView>
+
             </GridLayout>
-        </StackLayout>
+            
+        </GridLayout>
     </TabContentItem>
 
     <!--Outfit Creator-->
@@ -163,12 +170,12 @@
                                 </StackLayout>
                             </ng-template>
                         </RadListView>
-                        <Button text = "My Saved Items"></Button>
+                        <Button text = "Saved for later"></Button>
                         <RadListView height ="200" row="0" orientation="horizontal" [items]="userSaved" margin-left = "2" margin-right="2">
                             <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal"></ListViewLinearLayout>
                             <ng-template let-item="item" let-index="index">
                                 <StackLayout [nsRouterLink]="['detail', index]" 
-                                [queryParams]="{ source: 'userSaved', liked: true, disliked: false }">
+                                [queryParams]="{ source: 'userSaved', saved: true }">
                                     <Image [src]="item.img[0]" height="80%" width = "80%" ios:stretch="aspectFill"></Image>
                                     <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
                                 </StackLayout>
@@ -176,13 +183,14 @@
                         </RadListView>
                         <Button text = "My Outfits"></Button>
                         <RadListView height ="200" row="0" orientation="horizontal" [items]="myOutfits" margin-left = "2" margin-right="2">
-                            <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal"></ListViewLinearLayout>
+                            <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="200" itemHeight="200" ></ListViewLinearLayout>
                             <ng-template let-item="item" let-index="index">
-                                <StackLayout 
-                                [queryParams]="{ source: 'userSaved', liked: true, disliked: false }">
-                                    <Image [src]="item.img[0]" height="80%" width = "80%" ios:stretch="aspectFill"></Image>
-                                    <Label textAlignment = "center" size = "15" width="100%" [text]="item.outfitID" textWrap="true"></Label>
-                                </StackLayout>
+                                <GridLayout rows="*,*" columns="*,*" [nsRouterLink]="['outfit']" [queryParams]="{ outfit: index}">
+                                    <Image row=0 column=0 [src]="item['items'][0] ? item['items'][0].img[0] : ''" height="70%" width = "70%" ios:stretch="aspectFill"></Image>
+                                    <Image row=0 column=1 [src]="item['items'][1] ? item['items'][1].img[0] : ''" height="70%" width = "70%" ios:stretch="aspectFill"></Image>
+                                    <Image row=1 column=0 [src]="item['items'][2] ? item['items'][2].img[0] : ''" height="70%" width = "70%" ios:stretch="aspectFill"></Image>
+                                    <Image row=1 column=1 [src]="item['items'][3] ? item['items'][3].img[0] : ''" height="70%" width = "70%" ios:stretch="aspectFill"></Image>
+                                </GridLayout>
                             </ng-template>
                         </RadListView>
                 </StackLayout>

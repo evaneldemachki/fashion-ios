@@ -55,9 +55,11 @@ export class LoginComponent {
     public checkYesPW: Boolean = false;
     public isOpen = true;
     public flexBox: FlexboxLayout;
-    public landingImages = ['~/images/IMG_6513.png','~/images/IMG_6514.png','~/images/IMG_6515.png','~/images/IMG_6516.png','~/images/IMG_6517.png','~/images/IMG_6518.png','~/images/IMG_6519.png','~/images/IMG_6520.png','~/images/IMG_6521.png','~/images/IMG_6522.png']
+    public landingImages = ['~/images/IMG_6513.png','~/images/IMG_6514.png','~/images/IMG_6515.png','~/images/IMG_6516.png','~/images/IMG_6518.png','~/images/IMG_6519.png','~/images/IMG_6520.png','~/images/IMG_6521.png','~/images/IMG_6522.png']
     public firstImageSpot: Image;
     public secondImageSpot: Image;
+    public image1anim: Animation;
+    public image2anim: Animation;
 
 
     constructor(
@@ -81,13 +83,13 @@ export class LoginComponent {
     }
 
     validateLogin() {
-        let endpoint = "http://fashionapi.herokuapp.com/user/login";
+        let endpoint = "https://fashionapi.herokuapp.com/user/login";
         return this.http.post(endpoint, this.credentials, 
             {responseType: "text", observe: "response"});
     }
 
     createUser() {
-        let endpoint = "http://fashionapi.herokuapp.com/user/register";
+        let endpoint = "https://fashionapi.herokuapp.com/user/register";
         return this.http.post(endpoint, this.credentials,
             {responseType: "text", observe: "response"});
     }
@@ -107,7 +109,7 @@ export class LoginComponent {
                 }
                 this.routerExtensions.navigate(["items", token], { clearHistory: true });
             }, err => { // alert with error message if verification failed
-                let response = err.error.slice(7, err.error.length);
+                let response = err.error
                 alert(response);
                 this.isBusy=false;
             });
@@ -164,7 +166,7 @@ export class LoginComponent {
         newImage.style.width = 160;
         newImage.style.height = 180;
         newImage.order=1;
-        let imageIndex = Math.floor(Math.random()*(9-0)+0);
+        let imageIndex = Math.floor(Math.random()*(8-0)+0);
         newImage.src = this.landingImages[imageIndex];
         container.addChild(newImage);
         let imageX = 0;
@@ -177,7 +179,7 @@ export class LoginComponent {
         args.object.originY = 0;
         let page: Page =  <Page>args.page;
         this.firstImageSpot = args.object;
-        let imageIndex = Math.floor(Math.random()*(9-0)+0);
+        let imageIndex = Math.floor(Math.random()*(8-0)+0);
         args.object.src = this.landingImages[imageIndex];
         let negative = 0;
         image.scaleX = 5;
@@ -194,7 +196,7 @@ export class LoginComponent {
         args.object.originY = 0;
         let page: Page =  <Page>args.page;
         this.firstImageSpot = args.object;
-        let imageIndex = Math.floor(Math.random()*(9-0)+0);
+        let imageIndex = Math.floor(Math.random()*(8-0)+0);
         args.object.src = this.landingImages[imageIndex];
         let negative = 0;
         image.scaleX = 5;
@@ -207,7 +209,7 @@ export class LoginComponent {
     }
 
     animateFalling(image: Image){
-        let imageIndex = Math.floor(Math.random()*(9-0)+0);
+        let imageIndex = Math.floor(Math.random()*(8-0)+0);
         image.src = this.landingImages[imageIndex];
         let imageX = 0;
         if(Math.random()>.5){
@@ -229,10 +231,12 @@ export class LoginComponent {
         ]);
         
         setTimeout(() => {
+            this.image2anim = animation;
             animation.play().then(()=>{
                 this.animateFalling(image);
             });
         }, 100)
+
     }
 }
 

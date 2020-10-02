@@ -20,11 +20,6 @@
     visibility: hidden;
 }
 
-.searchMenu {
-    visibility: collapse;
-    border-radius: 25px;
-}
-
 .i-profile {
     width: 50px;
     height: 50px;
