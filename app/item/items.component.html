@@ -76,13 +76,14 @@
            
 
             <!--Sidebar Menu-->
-            <GridLayout (loaded)="menuLoaded($event)" row=0 rowspan=12 column=0 colspan=5 style="background-color: gray;" rows="*,*,*,*,*,*,*,*,*,*" columns="*,*,*,*,*,*,*,*,*,*">
+            <GridLayout (loaded)="menuLoaded($event)" row=0 rowspan=12 column=5 colspan=5 style="background-color: gray;" rows="*,*,*,*,*,*,*,*,*,*" columns="*,*,*,*,*,*,*,*,*,*,*,*,*">
                     <SearchBar class="searchMenu" hint="Search for items ..." (textChange)="onTextChanged($event)"
-                    [text]="searchPhrase" (clear)="onClear($event)" (submit)="onSubmit($event)" row=0 column=0 colspan=10>
+                    [text]="searchPhrase" (clear)="onClear($event)" (submit)="onSubmit($event)" row=0 column=0 colspan=14>
                     </SearchBar>
 
-                    <Button text="Categories" row=1 column=0 colspan=10 style="font-size:15" (tap)="showCategories()"></Button>
-                    
+                    <Button text="Tags" row=1 column=0 colspan=7 style="font-size:15" (tap)="showCategories()"></Button>
+                    <Button text="Categories" row=1 column=5 colspan=10 style="font-size:13" (tap)="showCategories()"></Button>
+                   
                     <RadListView [class]="categoryVisible ? 'visible' : 'invisible'" [items]="categories" orientation="Vertical" height=30% (loaded)="categoryListLoaded($event)"
                     multipleSelection="true" selectionBehavior="Press" row=2 rowspan=3 column=3 colspan=5
                     (itemSelected)="categorySelected($event)" (itemDeselected)="categoryDeselected($event)">

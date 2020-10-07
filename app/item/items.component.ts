@@ -474,7 +474,7 @@ export class ItemsComponent implements OnInit {
 
     menuLoaded(args){
         this.sideBarMenu = args.object as GridLayout;
-        this.sideBarMenu.translateX = this.sideBarMenu.originX - 200;
+        this.sideBarMenu.translateX = this.sideBarMenu.originX + 200;
     }
 
     public categoryList: RadListView;
@@ -486,7 +486,7 @@ export class ItemsComponent implements OnInit {
     openSideMenu(args){
         let opening = new Animation([
             {
-                translate: { x: this.sideBarMenu.originX+200, y: this.sideBarMenu.originY },
+                translate: { x: this.sideBarMenu.originX, y: this.sideBarMenu.originY },
                 duration: 300,
                 target: this.sideBarMenu,
                 delay: 0,
@@ -494,7 +494,7 @@ export class ItemsComponent implements OnInit {
         ]);
         let closing = new Animation([
             {
-                translate: { x: this.sideBarMenu.originX-200, y: this.sideBarMenu.originY },
+                translate: { x: this.sideBarMenu.originX+200, y: this.sideBarMenu.originY },
                 duration: 300,
                 target: this.sideBarMenu,
                 delay: 0,

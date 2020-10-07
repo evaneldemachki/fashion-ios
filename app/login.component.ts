@@ -17,6 +17,7 @@ import { Image } from "tns-core-modules/ui/image";
 import { Page } from "tns-core-modules/ui/page";
 import { Animation } from "tns-core-modules/ui/animation";
 import {GridLayout} from "@nativescript/core/ui/layouts//grid-layout";
+import {TextField} from "tns-core-modules/ui/text-field";
 
 
 @Component({
@@ -46,8 +47,11 @@ import {GridLayout} from "@nativescript/core/ui/layouts//grid-layout";
 export class LoginComponent {
     public isLoggingIn = true;
     public credentials: User = {
-        username: "", 
-        password: ""
+        email: "", 
+        password: "",
+        username: "",
+        first_name: "",
+        last_name: ""
     }
     public isBusy: boolean = false;
     public confirm: string = "";
@@ -68,9 +72,10 @@ export class LoginComponent {
 
     ngOnInit(): void {
         this.checkYes = getBoolean("checkYes");
-        this.credentials.username = getString("email");
+        this.credentials.email = getString("email");
         this.checkYesPW = getBoolean("checkYesPW");
         this.credentials.password = getString("password")
+
 
     }
 
@@ -101,7 +106,7 @@ export class LoginComponent {
                 let token = res.body; // return token if verification successful
                 if(this.checkYes==true){
                     setBoolean("checkYes", true);
-                    setString("email", this.credentials.username);
+                    setString("email", this.credentials.email);
                 }
                 if(this.checkYesPW==true){
                     setBoolean("checkYesPW", true);
@@ -154,6 +159,7 @@ export class LoginComponent {
     savePWOption(){
         if(this.checkYesPW==true){
             this.checkYesPW=false;
+            remove("password")
             remove("checkYesPW");
         }else{
             this.checkYesPW = true;
@@ -238,9 +244,48 @@ export class LoginComponent {
         }, 100)
 
     }
+
+    onReturnPress(args){
+        var page = args.object.page;
+        let textField = <TextField>args.object;
+        if(!this.isLoggingIn){
+            switch(textField.id){
+                case 'first_name':
+                    <TextField>page.getViewById("last_name").focus()
+                    break;
+                case 'last_name':
+                    <TextField>page.getViewById("username").focus()
+                    break;
+                case 'username':
+                    <TextField>page.getViewById("email").focus()
+                    break;
+                case 'email':
+                    <TextField>page.getViewById("password").focus()
+                    break;
+                case 'password':
+                    <TextField>page.getViewById("password_confirm").focus()
+                    break;
+                case 'password_confirm':
+                    this.submit()
+                    break;
+            }
+        }else{
+            switch(textField.id){
+                case 'email':
+                    <TextField>page.getViewById("password").focus()
+                    break;
+                case 'password':
+                    this.submit()
+                    break;
+            }
+        }
+    }
 }
 
 export interface User {
-    username: string;
+    email: string;
     password: string;
+    username: string;
+    first_name: string;
+    last_name: string;
 }

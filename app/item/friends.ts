@@ -39,7 +39,7 @@ export class friendsComponent implements OnInit {
     grid: GridLayout;
 
     ngOnInit(): void {
-
+        
     }
 
     searchStart(args){
