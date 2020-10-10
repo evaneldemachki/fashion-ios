@@ -18,7 +18,7 @@ import { Label } from "tns-core-modules/ui/label";
 
 
 @Component({
-    selector: "ns-outfit",
+    selector: "ns-user",
     templateUrl: "./user.html",
 })
 export class userComponent implements OnInit {
