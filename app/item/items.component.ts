@@ -16,6 +16,7 @@ import { ListPicker } from "tns-core-modules/ui/list-picker";
 import { View } from "tns-core-modules/ui/core/view";
 
 import { PanGestureEventData, GestureStateTypes } from "tns-core-modules/ui/gestures";
+import { GestureTypes, GestureEventData } from "tns-core-modules/ui/gestures";
 import { ActivatedRoute } from "@angular/router";
 import { Image } from "tns-core-modules/ui/image";
 
@@ -79,7 +80,8 @@ export class ItemsComponent implements OnInit {
 
     constructor(
         private itemService: ItemService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private page: Page
         ) { }
 
     set userLikes(value) {
@@ -160,12 +162,12 @@ export class ItemsComponent implements OnInit {
     addItemsToView() {
         let newitems = [];
         let tobeLoaded = 0
-        if(this.currentlyLoaded + 1 > this.totalLoaded) {
+        if(this.currentlyLoaded + 20 > this.totalLoaded) {
             newitems = this.items.slice(this.currentlyLoaded, this.totalLoaded);
             tobeLoaded = this.totalLoaded - this.currentlyLoaded;
         } else {
-            newitems = this.items.slice(this.currentlyLoaded, this.currentlyLoaded + 1);
-            tobeLoaded = 1;
+            newitems = this.items.slice(this.currentlyLoaded, this.currentlyLoaded + 20);
+            tobeLoaded = 20;
         }
         for(let i = 0; i < tobeLoaded; i++) {
             this.itemsShown.push(newitems[i]);
@@ -191,6 +193,7 @@ export class ItemsComponent implements OnInit {
     }
 
     onTextChanged(args) {
+        console.log("button loaded textchange")
         this.searchBar = args.object as SearchBar;
         if(this.searchBar.text != null) {
             this.searchText = this.searchBar.text.toLowerCase();
@@ -225,6 +228,10 @@ export class ItemsComponent implements OnInit {
 
     scrollStartedEvent(args) {
         this.searchBar.dismissSoftInput();
+    }
+
+    profileScrollStartedEvent(args){
+        this.profileSearchBar.dismissSoftInput();
     }
 
     searchRouter() {
@@ -267,6 +274,8 @@ export class ItemsComponent implements OnInit {
         this.itemsLiked=[]
         this.itemsDisliked=[];
         this.itemsSaved = [];
+        
+
         for(let i = 0; i < this.userLikes.length; i++) {
             for(let j =0; j < this.items.length; j++) {
                 if(this.userLikes[i]['_id'] == this.items[j]['_id']) {
@@ -484,6 +493,8 @@ export class ItemsComponent implements OnInit {
     menuLoaded(args){
         this.sideBarMenu = args.object as GridLayout;
         this.sideBarMenu.translateX = this.sideBarMenu.originX + 200;
+        this.page = args.object.page;
+        this.searchBar = <SearchBar>this.page.getViewById('searchBar')
     }
 
     public categoryList: RadListView;
@@ -497,6 +508,7 @@ export class ItemsComponent implements OnInit {
     }
 
     profileSearchLoaded(args){
+        this.profileSearchBar = <SearchBar>this.page.getViewById('searchBarProfile')
         this.profileSearchMenu = args.object;
         this.profileSearchMenu.translateY = this.profileSearchMenu.originY + this.windowHeight;
     }
@@ -560,5 +572,11 @@ export class ItemsComponent implements OnInit {
         }else{
             this.categoryVisible=false;
         }
+    }
+
+    fashionItemInit(args){
+        args.object.on(GestureTypes.doubleTap, function (args: GestureEventData) {
+            console.log("Long Press");
+        });
     }
 }

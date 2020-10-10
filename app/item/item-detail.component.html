@@ -26,8 +26,8 @@
             <Label [text]="'$' + item.price" class="listing-right" textAlignment="center" textWrap="true"></Label>
         </StackLayout>
         <StackLayout orientation="Horizontal">
-        <Button [text]="saved ? 'Unsave For Later' : 'Save For Later'" width="50%" margin="10 0 10 0" backgroundColor="black" height="100px" (tap)=onItemSave()></Button>
-        <Button text="Buy This Product" width="50%" margin="10 0 10 0" backgroundColor="blue" height="100px" [nsRouterLink]="index"></Button>
+        <Button class="itemDetailButton" [text]="saved ? 'Unsave For Later' : 'Save For Later'" width="50%" margin="10 0 10 0" backgroundColor="black" height="100px" (tap)=onItemSave()></Button>
+        <Button class="itemDetailButton" text="Buy This Product" width="50%" margin="10 0 10 0" backgroundColor="blue" height="100px" [nsRouterLink]="index"></Button>
         </StackLayout>
     </StackLayout>
     <StackLayout col="9" row="0">

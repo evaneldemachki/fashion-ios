@@ -2,18 +2,18 @@
     <ActionItem tap="openSideMenu($event)" ios.systemIcon="9" ios.position="left" android.systemIcon="res://ic_menu_share" android.position="actionBar"></ActionItem>
     <ActionItem (tap)="openSearch($event)" ios.systemIcon="12" ios.position="right" text="search" android.position="popup"></ActionItem>
 </ActionBar>
-<BottomNavigation selectedIndex="0" (selectedIndexChanged)="indexChanged($event)">
+<Tabs selectedIndex="0" (selectedIndexChanged)="indexChanged($event)">
     <!-- The bottom tab UI is created via TabStrip (the containier) and TabStripItem (for each tab)-->
     <TabStrip>
-        <TabStripItem>
+        <TabStripItem >
             <Label text="Home"></Label>
             <Image src="font://&#xf015;" class="fas t-36"></Image>
         </TabStripItem>
-        <TabStripItem class="special">
+        <TabStripItem class="special" pageTransition="slide">
             <Label text="Outfits"></Label>
             <Image src="font://&#xf553;" class="fas t-36"></Image>
         </TabStripItem>
-        <TabStripItem class="special">
+        <TabStripItem class="special" pageTransition="slide">
             <Label text="Profile"></Label>
             <Image src="font://&#xf2bd;" class="fas t-36"></Image>
         </TabStripItem>
@@ -27,7 +27,7 @@
             </ListPicker>
           
             <RadListView row="0" rowspan="11" col="0" colspan="10" orientation="vertical" [items]="itemsShown"
-            width="100%" height="100%" (scrolled)="scrollStartedEvent($event)" loadOnDemandMode="Auto" (loadMoreDataRequested)="onLoadMoreItemsRequested($event)" loadOnDemandBufferSize="1"
+            width="100%" height="100%" (scrolled)="scrollStartedEvent($event)" loadOnDemandMode="Auto" (loadMoreDataRequested)="onLoadMoreItemsRequested($event)" loadOnDemandBufferSize="8"
             id="listView" selectionBehavior="None" 
             (itemSwipeProgressEnded)="onSwipeCellFinished($event)"
             (itemSwipeProgressStarted)="onSwipeCellStarted($event)" 
@@ -36,7 +36,7 @@
                 <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
                 <ng-template horizontalAlignment="center" let-item="item" let-index="index" >
                     <GridLayout style="background-image: ~/item/backgroundShadow.png;" [class] = "itemsLiked[index] ? 'likedBackground' : 'dislikedBackground'">
-                    <GridLayout columns="*,*,*" [nsRouterLink]="['detail', index]" 
+                    <GridLayout columns="*,*,*" (loaded)="fashionItemInit($event)" [nsRouterLink]="['detail', index]" 
                     [queryParams]="{ source: 'itemsShown', liked: itemsLiked[index], disliked: itemsDisliked[index], saved: itemsSaved[index]}" 
                     padding="0 0 0 0" >
                         <Image colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
@@ -62,22 +62,22 @@
 
             <!--Tutorial Scroll-->
             <StackLayout row="0" rowspan="3" col="5" colspan="6" [class]="tutorialHide ? 'invisible Tutorials' : 'visible Tutorials'">
-                <Label textAlignment="center" text="Quick Tutorial:" style="font-size: 20; padding-top: 10;" ></Label>
-                <Label style="font-size: 14" textAlignment="center" textWrap="true" text="Your feed never runs out! Just keep scrolling!"></Label>
-                <Label style="font-size: 14" textAlignment="center" textWrap="true" text="Each item can be swiped Right (Like)"></Label>
-                <Label style="font-size: 14" textAlignment="center" textWrap="true" text="or Left (Dislike)"></Label>
+                <Label class = "tutorialText" textAlignment="center" text="Quick Tutorial:" style="font-size: 20; padding-top: 10;" ></Label>
+                <Label class = "tutorialText" textAlignment="center" textWrap="true" text="Your feed never runs out! Just keep scrolling!"></Label>
+                <Label class = "tutorialText" textAlignment="center" textWrap="true" text="Each item can be swiped Right (Like)"></Label>
+                <Label class = "tutorialText" textAlignment="center" textWrap="true" text="or Left (Dislike)"></Label>
             </StackLayout>
 
             <!--Tutorial Scroll-->
             <StackLayout class="Tutorials" row="9" rowspan="2" col="1" colspan="8" [class]="tutorialHide ? 'invisible Tutorials' : 'visible Tutorials'">
-                <Label style="font-size: 17; padding-top: 10;" textAlignment="center" textWrap="true" text="The more you rate the clothes that come, the better our algorithm will match you with your perfect style"></Label>
+                <Label class = "tutorialText" style="font-size: 17; padding-top: 10;" textAlignment="center" textWrap="true" text="The more you rate the clothes that come, the better our algorithm will match you with your perfect style"></Label>
             </StackLayout>
 
            
 
             <!--Sidebar Menu-->
             <GridLayout (loaded)="menuLoaded($event)" row=0 rowspan=12 column=5 colspan=5 style="background-color: gray;" rows="*,*,*,*,*,*,*,*,*,*" columns="*,*,*,*,*,*,*,*,*,*,*,*,*">
-                    <SearchBar class="searchMenu" hint="Search for items ..." (textChange)="onTextChanged($event)"
+                    <SearchBar id="searchBar" class="searchMenu" hint="Search for items ..." (textChange)="onTextChanged($event)"
                     [text]="searchPhrase" (clear)="onClear($event)" (submit)="onSubmit($event)" row=0 column=0 colspan=14>
                     </SearchBar>
 
@@ -200,7 +200,7 @@
             <!--Search Profile Menu-->
             <GridLayout row="0" rowspan="3" id="profileSearch" rows="*,*,*,*,*,*,*,*,*,*" (loaded)="profileSearchLoaded($event)" style="background-color: rgba(59, 59, 59, .8); margin-right: 5;">
                 <RadListView row="1" rowspan="10" orientation="vertical" [items]="items"
-                    width="100%" height="100%" (scrolled)="scrollStartedEvent($event)" loadOnDemandMode="Auto" (loadMoreDataRequested)="onLoadMoreItemsRequested($event)" loadOnDemandBufferSize="1"
+                    width="100%" height="100%" (scrolled)="profileScrollStartedEvent($event)" loadOnDemandMode="Auto" (loadMoreDataRequested)="onLoadMoreItemsRequested($event)" loadOnDemandBufferSize="1"
                     id="listView" selectionBehavior="None">
                     <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
                     <ng-template horizontalAlignment="center" let-item="item" let-index="index" >
@@ -218,10 +218,10 @@
                     </ng-template>
                 </RadListView>
 
-                <SearchBar row=0 hint="Search for Users, Tags, Clothes ..." (textChange)="onTextChanged($event)" color="Black" textFieldHintColor="red" style="background-color: rgba(59, 59, 59, 0.836);"
+                <SearchBar id="searchBarProfile" row=0 hint="Search for Users, Tags, Clothes ..." (textChange)="onTextChanged($event)" color="Black" textFieldHintColor="red" style="background-color: rgba(59, 59, 59, 0.836);"
                     [text]="searchPhrase" (clear)="onClear($event)" (submit)="onSubmit($event)">
                 </SearchBar>
             </GridLayout>
         </Gridlayout>
     </TabContentItem>
-</BottomNavigation>
+</Tabs>

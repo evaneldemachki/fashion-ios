@@ -78,8 +78,28 @@ activity-indicator{
     color: red;
 }
 
-label{
-    color: #E7EBC5
+.ns-dark .friendsListGrid{
+    background-color: gray;
+}
+
+.ns-light .friendsListGrid{
+    background-color: gray;
+}
+
+.ns-dark label{
+    color: white
+}
+
+.ns-light label{
+    color: black
+}
+
+.ns-dark .itemDetailButton{
+    color: white;
+}
+
+.ns-light .itemDetailButton{
+    color: white;
 }
 
 GridLayout{
@@ -90,7 +110,16 @@ GridLayout{
     background-color: #2D232E;
     border-width: 3;
     border-radius: 50%;
+}
 
+.ns-light .tutorialText{
+    font-size: 14;
+    color: white;
+}
+
+.ns-dark .tutorialText{
+    font-size: 14;
+    color: white;
 }
 
 FlexboxLayout{
@@ -101,33 +130,50 @@ Button {
     border-width: 3;
     border-color: #E7EBC5;
     border-radius: 50%;
-    color: #E7EBC5;
+    color: black;
     font-weight: bold;
 }
 
-.input-field{
+.ns-light .input-field{
     border-width: 3;
-    border-color: #E7EBC5;
+    border-color: black;
     border-radius: 50%;
-    color: #E7EBC5;
+    color: black;
     font-weight: bold;
     
+}
+
+.ns-dark .input-field{
+        border-width: 3;
+        border-color: white;
+        border-radius: 50%;
+        color: #E7EBC5;
+        font-weight: bold;
+        
 }
 
 #login{
     border-width: 3;
     border-color: white;
     border-radius: 50%;
-    background-color: #E7EBC5;
-    color: #474448;
+    background-color: black;
+    color: #a39ea5;
     font-weight: bold;
 }
 
-#swapLogin{
+.ns-dark #swapLogin{
     border-width: 3;
     border-color: #E7EBC5;
     border-radius: 50%;
-    color: #E7EBC5;
+    color: white;
+    font-weight: bold;
+}
+
+.ns-light #swapLogin{
+    border-width: 3;
+    border-color: #E7EBC5;
+    border-radius: 50%;
+    color: black;
     font-weight: bold;
 }
 
@@ -139,14 +185,25 @@ Button {
     border-radius: 50%;
 }
 
-#userList{
+.ns-light #userList{
     border-width: 3;
     border-radius: 10%;
     background-color: lightgray;
 }
 
-.userListText{
+.ns-dark #userList{
+    border-width: 3;
+    border-radius: 10%;
+    background-color: black;
+}
+
+.ns-light .userListText{
     color: black;
+    font-size: 15;
+}
+
+.ns-dark .userListText{
+    color: white;
     font-size: 15;
 }
 

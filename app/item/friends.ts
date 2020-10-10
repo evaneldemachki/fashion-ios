@@ -25,6 +25,7 @@ export class friendsComponent implements OnInit {
     searchUsers;
     index;
     friendsList = []
+    searchBar: SearchBar;
 
     constructor(
         private itemService: ItemService,
@@ -54,7 +55,7 @@ export class friendsComponent implements OnInit {
 
     onTextChanged(args){
         var searchText = args.object.text;
-        if(searchText.length>0){
+        if(searchText && searchText.length>0){
             this.searchUsers = [];
             for(var i=0; i<this.friendsList.length;i++){
                 if(this.friendsList[i]['username'].includes(searchText)){
@@ -67,9 +68,14 @@ export class friendsComponent implements OnInit {
             }
         }
     }
+    
+    friendsScrollStartedEvent(args){
+        this.searchBar.dismissSoftInput();
+    }
 
     gridInitialized(args){
         this.page = args.object.page;
+        this.searchBar = this.page.getViewById('searchBar');
     }
     
 }
