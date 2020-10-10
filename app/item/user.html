@@ -1,0 +1,29 @@
+<router-outlet></router-outlet>
+<BottomNavigation selectedIndex="0">
+    <!-- The bottom tab UI is created via TabStrip (the containier) and TabStripItem (for each tab)-->
+    <TabStrip>
+        <TabStripItem>
+            <Label text="Likes"></Label>
+            <Image src="font://&#xf004;" class="fas t-36"></Image>
+        </TabStripItem>
+        <TabStripItem class="special">
+            <Label text="Outfits"></Label>
+            <Image src="font://&#xf553;" class="fas t-36"></Image>
+        </TabStripItem>
+    </TabStrip>
+
+    <!--Likes Feed-->
+    <TabContentItem>
+        <GridLayout rows="*,*,*,*,*" (loaded)="start($event)">
+            <StackLayout row="0" rowspan="2">
+                <Lable [text]='username'></Lable>
+                <Lable [text]='fullname'></Lable>
+            </StackLayout>
+        </GridLayout>
+    </TabContentItem>
+
+    <!-- Outfits-->
+    <TabContentItem>
+          
+    </TabContentItem>
+</BottomNavigation>

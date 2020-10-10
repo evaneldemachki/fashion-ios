@@ -8,10 +8,10 @@ import { ItemsRoutingModule } from "./items-routing.module";
 import { ItemDetailComponent } from "./item-detail.component";
 import { ItemReferenceComponent } from "./item-reference.component";
 import { ItemService } from "./item.service";
-import { ProfileComponent } from "./profile-page";
 import { OutfitComponent } from "./outfit.component";
 import { tutorialComponent } from "./tutorial";
 import { friendsComponent } from "./friends";
+import { userComponent } from "./user";
 
 
 @NgModule({
@@ -25,10 +25,10 @@ import { friendsComponent } from "./friends";
         ItemsComponent,
         ItemDetailComponent,
         ItemReferenceComponent,
-        ProfileComponent,
         OutfitComponent,
         tutorialComponent,
         friendsComponent,
+        userComponent,
     ],
     providers: [
         ItemService
