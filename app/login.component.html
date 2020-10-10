@@ -3,21 +3,24 @@
   <Image order="1" (loaded)="secondImage($event)" row="0" rowspan="10" col="0" colspan="10" loadMode="async" height="25%" width="25%" stretch="aspectFit"></Image>
       <StackLayout order="0" class="form" row="0" rowspan="10" col="0" colspan="10">
         <StackLayout class="input-field" style="padding-top:15;">
-          <TextField [(ngModel)]="credentials.username" keyboardType="email" autocorrect="false" autocapitalizationType="none" hint="Email" ...></TextField>
-          <Label text="&#xf058; Save Email?" [class]="checkYes ? 'fas' : 'far'" (tap)="saveEmailOption()" style="text-align: center; padding-bottom: 10;"></Label>
+          <GridLayout *ngIf="!isLoggingIn" columns="*,*" rows="*" height=50>
+            <TextField id="first_name" column="0" row="0" [(ngModel)]="credentials.first_name" autocorrect="false" autocapitalizationType="none" (returnPress)="onReturnPress($event)" returnKeyType="next" hint="First Name" ...></TextField>
+            <TextField id="last_name" column="1" row="0" [(ngModel)]="credentials.last_name" autocorrect="false" autocapitalizationType="none" (returnPress)="onReturnPress($event)" returnKeyType="next" hint="Last Name" ...></TextField>
+          </GridLayout>
+          <TextField  id="username" *ngIf="!isLoggingIn" [(ngModel)]="credentials.username" autocorrect="false" autocapitalizationType="none" hint="Username" (returnPress)="onReturnPress($event)" returnKeyType="next" ...></TextField>
+          <TextField id="email" [(ngModel)]="credentials.email" keyboardType="email" autocorrect="false" autocapitalizationType="none" hint="Email" (returnPress)="onReturnPress($event)" returnKeyType="next" ...></TextField>
+          <Label *ngIf="isLoggingIn" text="&#xf058; Save Email?" [class]="checkYes ? 'fas' : 'far'" (tap)="saveEmailOption()" style="text-align: center; padding-bottom: 10;"></Label>
         </StackLayout>
     
         <StackLayout class="input-field" style="padding-top:15; padding-bottom: 15;">
-          <TextField [(ngModel)]="credentials.password" autocorrect="false" secure="true" autocapitalizationType="none" hint="Password" ...></TextField>
+          <TextField id="password" [(ngModel)]="credentials.password" autocorrect="false" secure="true" autocapitalizationType="none" hint="Password" (returnPress)="onReturnPress($event)" [returnKeyType]="!isLoggingIn ? 'next' : 'done'" ...></TextField>
+          <TextField id="password_confirm" *ngIf="!isLoggingIn" [(ngModel)]="confirm" autocorrect="false" secure="true" autocapitalizationType="none" hint="Confirm password" (returnPress)="onReturnPress($event)" returnKeyType="done" ...></TextField>
           <StackLayout orientation="Horizontal">
-            <Label text="&#xf058; Save Password?" [class]="checkYesPW ? 'fas' : 'far'" (tap)="savePWOption()" style="text-align: center; padding-right: 5; padding-left: 20;"></Label>
+            <Label *ngIf="isLoggingIn" text="&#xf058; Save Password?" [class]="checkYesPW ? 'fas' : 'far'" (tap)="savePWOption()" style="text-align: center; padding-right: 5; padding-left: 20;"></Label>
             <Label *ngIf="isLoggingIn" text="Forgot your password?" style="text-align: center;"></Label>
           </StackLayout>
         </StackLayout>
     
-        <StackLayout *ngIf="!isLoggingIn" class="input-field">
-          <TextField [(ngModel)]="confirm" autocorrect="false" secure="true" autocapitalizationType="none" hint="Confirm password" ...></TextField>
-        </StackLayout>
         <Button id="login" [text]="isLoggingIn ? 'Log In' : 'Sign Up'" (tap)="submit()"></Button>
         <ActivityIndicator [busy]="isBusy" (busyChange)="onBusyChanged($event)"></ActivityIndicator>
 

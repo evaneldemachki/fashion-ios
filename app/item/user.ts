@@ -19,12 +19,14 @@ import { Label } from "tns-core-modules/ui/label";
 
 @Component({
     selector: "ns-outfit",
-    templateUrl: "./friends.html",
+    templateUrl: "./user.html",
 })
-export class friendsComponent implements OnInit {
-    searchUsers;
-    index;
-    friendsList = []
+export class userComponent implements OnInit {
+    id;
+    source;
+    user;
+    username;
+    fullname;
 
     constructor(
         private itemService: ItemService,
@@ -33,43 +35,20 @@ export class friendsComponent implements OnInit {
         private http: HttpClient,
     ) { }
 
-
     ngOnInit(): void {
-        const i = this.route.snapshot.params.id;
-        this.index = i;
-        this.friendsList = this.itemService.friends;
-        this.searchUsers = this.friendsList;
-    }
-    
-    onSubmit(args){
-        this.itemService.searchUsers(args.object.text).subscribe((res) => {
-            this.searchUsers = JSON.parse(res);  
-            this.itemService.search = this.searchUsers;
+        this.route.queryParams.subscribe(params => {
+            this.source = params.source;
+            this.id = params.index;
+            if(this.source == "friends") {
+                this.user = this.itemService.search.getItem(this.id);
+                this.username = this.user.username;
+                this.fullname = this.user.first_name + ' ' + this.user.last_name
+            } 
         });
     }
 
-    onClear(){
-        this.searchUsers = this.friendsList;  
-    }
-
-    onTextChanged(args){
-        var searchText = args.object.text;
-        if(searchText.length>0){
-            this.searchUsers = [];
-            for(var i=0; i<this.friendsList.length;i++){
-                if(this.friendsList[i]['username'].includes(searchText)){
-                    this.searchUsers.push(this.friendsList[i]);
-                }else if(this.friendsList[i]['first_name'].includes(searchText)){
-                    this.searchUsers.push(this.friendsList[i]);
-                }else if(this.friendsList[i]['last_name'].includes(searchText)){
-                    this.searchUsers.push(this.friendsList[i]);
-                }
-            }
-        }
-    }
-
-    gridInitialized(args){
+    start(args){
         this.page = args.object.page;
+       
     }
-    
 }

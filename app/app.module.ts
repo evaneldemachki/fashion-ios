@@ -5,6 +5,7 @@ import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { LoginComponent } from "./login.component";
 import { NativeScriptFormsModule } from "@nativescript/angular/forms";
+import { userComponent } from "./item/user";
 
 //import { ItemsComponent } from "./item/items.component";
 //import { ItemDetailComponent } from "./item/item-detail.component";

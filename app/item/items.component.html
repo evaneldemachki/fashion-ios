@@ -1,8 +1,8 @@
-<ActionBar title="Explore Items" (loaded)="findUserActions()">
+<ActionBar title="Find Your Fashion" (loaded)="findUserActions()">
     <ActionItem tap="openSideMenu($event)" ios.systemIcon="9" ios.position="left" android.systemIcon="res://ic_menu_share" android.position="actionBar"></ActionItem>
-    <ActionItem (tap)="openSideMenu($event)" ios.systemIcon="12" ios.position="right" text="search" android.position="popup"></ActionItem>
+    <ActionItem (tap)="openSearch($event)" ios.systemIcon="12" ios.position="right" text="search" android.position="popup"></ActionItem>
 </ActionBar>
-<BottomNavigation selectedIndex="0">
+<BottomNavigation selectedIndex="0" (selectedIndexChanged)="indexChanged($event)">
     <!-- The bottom tab UI is created via TabStrip (the containier) and TabStripItem (for each tab)-->
     <TabStrip>
         <TabStripItem>
@@ -76,13 +76,14 @@
            
 
             <!--Sidebar Menu-->
-            <GridLayout (loaded)="menuLoaded($event)" row=0 rowspan=12 column=0 colspan=5 style="background-color: gray;" rows="*,*,*,*,*,*,*,*,*,*" columns="*,*,*,*,*,*,*,*,*,*">
+            <GridLayout (loaded)="menuLoaded($event)" row=0 rowspan=12 column=5 colspan=5 style="background-color: gray;" rows="*,*,*,*,*,*,*,*,*,*" columns="*,*,*,*,*,*,*,*,*,*,*,*,*">
                     <SearchBar class="searchMenu" hint="Search for items ..." (textChange)="onTextChanged($event)"
-                    [text]="searchPhrase" (clear)="onClear($event)" (submit)="onSubmit($event)" row=0 column=0 colspan=10>
+                    [text]="searchPhrase" (clear)="onClear($event)" (submit)="onSubmit($event)" row=0 column=0 colspan=14>
                     </SearchBar>
 
-                    <Button text="Categories" row=1 column=0 colspan=10 style="font-size:15" (tap)="showCategories()"></Button>
-                    
+                    <Button text="Tags" row=1 column=0 colspan=7 style="font-size:15" (tap)="showCategories()"></Button>
+                    <Button text="Categories" row=1 column=5 colspan=10 style="font-size:13" (tap)="showCategories()"></Button>
+                   
                     <RadListView [class]="categoryVisible ? 'visible' : 'invisible'" [items]="categories" orientation="Vertical" height=30% (loaded)="categoryListLoaded($event)"
                     multipleSelection="true" selectionBehavior="Press" row=2 rowspan=3 column=3 colspan=5
                     (itemSelected)="categorySelected($event)" (itemDeselected)="categoryDeselected($event)">
@@ -195,6 +196,32 @@
                         </RadListView>
                 </StackLayout>
             </ScrollView>
+
+            <!--Search Profile Menu-->
+            <GridLayout row="0" rowspan="3" id="profileSearch" rows="*,*,*,*,*,*,*,*,*,*" (loaded)="profileSearchLoaded($event)" style="background-color: rgba(59, 59, 59, .8); margin-right: 5;">
+                <RadListView row="1" rowspan="10" orientation="vertical" [items]="items"
+                    width="100%" height="100%" (scrolled)="scrollStartedEvent($event)" loadOnDemandMode="Auto" (loadMoreDataRequested)="onLoadMoreItemsRequested($event)" loadOnDemandBufferSize="1"
+                    id="listView" selectionBehavior="None">
+                    <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
+                    <ng-template horizontalAlignment="center" let-item="item" let-index="index" >
+                        <GridLayout style="background-image: ~/item/backgroundShadow.png;" [class] = "itemsLiked[index] ? 'likedBackground' : 'dislikedBackground'">
+                            <GridLayout columns="*,*,*" [nsRouterLink]="['detail', index]" 
+                            [queryParams]="{ source: 'itemsShown', liked: itemsLiked[index], disliked: itemsDisliked[index], saved: itemsSaved[index]}" 
+                            padding="0 0 0 0" >
+                                <Image colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
+                                <StackLayout column="2" style="padding-right:2;">
+                                    <Label [class]="itemsLiked[index] ? 'far t-36' : 'invisible'" style="color: green;" text="&#xf004;" ></Label>
+                                    <Label [class]="itemsSaved[index] ? 'far t-36' : 'invisible'" style="color: green;" text="&#xf0c7;" ></Label>
+                                </StackLayout>
+                            </GridLayout>
+                        </GridLayout>
+                    </ng-template>
+                </RadListView>
+
+                <SearchBar row=0 hint="Search for Users, Tags, Clothes ..." (textChange)="onTextChanged($event)" color="Black" textFieldHintColor="red" style="background-color: rgba(59, 59, 59, 0.836);"
+                    [text]="searchPhrase" (clear)="onClear($event)" (submit)="onSubmit($event)">
+                </SearchBar>
+            </GridLayout>
         </Gridlayout>
     </TabContentItem>
 </BottomNavigation>

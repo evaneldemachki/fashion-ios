@@ -24,6 +24,7 @@ import { ShowModalOptions } from "tns-core-modules/ui/core/view";
 import { GridLayout, ItemSpec } from "tns-core-modules/ui/layouts/grid-layout";
 const modalViewModulets = "ns-ui-category/modal-view/basics/modal-ts-view-page";
 import { Animation } from "tns-core-modules/ui/animation";
+import { screen } from "tns-core-modules/platform/platform"
 
 
 
@@ -53,6 +54,13 @@ export class ItemsComponent implements OnInit {
     public rightThresholdPassed = false;
     public userIcon: Image;
     private token: string;
+    public currIndex=0;
+    public profileSearchMenu: GridLayout;
+    public profileSearchBar: SearchBar;
+    public profileSearchMenuOn = 0;
+    public windowHeight = screen.mainScreen.heightPixels;
+    public windowWidth = screen.mainScreen.widthPixels;
+
 
     //Outfit Creator
     public myOutfits = [];
@@ -143,6 +151,7 @@ export class ItemsComponent implements OnInit {
             this.outfitCreaterList = this.userSaved;
             this.myOutfits = res['outfits']
             this.itemService.outfits = this.myOutfits;
+            this.itemService.friends = res['friends'];
             this.findUserActions();
         });
 
@@ -474,7 +483,7 @@ export class ItemsComponent implements OnInit {
 
     menuLoaded(args){
         this.sideBarMenu = args.object as GridLayout;
-        this.sideBarMenu.translateX = this.sideBarMenu.originX - 200;
+        this.sideBarMenu.translateX = this.sideBarMenu.originX + 200;
     }
 
     public categoryList: RadListView;
@@ -483,30 +492,66 @@ export class ItemsComponent implements OnInit {
         this.categoryList.translateX
     }
 
-    openSideMenu(args){
-        let opening = new Animation([
-            {
-                translate: { x: this.sideBarMenu.originX+200, y: this.sideBarMenu.originY },
-                duration: 300,
-                target: this.sideBarMenu,
-                delay: 0,
+    indexChanged(args){
+        this.currIndex = args.newIndex;
+    }
+
+    profileSearchLoaded(args){
+        this.profileSearchMenu = args.object;
+        this.profileSearchMenu.translateY = this.profileSearchMenu.originY + this.windowHeight;
+    }
+
+    openSearch(args){
+        if(this.currIndex==0){
+            let opening = new Animation([
+                {
+                    translate: { x: this.sideBarMenu.originX, y: this.sideBarMenu.originY },
+                    duration: 300,
+                    target: this.sideBarMenu,
+                    delay: 0,
+                }
+            ]);
+            let closing = new Animation([
+                {
+                    translate: { x: this.sideBarMenu.originX+200, y: this.sideBarMenu.originY },
+                    duration: 300,
+                    target: this.sideBarMenu,
+                    delay: 0,
+                }
+            ]);
+            if(this.sideMenuView==0){
+                opening.play();
+                this.sideMenuView = 1;
+            }else{
+                closing.play();
+                this.sideMenuView = 0;
             }
-        ]);
-        let closing = new Animation([
-            {
-                translate: { x: this.sideBarMenu.originX-200, y: this.sideBarMenu.originY },
-                duration: 300,
-                target: this.sideBarMenu,
-                delay: 0,
+        }else if(this.currIndex==2){
+            let opening = new Animation([
+                {
+                    translate: { x: this.profileSearchMenu.originX, y: this.profileSearchMenu.originY },
+                    duration: 300,
+                    target: this.profileSearchMenu,
+                    delay: 0,
+                }
+            ]);
+            let closing = new Animation([
+                {
+                    translate: { x: this.profileSearchMenu.originX, y: this.profileSearchMenu.originY+this.windowHeight},
+                    duration: 300,
+                    target: this.profileSearchMenu,
+                    delay: 0,
+                }
+            ]);
+            if(this.profileSearchMenuOn==0){
+                opening.play();
+                this.profileSearchMenuOn = 1;
+            }else{
+                closing.play();
+                this.profileSearchMenuOn = 0;
             }
-        ]);
-        if(this.sideMenuView==0){
-            opening.play();
-            this.sideMenuView = 1;
-        }else{
-            closing.play();
-            this.sideMenuView = 0;
         }
+
     }
 
     showCategories(){

@@ -25,6 +25,7 @@ export class ItemService {
     public userSaved = [];
     public wardrobe = [];
     public outfits = [];
+    public friends = [];
 
     constructor(private http: HttpClient) { }
 
@@ -369,5 +370,25 @@ export class ItemService {
         let header = {"Authorization": "Bearer " + this.token}
         return this.http.post(endpoint, input, 
           {headers: header, responseType: "text", observe: "response"});
+    }
+
+    searchUsers(name){
+        var url = "https://fashionapi.herokuapp.com/user/search?term="+name;
+        let header = {"Authorization": "Bearer " + this.token}
+        return this.http.get(
+            url, {
+                headers: header,
+                responseType: "text"
+            });
+    }
+
+    getFriends(){
+        var url = "https://fashionapi.herokuapp.com/user/friend";
+        let header = {"Authorization": "Bearer " + this.token}
+        return this.http.get(
+            url, {
+                headers: header,
+                responseType: "text"
+            });
     }
 }
