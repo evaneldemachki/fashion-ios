@@ -2,10 +2,11 @@
     <ActionItem (tap)="onItemLike($event)" ios.position="right" text="search" android.position="popup">
         <Label text = "&#xf004;" [class]="liked ? 'fas t-36' : 'far t-36'"></Label>    
     </ActionItem>
+    <!--
     <ActionItem ios.position="right" text="/" ></ActionItem>
     <ActionItem (tap)="onItemDislike($event)" ios.position="right" text="search" android.position="popup">
         <Label text = "&#xf165;" [class]="disliked ? 'fas t-36' : 'far t-36'"></Label>
-    </ActionItem>
+    </ActionItem>-->
 </ActionBar>
 
 <GridLayout columns="*,*,*,*,*,*,*,*,*,*" rows="*,*,*,*,*,*,*,*,*,*">
@@ -26,8 +27,8 @@
             <Label [text]="'$' + item.price" class="listing-right" textAlignment="center" textWrap="true"></Label>
         </StackLayout>
         <StackLayout orientation="Horizontal">
-        <Button [text]="saved ? 'Unsave For Later' : 'Save For Later'" width="50%" margin="10 0 10 0" backgroundColor="black" height="100px" (tap)=onItemSave()></Button>
-        <Button text="Buy This Product" width="50%" margin="10 0 10 0" backgroundColor="blue" height="100px" [nsRouterLink]="index"></Button>
+        <Button class="itemDetailButton" [text]="saved ? 'Unsave For Later' : 'Save For Later'" width="50%" margin="10 0 10 0" backgroundColor="black" height="100px" (tap)=onItemSave()></Button>
+        <Button class="itemDetailButton" text="Buy This Product" width="50%" margin="10 0 10 0" backgroundColor="blue" height="100px" [nsRouterLink]="index"></Button>
         </StackLayout>
     </StackLayout>
     <StackLayout col="9" row="0">

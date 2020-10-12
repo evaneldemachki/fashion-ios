@@ -57,6 +57,7 @@ export class LoginComponent {
     public confirm: string = "";
     public checkYes: Boolean = false;
     public checkYesPW: Boolean = false;
+    public token;
     public isOpen = true;
     public flexBox: FlexboxLayout;
     public landingImages = ['~/images/IMG_6513.png','~/images/IMG_6514.png','~/images/IMG_6515.png','~/images/IMG_6516.png','~/images/IMG_6518.png','~/images/IMG_6519.png','~/images/IMG_6520.png','~/images/IMG_6521.png','~/images/IMG_6522.png']
@@ -75,8 +76,11 @@ export class LoginComponent {
         this.credentials.email = getString("email");
         this.checkYesPW = getBoolean("checkYesPW");
         this.credentials.password = getString("password")
-
-
+        this.token = getString("token")
+        if(this.token){
+            this.routerExtensions.navigate(["items", this.token], { clearHistory: true });
+        }
+        
     }
 
     toggle() {
@@ -104,6 +108,7 @@ export class LoginComponent {
             this.isBusy = true;
             this.validateLogin().subscribe(res => {
                 let token = res.body; // return token if verification successful
+                setString("token", token);
                 if(this.checkYes==true){
                     setBoolean("checkYes", true);
                     setString("email", this.credentials.email);

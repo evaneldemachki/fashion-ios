@@ -15,8 +15,9 @@ const routes: Routes = [
     { path: "detail/:id", component: ItemDetailComponent },
     { path: "detail/:id/:url", component: ItemReferenceComponent },
     { path: "outfit", component: OutfitComponent },
-    { path: "friends", component: friendsComponent },
-    { path: "friends/user", component: userComponent }
+    { path: "friends", component: friendsComponent},
+    
+
 ];
 
 @NgModule({
