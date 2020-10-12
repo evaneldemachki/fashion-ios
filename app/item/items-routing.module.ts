@@ -15,9 +15,8 @@ const routes: Routes = [
     { path: "detail/:id", component: ItemDetailComponent },
     { path: "detail/:id/:url", component: ItemReferenceComponent },
     { path: "outfit", component: OutfitComponent },
-    { path: "friends", component: friendsComponent, children: [
-        { path: "user", component: userComponent, outlet: 'useroutlet' }
-    ]},
+    { path: "friends", component: friendsComponent},
+    
 
 ];
 

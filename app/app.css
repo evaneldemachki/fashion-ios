@@ -212,3 +212,11 @@ SearchBar{
     border-radius:10%;
 }
 
+.popUpMenu{
+    background-color: rgba(59, 59, 59, .8);
+    margin-right: 5; 
+    border: 1px; 
+    border-top-left-radius: 50%;
+    border-top-right-radius: 50%;
+}
+

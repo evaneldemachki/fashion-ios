@@ -21,7 +21,7 @@
           </StackLayout>
         </StackLayout>
     
-        <Button id="login" [text]="isLoggingIn ? 'Log In' : 'Sign Up'" (tap)="submit()"></Button>
+        <Button id="login" [text]="isLoggingIn ? 'Log In' : 'Sign Up'" (tap)="submit()" style="color:white"></Button>
         <ActivityIndicator [busy]="isBusy" (busyChange)="onBusyChanged($event)"></ActivityIndicator>
 
         <Label (tap)="toggleForm()" style="text-align: center;">

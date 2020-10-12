@@ -15,6 +15,7 @@ import { RadListView, ListViewEventData, SwipeActionsEventData } from "nativescr
 import { GestureTypes, GestureEventData } from "tns-core-modules/ui/gestures";
 import { GridLayout, ItemSpec } from "tns-core-modules/ui/layouts/grid-layout";
 import { Label } from "tns-core-modules/ui/label";
+import { screen } from "tns-core-modules/platform/platform";
 
 
 @Component({
@@ -26,6 +27,19 @@ export class friendsComponent implements OnInit {
     index;
     friendsList = []
     searchBar: SearchBar;
+    friendsGrid: GridLayout;
+    closeFriendMenu: Label;
+    public windowHeight = screen.mainScreen.heightPixels;
+    public windowWidth = screen.mainScreen.widthPixels;
+    
+    friendUser;
+    friendsIcon:Image;
+    friendsName:String;
+    friendsUsername:String;
+    friendLikes = [];
+    friendOutfits = [];
+    friendsView = 0;
+    
 
     constructor(
         private itemService: ItemService,
@@ -76,6 +90,59 @@ export class friendsComponent implements OnInit {
     gridInitialized(args){
         this.page = args.object.page;
         this.searchBar = this.page.getViewById('searchBar');
+        this.friendsGrid = <GridLayout>this.page.getViewById('friendsProfile');
+        //this.closeFriendMenu = this.page.getViewById('closeFriendIcon');
+        //this.closeFriendMenu.on(GestureTypes.tap, function (args) {
+         //   this.closeFriend();
+        //});
+        this.friendsGrid.translateY = this.friendsGrid.originY + this.windowHeight;
+        this.friendsGrid.scaleX = this.friendsGrid.scaleX * .5;
+        this.friendsGrid.scaleY = this.friendsGrid.scaleY * .5;
+
     }
+
+    loadFriend(index){
+        this.friendUser = this.searchUsers[index];
+        this.friendsIcon = this.friendUser.img;
+        this.friendsName = this.friendUser['first_name'] + ' ' + this.friendUser['last_name'];
+        this.friendsUsername = this.friendUser['username'];
+        this.friendLikes = this.friendUser['likes'];
+        this.friendOutfits = this.friendUser['outfits'];
+
+    }
+
+    closeFriend(){
+        let closing = new Animation([
+            {
+                translate: { x: this.friendsGrid.originX, y:this.friendsGrid.originY + this.windowHeight },
+                scale: { x: .5, y: .5},
+                duration: 1000,
+                target: this.friendsGrid,
+                delay: 0,
+            }
+        ]);
+        if(this.friendsView==1){
+            closing.play();
+            this.friendsView = 0;
+        }
+    }
+
+    openFriend(index){
+        this.loadFriend(index);
+        let opening = new Animation([
+            {
+                translate: { x: this.friendsGrid.originX, y: this.friendsGrid.originY +100},
+                scale: { x: 1, y: 1},
+                duration: 1000,
+                target: this.friendsGrid,
+                delay: 0,
+            }
+        ]);
+        if(this.friendsView==0){
+            opening.play();
+            this.friendsView = 1;
+        }
+    }
+    
     
 }

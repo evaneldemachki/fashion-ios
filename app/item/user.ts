@@ -27,6 +27,7 @@ export class userComponent implements OnInit {
     user;
     username;
     fullname;
+    index;
 
     constructor(
         private itemService: ItemService,
@@ -36,6 +37,9 @@ export class userComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
+        const i = this.route.snapshot.params.id;
+        this.index = i;
+
         this.route.queryParams.subscribe(params => {
             this.source = params.source;
             this.id = params.index;
