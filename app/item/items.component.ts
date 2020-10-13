@@ -7,6 +7,8 @@ import { registerElement } from 'nativescript-angular/element-registry';
 import { RadListView, ListViewEventData, SwipeActionsEventData } from "nativescript-ui-listview";
 import * as viewModule from 'tns-core-modules/ui/core/view';
 import * as utils from "tns-core-modules/utils/utils";
+import { getBoolean, setBoolean, getNumber, setNumber, getString, setString, hasKey, remove, clear} from "tns-core-modules/application-settings";
+import { RouterExtensions } from "nativescript-angular/router";
 
 import { Observable } from 'tns-core-modules/data/observable';
 import { ObservableArray } from 'tns-core-modules/data/observable-array';
@@ -55,9 +57,12 @@ export class ItemsComponent implements OnInit {
     private token: string;
     public categoryList: RadListView;
     public currIndex=0;
+
+
     public profileSearchMenu: GridLayout;
     public profileSearchBar: SearchBar;
     public profileSearchMenuOn = 0;
+    public profileSearchUsers = [];
 
     public profileLikesSearchMenu: GridLayout;
     public profileLikesSearchBar: SearchBar;
@@ -99,7 +104,8 @@ export class ItemsComponent implements OnInit {
     constructor(
         private itemService: ItemService,
         private route: ActivatedRoute,
-        private page: Page
+        private page: Page,
+        private routerExtensions: RouterExtensions,
         ) { }
 
     set userLikes(value) {
@@ -163,6 +169,8 @@ export class ItemsComponent implements OnInit {
     loadUserData() {
         let input = { "token": this.token };
         this.itemService.getUserData(input).subscribe(res => {
+            //this.itemService.userID = res['username']
+            console.log(res['_id'])
             this.userLikes = res['likes'];
             this.userLikes.reverse();
             this.searchLikes = this.userLikes;
@@ -180,9 +188,27 @@ export class ItemsComponent implements OnInit {
 
             this.itemService.friends = res['friends'];
             this.profileFriendsList = this.itemService.friends;
-            this.profileFriendsSearchUsers = this.profileFriendsList;
+            this.profileFriendsSearchUsers = this.profileFriendsList;                                    
             this.findUserActions();
         });
+
+        this.itemService.getAllUsers().subscribe(res => {
+            this.itemService.allUsers = res;
+            console.log(this.itemService.userID)
+            for(var i =0; i<this.itemService.allUsers.length;i++){
+                if(this.itemService.allUsers[i]['username']==this.itemService.userID){
+                    console.log("found user")
+                    this.itemService.allUsers.splice(i,1);
+                }
+            }
+            this.profileSearchUsers = this.itemService.allUsers;
+        });
+
+    }
+
+    Logout(){
+        remove("token");
+        this.routerExtensions.navigate(["login"], { clearHistory: true });
     }
 
     addItemsToView() {
@@ -247,10 +273,6 @@ export class ItemsComponent implements OnInit {
 
     scrollStartedEvent(args) {
         this.searchBar.dismissSoftInput();
-    }
-
-    profileScrollStartedEvent(args){
-        this.profileSearchBar.dismissSoftInput();
     }
 
     searchRouter() {
@@ -530,13 +552,6 @@ export class ItemsComponent implements OnInit {
         this.currIndex = args.newIndex;
     }
 
-    profileSearchLoaded(args){
-        this.profileSearchBar = <SearchBar>this.page.getViewById('searchBarProfile')
-        this.profileSearchMenu = args.object;
-        this.profileSearchMenu.translateY = this.profileSearchMenu.originY + this.windowHeight;
-
-    }
-
     openSearch(args){
         if(this.currIndex==0){
             let opening = new Animation([
@@ -559,6 +574,7 @@ export class ItemsComponent implements OnInit {
                 opening.play();
                 this.sideMenuView = 1;
             }else{
+                this.searchBar.dismissSoftInput();
                 closing.play();
                 this.sideMenuView = 0;
             }
@@ -583,6 +599,7 @@ export class ItemsComponent implements OnInit {
                 opening.play();
                 this.profileSearchMenuOn = 1;
             }else{
+                this.profileSearchBar.dismissSoftInput();
                 closing.play();
                 this.profileSearchMenuOn = 0;
             }
@@ -611,8 +628,72 @@ export class ItemsComponent implements OnInit {
         
     }
 
-    
 
+    //User Grid Functions
+    userGridInitialized(args){
+        this.profileSearchMenuOn = 0;
+        this.profileSearchBar = <SearchBar>this.page.getViewById('searchBarUser');
+        this.profileSearchMenu = args.object;
+        this.profileSearchMenu.translateY = this.profileSearchMenu.originY + this.windowHeight;
+    }
+
+    profileUserScrollStartedEvent(args){
+        this.profileSearchBar.dismissSoftInput();
+    }
+
+    closeUser(){
+        this.profileSearchBar.dismissSoftInput();
+        let closing = new Animation([
+            {
+                translate: { x: this.profileSearchMenu.originX, y:this.profileSearchMenu.originY + this.windowHeight },
+                scale: { x: .5, y: .5},
+                duration: 1000,
+                target: this.profileSearchMenu,
+                delay: 0,
+            }
+        ]);
+        if(this.profileSearchMenuOn==1){
+            closing.play();
+            this.profileSearchMenuOn = 0;
+        }
+    }
+
+    openUser(){
+        let opening = new Animation([
+            {
+                translate: { x: this.profileSearchMenu.originX, y: this.profileSearchMenu.originY},
+                scale: { x: 1, y: 1},
+                duration: 300,
+                target: this.profileSearchMenu,
+                delay: 0,
+            }
+        ]);
+        if(this.profileSearchMenuOn==0){
+            opening.play();
+            this.profileSearchMenuOn = 1;
+        }
+    }
+
+    onUserClear(args){
+        this.profileSearchUsers = this.itemService.allUsers;
+    }
+
+    onUserTextChanged(args){
+        var searchText = args.object.text;
+        if(searchText && searchText.length>0){
+            this.profileSearchUsers = [];
+            for(var i=0; i<this.itemService.allUsers.length;i++){
+                if(this.itemService.allUsers[i]['username'].toLowerCase().includes(searchText.toLowerCase())){
+                    this.profileSearchUsers.push(this.itemService.allUsers[i]);
+                }else if(this.itemService.allUsers[i]['first_name'].toLowerCase().includes(searchText.toLowerCase())){
+                    this.profileSearchUsers.push(this.itemService.allUsers[i]);
+                }else if(this.itemService.allUsers[i]['last_name'].toLowerCase().includes(searchText.toLowerCase())){
+                    this.profileSearchUsers.push(this.itemService.allUsers[i]);
+                }
+            }
+        }
+    }
+    
     //Likes Grid Functions
     likesGridInitialized(args){
         this.profileLikesSearchMenuOn = 0;
@@ -666,10 +747,21 @@ export class ItemsComponent implements OnInit {
         var searchText = args.object.text;
         if(searchText && searchText.length>0){
             this.searchLikes = [];
+            let lowerSearchText = searchText.toLowerCase();
             for(var i=0; i<this.userLikes.length;i++){
-                if(this.userLikes[i]['name'].search(searchText)){
-                    console.log('found')
-                    this.searchLikes.push(this.searchLikes[i]);
+                let itemName = this.userLikes[i]['name'].toLowerCase();
+                if(itemName.search(lowerSearchText)!=-1){
+                    this.searchLikes.push(this.userLikes[i]);
+                    /*let found = false;
+                    for(var k=0; k<this.searchLikes.length;k++){
+                        if(this.searchLikes[k]==this.userLikes[i]){
+                            found=true;
+                            break;
+                        }
+                    }
+                    if(found==false){
+                        this.searchLikes.push(this.userLikes[i]);
+                    }*/
                 }
             }
         }
@@ -801,15 +893,14 @@ export class ItemsComponent implements OnInit {
         var searchText = args.object.text;
         if(searchText && searchText.length>0){
             this.profileSavedSearchList = [];
-            for(var i=0; i<this.profileSavedList.length;i++){
-                if(this.profileSavedList[i]['username'].includes(searchText)){
-                    this.profileSavedSearchList.push(this.profileSavedList[i]);
-                }else if(this.profileSavedList[i]['first_name'].includes(searchText)){
-                    this.profileSavedSearchList.push(this.profileSavedList[i]);
-                }else if(this.profileSavedList[i]['last_name'].includes(searchText)){
+            let lowerSearchText = searchText.toLowerCase();
+            for(var i=0; i<this.userLikes.length;i++){
+                let itemName = this.profileSavedList[i]['name'].toLowerCase();
+                if(itemName.search(lowerSearchText)!=-1){
                     this.profileSavedSearchList.push(this.profileSavedList[i]);
                 }
             }
         }
+
     }
 }

@@ -11,7 +11,7 @@
 
 <GridLayout columns="*,*,*,*,*,*,*,*,*,*" rows="*,*,*,*,*,*,*,*,*,*">
     <StackLayout col="0" colspan="10" row=0 rowspan=10>
-        <RadListView orientation="horizontal" [items]="item.img" swipeActions="true"
+        <RadListView orientation="horizontal" [items]="item.img" swipeActions="false"
             (scrollDragEnded)="onScrollDragEnded($event)" (scrollEnded)="onScrollEnded($event)"
             width="100%" height="350">
             <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="350" itemHeight="350" [spanCount]="1"></ListViewLinearLayout>
@@ -28,7 +28,7 @@
         </StackLayout>
         <StackLayout orientation="Horizontal">
         <Button class="itemDetailButton" [text]="saved ? 'Unsave For Later' : 'Save For Later'" width="50%" margin="10 0 10 0" backgroundColor="black" height="100px" (tap)=onItemSave()></Button>
-        <Button class="itemDetailButton" text="Buy This Product" width="50%" margin="10 0 10 0" backgroundColor="blue" height="100px" [nsRouterLink]="index"></Button>
+        <Button class="itemDetailButton" text="Buy This Product" width="50%" margin="10 0 10 0" backgroundColor="blue" height="100px" [nsRouterLink]="index" [queryParams]="{ id: id}"></Button>
         </StackLayout>
     </StackLayout>
     <StackLayout col="9" row="0">

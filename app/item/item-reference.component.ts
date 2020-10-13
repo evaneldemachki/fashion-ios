@@ -10,6 +10,7 @@ import { ItemService } from "./item.service"
 })
 export class ItemReferenceComponent implements OnInit {
     item_url: string;
+    id: string;
 
     constructor( 
         private route: ActivatedRoute,
@@ -20,6 +21,14 @@ export class ItemReferenceComponent implements OnInit {
     }
     ngOnInit(): void {
         let index = this.route.snapshot.params.id;
-        this.item_url = this.itemService.getItem(index)["url"];
+        //this.item_url = this.itemService.getItem(index)["url"];
+
+        this.route.queryParams.subscribe(params => {
+            this.id = params.id;
+            this.itemService.getOne(this.id).subscribe(res => {
+                this.item_url = res["url"]
+            });
+        });
+
     }
 }
