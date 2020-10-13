@@ -13,7 +13,8 @@ export class ItemService {
     //items: Item[];
     public items = new ObservableArray();
     public search = new ObservableArray();
-    public lastSearch = "";
+    public userID = "";
+    public lastSearch = ""; 
     public limit = 500;
     public token: String;
     public userLikes = [];
@@ -26,6 +27,7 @@ export class ItemService {
     public wardrobe = [];
     public outfits = [];
     public friends = [];
+    public allUsers;
 
     constructor(private http: HttpClient) { }
 
@@ -372,6 +374,16 @@ export class ItemService {
           {headers: header, responseType: "text", observe: "response"});
     }
 
+    getAllUsers(){
+        var url = "https://fashionapi.herokuapp.com/user/search";
+        let header = {"Authorization": "Bearer " + this.token}
+        return this.http.get(
+            url, {
+                headers: header,
+                responseType: "json"
+            });
+    }
+
     searchUsers(name){
         var url = "https://fashionapi.herokuapp.com/user/search?term="+name;
         let header = {"Authorization": "Bearer " + this.token}
@@ -390,5 +402,16 @@ export class ItemService {
                 headers: header,
                 responseType: "text"
             });
+    }
+
+    getFriendData(id){
+        let body = {
+            "id": id
+        }
+        var url = "https://fashionapi.herokuapp.com/user/friend";
+        let header = {"Authorization": "Bearer " + this.token}
+        return this.http.post(
+            url, body, { headers: header, responseType: "text" }
+        );
     }
 }

@@ -6,15 +6,15 @@
     <!-- The bottom tab UI is created via TabStrip (the containier) and TabStripItem (for each tab)-->
     <TabStrip>
         <TabStripItem >
-            <Label text="Browse"></Label>
+            <Label text="Browse" class="tabMenu"></Label>
             <Image src="font://&#xf00e;" class="fas t-36"></Image>
         </TabStripItem>
         <TabStripItem class="special">
-            <Label text="Outfits"></Label>
+            <Label text="Outfits" class="tabMenu"></Label>
             <Image src="font://&#xf553;" class="fas t-36"></Image>
         </TabStripItem>
         <TabStripItem class="special">
-            <Label text="Profile"></Label>
+            <Label text="Profile" class="tabMenu"></Label>
             <Image src="font://&#xf2bd;" class="fas t-36"></Image>
         </TabStripItem>
     </TabStrip>
@@ -96,7 +96,7 @@
                     multipleSelection="false" selectionBehavior="Press" 
                     (itemSelected)="outfitCategorySelected($event)" (itemDeselected)="outfitCategoryDeselected($event)">
                     <ListViewGridLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="90" itemHeight="60" spanCount="1"></ListViewGridLayout>
-                        <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
+                    <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
                     <ng-template let-item="item" height=50>
                             <label verticalAlignment="center" textAlignment = "center" padding="20" text= {{item}} textWrap="true"></label>
                     </ng-template>
@@ -130,7 +130,7 @@
                     <Label size="16" textAlignment = "center" [text] = "outfitCostLabel"></Label>
                 </StackLayout>
                 <!--[class]="outfitTutorialHide ? 'invisible' : 'visible'"-->
-                <Label row="1" rowspan="2" col="4" colspan="8" [class]="outfitTutorialHide ? 'invisible Tutorials' : 'visible Tutorials'" style="font-size: 12; padding-top: 10;" textAlignment="center" textWrap="true" text="Tap your clothes, build your perfect outfit"></Label>
+                <Label row="1" rowspan="2" col="4" colspan="8" [class]="outfitTutorialHide ? 'invisible Tutorials' : 'visible Tutorials'" style="font-size: 12; padding-top: 10; color: white;" textAlignment="center" textWrap="true" text="Tap your clothes, build your perfect outfit"></Label>
 
             </GridLayout>
         </StackLayout>
@@ -142,7 +142,7 @@
             <StackLayout row="0">
                 <Image [src] = "userIcon" height="70%" width = "70%"></Image>
                 <GridLayout columns="*,*,*,*,*">
-                    <button col="0" colspan="2" width="100%" text="See Top Outfits" (tap)="browseTopOutfits()"></button>
+                    <button col="0" colspan="2" width="100%" text="Logout" (tap)="Logout()"></button>
                     <button col="3" colspan="2" width="100%" text="Friends" (tap)="openFriend()" ></button>
                 </GridLayout>
             </StackLayout>    
@@ -150,8 +150,8 @@
                 <StackLayout>
                         <Button class="profile" textAlignment = "center" text="My Liked" (tap)="openLikes()"></Button>
                         <RadListView height ="200" row="0" orientation="horizontal" [items]="userLikes" margin-left = "2" margin-right="2">
-                            <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal"></ListViewLinearLayout>
-                            <ng-template let-item="item" let-index="index">
+                            <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="125"></ListViewLinearLayout>
+                            <ng-template let-item="item" let-index="index" >
                                 <StackLayout [nsRouterLink]="['detail', index]" 
                                 [queryParams]="{ source: 'userLikes', liked: true, disliked: false }">
                                     <Image [src]="item.img[0]" height="80%" width = "80%" ios:stretch="aspectFill"></Image>
@@ -161,7 +161,7 @@
                         </RadListView>
                         <Button text = "Saved for later" (tap)="openSaved()"></Button>
                         <RadListView height ="200" row="0" orientation="horizontal" [items]="userSaved" margin-left = "2" margin-right="2">
-                            <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal"></ListViewLinearLayout>
+                            <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="125"></ListViewLinearLayout>
                             <ng-template let-item="item" let-index="index">
                                 <StackLayout [nsRouterLink]="['detail', index]" 
                                 [queryParams]="{ source: 'userSaved', saved: true }">
@@ -186,28 +186,27 @@
             </ScrollView>
 
             <!--Profile Search Menu-->
-            <GridLayout row="0" rowspan="3" id="profileSearch" rows="*,*,*,*,*,*,*,*,*,*" (loaded)="profileSearchLoaded($event)" style="background-color: rgba(59, 59, 59, .8); margin-right: 5;">
-                <RadListView row="1" rowspan="10" orientation="vertical" [items]="items"
-                    width="100%" height="100%" (scrolled)="profileScrollStartedEvent($event)" loadOnDemandMode="Auto" (loadMoreDataRequested)="onLoadMoreItemsRequested($event)" loadOnDemandBufferSize="1"
-                    id="listView" selectionBehavior="None">
-                    <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
-                    <ng-template horizontalAlignment="center" let-item="item" let-index="index" >
-                        <GridLayout style="background-image: ~/item/backgroundShadow.png;" [class] = "itemsLiked[index] ? 'likedBackground' : 'dislikedBackground'">
-                            <GridLayout columns="*,*,*" [nsRouterLink]="['detail', index]" 
-                            [queryParams]="{ source: 'itemsShown', liked: itemsLiked[index], disliked: itemsDisliked[index], saved: itemsSaved[index]}" 
-                            padding="0 0 0 0" >
-                                <Image colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
-                                <StackLayout column="2" style="padding-right:2;">
-                                    <Label [class]="itemsLiked[index] ? 'far t-36' : 'invisible'" style="color: green;" text="&#xf004;" ></Label>
-                                    <Label [class]="itemsSaved[index] ? 'far t-36' : 'invisible'" style="color: green;" text="&#xf0c7;" ></Label>
-                                </StackLayout>
-                            </GridLayout>
-                        </GridLayout>
-                    </ng-template>
+            <GridLayout class="popUpMenu" row="0" rowspan="3" id="profileSearch" rows="*,*,*,*,*,*,*,*,*,*" (loaded)="userGridInitialized($event)" style="background-color: rgba(59, 59, 59, .8); margin-right: 5;">
+                <RadListView id="Main" column="0" colspan="5" row="1" rowspan="10" [items]="profileSearchUsers" orientation="Vertical" height=100%
+                        multipleSelection="false" selectionBehavior="Press" (scrolled)="profileUserScrollStartedEvent($event)"
+                        (itemDeselected)="categoryDeselected($event)">
+                            <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" itemWidth="350" itemHeight="95" spanCount="1"></ListViewGridLayout>
+                                <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
+                            <ng-template let-item="item" let-index="index" horizontalAlignment="center">
+                                <GridLayout id="userList" columns="*,*,*,*,*,*" rows="*,*" [nsRouterLink]="['user']" [queryParams]="{ source: 'search', id: profileSearchUsers[index]['_id']}" style="margin-top: 10; margin-left: 15;">
+                                    <StackLayout orientation="horizontal" row="0" column="0" colspan="3" >
+                                    <label class="userListText" textAlignment = "left" [text]="'@' + item.username"></label>
+                                    </StackLayout>
+                                    <StackLayout row="1" column="0" colspan="3" orientation="horizontal">
+                                        <label class="userListText"  [text]="item.first_name + ' ' + item.last_name" textAlignment = "left"></label>
+                                    </StackLayout>
+                                    <Button text="Friend" row="0" rowspan="2" column="4" colspan="2" style="background-color: white; color: black;"></Button>
+                                </GridLayout>
+                            </ng-template>
                 </RadListView>
 
-                <SearchBar id="searchBarProfile" row=0 hint="Search for Users, Tags, Clothes ..." (textChange)="onTextChanged($event)" color="Black" textFieldHintColor="red" style="background-color: rgba(59, 59, 59, 0.836);"
-                    [text]="searchPhrase" (clear)="onClear($event)" (submit)="onSubmit($event)">
+                <SearchBar id="searchBarUser" row=0 hint="Search for Users, Tags, Clothes ..." (textChange)="onUserTextChanged($event)" color="Black" textFieldHintColor="red" style="background-color: rgba(59, 59, 59, 0.836);"
+                    [text]="searchPhrase" (clear)="onUserClear($event)" submit="onSubmit($event)">
                 </SearchBar>
             </GridLayout>
 
@@ -219,7 +218,7 @@
                     <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
                     <ng-template horizontalAlignment="center" let-item="item" let-index="index">
                         <GridLayout style="background-image: ~/item/backgroundShadow.png;" [nsRouterLink]="['detail', index]" 
-                        [queryParams]="{ source: 'userLikes', liked: true, disliked: false }" >
+                        [queryParams]="{ source: 'userLikes', liked: true, disliked: false, id: searchLikes[index]['_id'] }" >
                             <GridLayout columns="*,*,*" padding="0 0 0 0" >
                                 <Image colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
                             </GridLayout>
@@ -244,7 +243,7 @@
                             <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" itemWidth="350" itemHeight="95" spanCount="1"></ListViewGridLayout>
                                 <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
                             <ng-template let-item="item" let-index="index" horizontalAlignment="center">
-                                <GridLayout id="userList" columns="*,*,*,*,*,*" rows="*,*" [queryParams]="{ source: 'friends', id: profileFriendsSearchUsers[index]['_id']}" style="margin-top: 10; margin-left: 15;">
+                                <GridLayout id="userList" columns="*,*,*,*,*,*" rows="*,*" [nsRouterLink]="['user']" [queryParams]="{ source: 'friends', id: profileFriendsSearchUsers[index]['_id']}" style="margin-top: 10; margin-left: 15;">
                                     <StackLayout orientation="horizontal" row="0" column="0" colspan="3" >
                                     <label class="userListText" textAlignment = "left" [text]="'@' + item.username"></label>
                                     </StackLayout>
@@ -269,7 +268,7 @@
                     <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
                     <ng-template horizontalAlignment="center" let-item="item" let-index="index">
                         <GridLayout style="background-image: ~/item/backgroundShadow.png;" [nsRouterLink]="['detail', index]" 
-                        [queryParams]="{ source: 'userSaved'}" >
+                        [queryParams]="{ source: 'userSaved', id: profileSavedSearchList[index]['_id']}" >
                             <GridLayout columns="*,*,*" padding="0 0 0 0" >
                                 <Image colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
                             </GridLayout>

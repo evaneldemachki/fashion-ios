@@ -42,13 +42,15 @@ export class userComponent implements OnInit {
 
         this.route.queryParams.subscribe(params => {
             this.source = params.source;
-            this.id = params.index;
+            this.id = params.id;
             if(this.source == "friends") {
-                this.user = this.itemService.search.getItem(this.id);
-                this.username = this.user.username;
-                this.fullname = this.user.first_name + ' ' + this.user.last_name
+                this.user = this.itemService.getFriendData(this.id);
+                console.log(this.user)
+                this.username = this.user['username'];
+                this.fullname = this.user['first_name'] + ' ' + this.user['last_name']
             } 
         });
+        console.log(this.user)
     }
 
     start(args){
