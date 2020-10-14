@@ -21,7 +21,7 @@
 
     <!--Main Feed-->
     <TabContentItem>
-        <GridLayout rows="*,*,*,*,*,*,*,*,*,*,*" columns="*,*,*,*,*,*,*,*,*,*">
+        <GridLayout rows="*,*,*,*,*,*,*,*,*,*,*" columns="*,*,*,*,*,*,*,*,*,*" class="mainView">
             <ListPicker class="picker" style="visibility: collapse;"
             [items]="categories">
             </ListPicker>
@@ -32,18 +32,22 @@
             itemSwipeProgressEnded="onSwipeCellFinished($event)"
             itemSwipeProgressStarted="onSwipeCellStarted($event)" 
             (itemSwiping)="onItemSwiping" >
-                <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
+                <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="240"></ListViewGridLayout>
                 <ng-template horizontalAlignment="center" let-item="item" let-index="index" >
-                    <GridLayout style="background-image: ~/item/backgroundShadow.png;" [class] = "itemsLiked[index] ? 'likedBackground' : 'dislikedBackground'">
-                    <GridLayout columns="*,*,*" (doubleTap)="fashionItemInit(index)" loaded="fashionItemInit($event, index)" [nsRouterLink]="['detail', index]" 
-                    [queryParams]="{ source: 'itemsShown', liked: itemsLiked[index], disliked: itemsDisliked[index], saved: itemsSaved[index]}" 
-                    padding="0 0 0 0" >
-                        <Image colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
-                        <StackLayout column="2" style="padding-right:2;">
-                        <Label [class]="itemsLiked[index] ? 'far t-36' : 'invisible'" style="color: green;" text="&#xf004;" ></Label>
-                        <Label [class]="itemsSaved[index] ? 'far t-36' : 'invisible'" style="color: green;" text="&#xf0c7;" ></Label>
-                        </StackLayout>
+                <GridLayout rows="*, 20, 20" columns="*,*,*" class="cardView" (doubleTap)="fashionItemInit(index)">
+                    <GridLayout row=0 column=0 colspan=3>
+                        <GridLayout columns="*,*,55" loaded="fashionItemInit($event, index)" [nsRouterLink]="['detail', index]" 
+                        [queryParams]="{ source: 'itemsShown', liked: itemsLiked[index], disliked: itemsDisliked[index], saved: itemsSaved[index]}" 
+                        padding="0 0 0 0" >
+                            <Image colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
+                            <StackLayout column="2" style="padding-left: 0;">
+                                <Label [class]="itemsLiked[index] ? 'far t-36' : 'invisible'" style="color: green;" text="&#xf004;" ></Label>
+                                <Label [class]="itemsSaved[index] ? 'far t-36' : 'invisible'" style="color: green;" text="&#xf0c7;" ></Label>
+                            </StackLayout>
+                        </GridLayout>
                     </GridLayout>
+                    <Label class="mainViewText" [text]="item.name" row=1 rowspan=2 column=0 colspan=2 textWrap="true"></Label>
+                    <Label class="mainViewText" [text]="item.source" style="font-weight:bold;" row=1 rowspan=2 column=3 textWrap="true" verticalAlignment="top" horizontalAlignment="right"></Label>
                 </GridLayout>
                 </ng-template>
             </RadListView>
@@ -64,7 +68,7 @@
            
 
             <!--Sidebar Menu-->
-            <GridLayout (loaded)="menuLoaded($event)" row=0 rowspan=12 column=5 colspan=5 style="background-color: gray; padding-top:5;" rows="*,*,*,*,*,*,*,*,*,*" columns="*,*,*,*,*,*,*,*,*,*,*,*,*">
+            <GridLayout (loaded)="menuLoaded($event)" row=0 rowspan=12 column=5 colspan=5 style="background-color: gray; margin-top:-5;" rows="*,*,*,*,*,*,*,*,*,*" columns="*,*,*,*,*,*,*,*,*,*,*,*,*">
                     <SearchBar id="searchBar" class="searchMenu" hint="Search for items ..." (textChange)="onTextChanged($event)"
                     [text]="searchPhrase" (clear)="onClear($event)" (submit)="onSubmit($event)" row=0 column=0 colspan=14>
                     </SearchBar>
@@ -137,6 +141,8 @@
 
     <!--Profile Screen-->
     </TabContentItem>
+    
+    <!--Profile-->
     <TabContentItem>
         <Gridlayout padding="2 0 2 2" rows = "*,*,*" id="accountMenu" margin="0"> 
             <StackLayout row="0">

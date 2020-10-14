@@ -22,7 +22,7 @@
                     </ng-template>
                 </RadListView>
                 <Button text = "Their Outfits"></Button>
-                <RadListView height ="200" row="0" orientation="horizontal" [items]="myOutfits" margin-left = "2" margin-right="2">
+                <RadListView height ="200" row="0" orientation="horizontal" [items]="userOutfits" margin-left = "2" margin-right="2">
                     <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="200" itemHeight="200" ></ListViewLinearLayout>
                     <ng-template let-item="item" let-index="index">
                         <GridLayout rows="*,*" columns="*,*" [nsRouterLink]="['outfit']" [queryParams]="{ outfit: index}">
@@ -36,5 +36,54 @@
         </StackLayout>
     </ScrollView>
 
+    <!--Search Friends Likes-->
+    <GridLayout class="popUpMenu"row="0" rowspan="3" id="profileLikesSearch" rows="*,*,*,*,*,*,*,*,*,*" columns = "*,*,*,*,*,*,*,*,*,*" (loaded)="likesGridInitialized($event)">
+        <RadListView row="1" rowspan="10" column="0" colspan="10" orientation="vertical" [items]="searchLikes"
+        width="100%" height="100%" (scrolled)="profileLikesScrollStartedEvent($event)"
+        id="listView" selectionBehavior="None">
+            <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
+            <ng-template horizontalAlignment="center" let-item="item" let-index="index">
+                <GridLayout style="background-image: ~/item/backgroundShadow.png;" [nsRouterLink]="['detail', index]" 
+                [queryParams]="{ source: 'userLikes', liked: true, disliked: false, id: searchLikes[index]['_id'] }" >
+                    <GridLayout columns="*,*,*" padding="0 0 0 0" >
+                        <Image colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
+                    </GridLayout>
+                    <GridLayout style="background-color: rgba(255, 255, 255, 0.685); border-radius: 80%; border: 2" height="40">
+                        <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true" style="color: black;"></Label>
+                    </GridLayout>
+                </GridLayout>
+            </ng-template>
+        </RadListView>
+
+        <SearchBar class="popUpMenu" id="searchBarLikesProfile" row=0 column="2" colspan="10" hint="Search through likes ..." (textChange)="onLikeTextChanged($event)" color="Black" textFieldHintColor="red" style="background-color: rgba(59, 59, 59, .8);"
+            [text]="searchPhrase" (clear)="onLikesClear($event)" submit="onSubmit($event)">
+        </SearchBar>
+        <Label id="closeLikesIcon" row="0" column="0" colspan="2" class="far t-36" style="padding: 10; padding-left: 20; color: black;" text="&#xf057;" (tap)="closeLikes()"></Label>
+    </GridLayout>
+
+    <!--Profile Search Friends-->
+    <GridLayout class="friendsListGrid popUpMenu" id="profileFriends" row="0" rowspan="3" columns="*,*,*,*,*" rows="*,*,*,*,*,*,*,*,*,*" (loaded)="friendGridInitialized($event)">
+        <RadListView id="Main" column="0" colspan="5" row="1" rowspan="10" [items]="profileFriendsSearchUsers" orientation="Vertical" height=100%
+                multipleSelection="false" selectionBehavior="Press" (scrolled)="friendsScrollStartedEvent($event)"
+                (itemDeselected)="categoryDeselected($event)">
+                    <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" itemWidth="350" itemHeight="95" spanCount="1"></ListViewGridLayout>
+                        <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
+                    <ng-template let-item="item" let-index="index" horizontalAlignment="center">
+                        <GridLayout id="userList" columns="*,*,*,*,*,*" rows="*,*" [nsRouterLink]="['user']" [queryParams]="{ source: 'friends', id: profileFriendsSearchUsers[index]['_id']}" style="margin-top: 10; margin-left: 15;">
+                            <StackLayout orientation="horizontal" row="0" column="0" colspan="3" >
+                            <label class="userListText" textAlignment = "left" [text]="'@' + item.username"></label>
+                            </StackLayout>
+                            <StackLayout row="1" column="0" colspan="3" orientation="horizontal">
+                                <label class="userListText"  [text]="item.first_name + ' ' + item.last_name" textAlignment = "left"></label>
+                            </StackLayout>
+                            <Button text="Friend" row="0" rowspan="2" column="4" colspan="2" style="background-color: white; color: black;"></Button>
+                        </GridLayout>
+                    </ng-template>
+        </RadListView>
+        <SearchBar id="searchBarFriends" row="0" column="1" colspan="5" hint="Search for Users ..." loaded="searchStart($event)" (textChange)="onFriendTextChanged($event)"
+        [text]="searchPhrase" (clear)="onFriendClear($event)" submit="onSubmit($event)" style="padding-left: 30;">
+        </SearchBar>
+        <Label id="closeFriendIcon" row="0" column="0" class="far t-36" style="padding: 10; padding-left: 20; color: black;" text="&#xf057;" (tap)="closeFriend()"></Label>
+    </GridLayout>
 
 </Gridlayout>
