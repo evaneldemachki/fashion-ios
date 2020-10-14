@@ -48,13 +48,24 @@ export class ItemDetailComponent implements OnInit {
 
         this.route.queryParams.subscribe(params => {
             // convert string parameters to boolean:
-            this.liked = (params.liked == "true");
-            this.disliked = (params.disliked == "true");
-            this.saved = (params.saved == "true");
+            //this.liked = (params.liked == "true");
+            //this.disliked = (params.disliked == "true");
+            //this.saved = (params.saved == "true");
             this.source = params.source;
-                        
+
             if(this.source == "itemsShown") {
                 this.item = <Item>this.itemService.itemsShown.getItem(i);
+                for(var j=0;j<this.itemService.userLikes.length;j++){
+                    if(this.itemService.userLikes[j]['_id']==this.item['_id']){
+                        this.liked=true;
+                    }
+                }
+
+                for(var j=0;j<this.itemService.userSaved.length;j++){
+                    if(this.itemService.userSaved[j]['_id']==this.item['_id']){
+                        this.saved = true;  
+                    }
+                }
             } else if(this.source == "userLikes") {
                 if(this.id){
                     this.itemService.getOne(this.id).subscribe(res => {
@@ -63,6 +74,13 @@ export class ItemDetailComponent implements OnInit {
                 }else{
                     this.item = <Item>this.itemService.userLikes[i];
                 }
+
+                for(var j=0;j<this.itemService.userLikes.length;j++){
+                    if(this.itemService.userLikes[j]['_id']==this.item['_id']){
+                        this.liked=true;
+                    }
+                }
+
                 for(var j=0;j<this.itemService.userSaved.length;j++){
                     if(this.itemService.userSaved[j]['_id']==this.item['_id']){
                         this.saved = true;  
@@ -76,16 +94,19 @@ export class ItemDetailComponent implements OnInit {
                 }else{
                     this.item = <Item>this.itemService.userSaved[i];
                 }
+
                 for(var j=0;j<this.itemService.userLikes.length;j++){
                     if(this.itemService.userLikes[j]['_id']==this.item['_id']){
                         this.liked=true;
                     }
                 }
-                for(var j=0;j<this.itemService.userDislikes.length;j++){
-                    if(this.itemService.userDislikes[j]['_id']==this.item['_id']){
-                        this.disliked = true;
+
+                for(var j=0;j<this.itemService.userSaved.length;j++){
+                    if(this.itemService.userSaved[j]['_id']==this.item['_id']){
+                        this.saved = true;  
                     }
                 }
+            
             }
         });
         this.id = this.item['_id']

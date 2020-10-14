@@ -13,7 +13,9 @@ export class ItemService {
     //items: Item[];
     public items = new ObservableArray();
     public search = new ObservableArray();
-    public userID = "";
+    public userId = "";
+    public userName = "";
+    public userFullname = "";
     public lastSearch = ""; 
     public limit = 500;
     public token: String;
@@ -411,7 +413,7 @@ export class ItemService {
         var url = "https://fashionapi.herokuapp.com/user/friend";
         let header = {"Authorization": "Bearer " + this.token}
         return this.http.post(
-            url, body, { headers: header, responseType: "text" }
+            url, body, { headers: header, responseType: "json" }
         );
     }
 }

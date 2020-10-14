@@ -6,7 +6,7 @@
 }
 
 #accountMenu {
-    background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
+    background-image: linear-gradient(to top, white 0%, black 100%);
 }
 
 .TileBackground {
@@ -179,6 +179,8 @@ Button {
 
 #StyleImage{
     border-radius:50%;
+    border-width: 2;
+    border-color: black;
 }
 
 #radListSelected{
@@ -207,6 +209,14 @@ Button {
     font-size: 15;
 }
 
+.ns-light .mainViewText{
+    color: black;
+}
+
+.ns-dark .mainViewText{
+    color: white;
+}
+
 SearchBar{
     border-width:3;
     border-radius:10%;
@@ -222,5 +232,47 @@ SearchBar{
 
 .tabMenu{
     color:white;
+}
+
+.ns-light .mainView{
+    background-color: rgb(117, 117, 117);
+}
+
+.ns-dark .mainView{
+    background-color: rgb(117, 117, 117);
+}
+
+.ns-light .cardView{
+    outline-width: 10;
+    outline-color: black;
+    border-width: 10; 
+    border-top-right-radius: 20%;
+    border-bottom-right-radius: 20%;
+
+    border-right-color:rgba(109, 109, 109, 0);
+    border-left-color:rgba(109, 109, 109, 0);
+    
+    border-bottom-color:rgba(109, 109, 109, 0.486);
+    border-top-color:rgba(109, 109, 109, 0.486);
+
+    background-color: rgb(180, 180, 180);
+    margin:5px;
+
+}
+
+.ns-dark .cardView{
+    outline-width: 10;
+    outline-color: black;
+    border-width: 10; 
+    border-top-right-radius: 20%;
+    border-bottom-left-radius: 20%;
+        
+    border-top-color:rgba(109, 109, 109, 0.486);
+    border-bottom-color:rgba(109, 109, 109, 0.486);
+
+    border-right-color:rgb(46, 46, 46);
+    background-color: rgb(46, 46, 46);
+    margin:5px;
+
 }
 

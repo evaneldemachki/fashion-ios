@@ -21,6 +21,8 @@ import { PanGestureEventData, GestureStateTypes } from "tns-core-modules/ui/gest
 import { GestureTypes, GestureEventData } from "tns-core-modules/ui/gestures";
 import { ActivatedRoute } from "@angular/router";
 import { Image } from "tns-core-modules/ui/image";
+import { isIOS } from "tns-core-modules/platform";
+import { Color } from "tns-core-modules/color";
 
 import { Button } from "tns-core-modules/ui/button";
 import { ShowModalOptions } from "tns-core-modules/ui/core/view";
@@ -170,18 +172,19 @@ export class ItemsComponent implements OnInit {
         let input = { "token": this.token };
         this.itemService.getUserData(input).subscribe(res => {
             //this.itemService.userID = res['username']
-            console.log(res['_id'])
+            this.itemService.userId = res['_id'];
+            this.itemService.userName = res['username'];
+            this.itemService.userFullname = res['first_name'] + ' ' + res['last_name'];
+
             this.userLikes = res['likes'];
             this.userLikes.reverse();
             this.searchLikes = this.userLikes;
             this.userDislikes = res['dislikes'];
             this.userIcon = res['img'];
-
             this.userSaved = res['wardrobe']
             this.userSaved.reverse();
             this.profileSavedList = this.userSaved;
             this.profileSavedSearchList = this.profileSavedList;
-
             this.outfitCreaterList = this.userSaved;
             this.myOutfits = res['outfits']
             this.itemService.outfits = this.myOutfits;
@@ -194,9 +197,8 @@ export class ItemsComponent implements OnInit {
 
         this.itemService.getAllUsers().subscribe(res => {
             this.itemService.allUsers = res;
-            console.log(this.itemService.userID)
             for(var i =0; i<this.itemService.allUsers.length;i++){
-                if(this.itemService.allUsers[i]['username']==this.itemService.userID){
+                if(this.itemService.allUsers[i]['_id']==this.itemService.userId){
                     console.log("found user")
                     this.itemService.allUsers.splice(i,1);
                 }
@@ -628,6 +630,17 @@ export class ItemsComponent implements OnInit {
         
     }
 
+    fashionItemBorder(args: EventData){
+        const view = args.object as View;
+        if (isIOS) {
+            const iosUIView = view.ios as UIView;
+            iosUIView.layer.shadowColor = UIColor.blackColor.CGColor;
+            //iosUIView.layer.shadowOpacity = .5;
+            //iosUIView.layer.shadowRadius = 20;
+            //iosUIView.layer.shadowOffset = CGSizeMake(10, 10);
+        }
+    }
+
 
     //User Grid Functions
     userGridInitialized(args){
@@ -780,7 +793,7 @@ export class ItemsComponent implements OnInit {
     }
 
     friendsScrollStartedEvent(args){
-        this.searchBar.dismissSoftInput();
+        this.profileFriendsSearchBar.dismissSoftInput();
     }
 
     closeFriend(){
