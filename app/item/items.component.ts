@@ -782,7 +782,7 @@ export class ItemsComponent implements OnInit {
 
     //Friends Grid Functions
     friendGridInitialized(args){
-        this.profileLikesSearchMenuOn = 0;
+        this.profileFriendsGridOn = 0;
         this.profileFriendsSearchBar = this.page.getViewById('searchBarFriends');
         this.profileFriendsGrid = <GridLayout>this.page.getViewById('profileFriends');
 
