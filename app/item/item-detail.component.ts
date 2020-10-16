@@ -125,6 +125,7 @@ export class ItemDetailComponent implements OnInit {
                 }
             
             }
+            this.id = this.item['_id']
         });
 
 
