@@ -10,27 +10,23 @@
 </ActionBar>
 
 <GridLayout columns="*,*,*,*,*,*,*,*,*,*" rows="*,*,*,*,*,*,*,*,*,*">
-    <StackLayout col="0" colspan="10" row=0 rowspan=10>
-        <RadListView orientation="horizontal" [items]="item.img" swipeActions="false"
-            (scrollDragEnded)="onScrollDragEnded($event)" (scrollEnded)="onScrollEnded($event)"
-            width="100%" height="350">
-            <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="350" itemHeight="350" [spanCount]="1"></ListViewLinearLayout>
-            <ng-template let-img="item">
-                <StackLayout>
-                    <Image [src]="img" height="350" ios:stretch="aspectFill"></Image>
-                </StackLayout>
-            </ng-template>
-        </RadListView>
-        <Label class="h1" width="100%" [text]="item.source" textWrap="false"></Label>
-        <StackLayout orientation="horizontal">
-            <Label [text]="item.name" class="listing-left" textAlignment="left" textWrap="true"></Label>
-            <Label [text]="'$' + item.price" class="listing-right" textAlignment="center" textWrap="true"></Label>
-        </StackLayout>
-        <StackLayout orientation="Horizontal">
-        <Button class="itemDetailButton" [text]="saved ? 'Unsave For Later' : 'Save For Later'" width="50%" margin="10 0 10 0" backgroundColor="black" height="100px" (tap)=onItemSave()></Button>
-        <Button class="itemDetailButton" text="Buy This Product" width="50%" margin="10 0 10 0" backgroundColor="blue" height="100px" [nsRouterLink]="index" [queryParams]="{ id: id}"></Button>
-        </StackLayout>
-    </StackLayout>
+    <RadListView row="0" rowspan="6" column="0" colspan="10" orientation="horizontal" [items]="item.img" swipeActions="false"
+        (scrollDragEnded)="onScrollDragEnded($event)" (scrollEnded)="onScrollEnded($event)"
+        width="100%" height="350">
+        <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="350" itemHeight="350" [spanCount]="1"></ListViewLinearLayout>
+        <ng-template let-img="item">
+            <StackLayout>
+                <Image [src]="img" height="350" ios:stretch="aspectFill"></Image>
+            </StackLayout>
+        </ng-template>
+    </RadListView>
+    <GridLayout class="itemDetailInfo" row="6" rowspan="3" column="0" colspan="10" orientation="horizontal" rows="*,*,*,*" columns="*,*,*,*,*">
+        <Label row="0" rowspan="2" column="0" colspan="3" class="h1" width="100%" [text]="item.source" textWrap="false"></Label>
+        <Label row="1" rowspan="2" column="0" colspan="3" [text]="item.name" class="listing-left" textAlignment="left" textWrap="true"></Label>
+        <Label row="1" rowspan="2" column="3" colspan="2" [text]="'$' + item.price" class="listing-right" textAlignment="center" textWrap="true" style="font-size: 20;"></Label>
+    </GridLayout>
+    <Button row="8" rowspan="2" column="0" colspan="5"  class="itemDetailButton" [text]="saved ? 'Unsave For Later' : 'Save For Later'" backgroundColor="black" (tap)=onItemSave()></Button>
+    <Button row="8" rowspan="2" column="5" colspan="5" class="itemDetailButton" text="Buy This Product" backgroundColor="blue" [nsRouterLink]="index" [queryParams]="{ id: id}"></Button>
     <StackLayout col="9" row="0">
         <Label [class]="saved ? 'far t-36' : 'invisible'" style="color: green;" text="&#xf0c7;" horizontalAlignment="center"></Label>
     </StackLayout>

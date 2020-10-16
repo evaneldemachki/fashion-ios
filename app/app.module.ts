@@ -6,6 +6,8 @@ import { AppComponent } from "./app.component";
 import { LoginComponent } from "./login.component";
 import { NativeScriptFormsModule } from "@nativescript/angular/forms";
 import { userComponent } from "./item/user";
+import { NgShadowModule } from 'nativescript-ng-shadow';
+
 
 //import { ItemsComponent } from "./item/items.component";
 //import { ItemDetailComponent } from "./item/item-detail.component";

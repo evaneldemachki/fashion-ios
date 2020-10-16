@@ -32,6 +32,7 @@ import { Animation } from "tns-core-modules/ui/animation";
 import { screen } from "tns-core-modules/platform/platform";
 import { Vibrate } from 'nativescript-vibrate';
 
+
 @Component({
     selector: "ns-items",
     moduleId: module.id,
@@ -66,22 +67,35 @@ export class ItemsComponent implements OnInit {
     public profileSearchMenuOn = 0;
     public profileSearchUsers = [];
 
-    public profileLikesSearchMenu: GridLayout;
-    public profileLikesSearchBar: SearchBar;
-    public profileLikesSearchMenuOn = 0;
-    public searchLikes = [];
-
     public profileFriendsSearchBar: SearchBar;
     public profileFriendsGrid: GridLayout;
     public profileFriendsGridOn = 0;
     public profileFriendsSearchUsers = [];
     public profileFriendsList = [];
 
+    public profileLikesSearchMenu: GridLayout;
+    public profileLikesSearchBar: SearchBar;
+    public profileLikesSearchMenuOn = 0;
+    public searchLikes = [];
+    public profileLikesSearchText="";
+    public profileLikesCategoryIndex=0;
+
     public profileSavedSearchBar: SearchBar;
     public profileSavedGrid: GridLayout;
     public profileSavedGridOn = 0;
-    public profileSavedSearchList = [];
+    public searchSaved = [];
     public profileSavedList = [];
+    public profileSavedSearchText="";
+    public profileSavedCategoryIndex=0;
+
+
+    public shareGrid: GridLayout;
+    public shareGrid2: GridLayout;
+    public shareGrid3: GridLayout;
+    public shareOn = 0;
+    public shareOn2 = 0;
+    public shareOn3 = 0;
+    public shareIcon: Image;
     
     public windowHeight = screen.mainScreen.heightPixels;
     public windowWidth = screen.mainScreen.widthPixels;
@@ -168,6 +182,10 @@ export class ItemsComponent implements OnInit {
    
     }
 
+    buttonLoaded(){
+        console.log("BUTTON LOADED");
+    }
+
     loadUserData() {
         let input = { "token": this.token };
         this.itemService.getUserData(input).subscribe(res => {
@@ -184,7 +202,7 @@ export class ItemsComponent implements OnInit {
             this.userSaved = res['wardrobe']
             this.userSaved.reverse();
             this.profileSavedList = this.userSaved;
-            this.profileSavedSearchList = this.profileSavedList;
+            this.searchSaved = this.profileSavedList;
             this.outfitCreaterList = this.userSaved;
             this.myOutfits = res['outfits']
             this.itemService.outfits = this.myOutfits;
@@ -478,22 +496,24 @@ export class ItemsComponent implements OnInit {
     }
 
     saveOutfit(args){
-        let ids = [];
-        for(let i =0;i<this.currentlyChosen.length;i++){
-            ids.push(this.currentlyChosen[i]['_id']);
-        }
-        console.log(ids)
-        let input = { "items": ids }
-        let newID = "";
-        this.itemService.addOutfit(input).subscribe((res) =>{
-            newID = res['outfitID'];
-        });
-        this.myOutfits.push(ids)
-        this.currentlyChosen=[];
-        let vibrator = new Vibrate();
-        vibrator.vibrate(50);
+        if(this.currentlyChosen.length>0){
+            let ids = [];
+            for(let i =0;i<this.currentlyChosen.length;i++){
+                ids.push(this.currentlyChosen[i]['_id']);
+            }
+            console.log(ids)
+            let input = { "items": ids }
+            let newID = "";
+            this.itemService.addOutfit(input).subscribe((res) =>{
+                newID = res['outfitID'];
+            });
+            this.myOutfits.push(ids)
+            this.currentlyChosen=[];
+            let vibrator = new Vibrate();
+            vibrator.vibrate(50);
 
-        console.log(newID);
+            console.log(newID);
+        }
     }
 
     updateOutfit(args){
@@ -552,6 +572,7 @@ export class ItemsComponent implements OnInit {
 
     indexChanged(args){
         this.currIndex = args.newIndex;
+        
     }
 
     openSearch(args){
@@ -641,6 +662,125 @@ export class ItemsComponent implements OnInit {
         }
     }
 
+    shareLoaded(args){
+        this.shareOn = 0;
+        this.shareGrid = args.object;
+        this.shareGrid.translateX = this.shareGrid.originX - this.windowWidth;        
+    }
+
+    shareLoaded2(args){
+        this.shareOn2 = 0;
+        this.shareGrid2 = args.object;
+        this.shareGrid2.translateX = this.shareGrid2.originX - this.windowWidth;        
+    }
+
+    shareLoaded3(args){
+        this.shareOn3 = 0;
+        this.shareGrid3 = args.object;
+        this.shareGrid3.translateX = this.shareGrid3.originX - this.windowWidth;        
+    }
+
+    onShare(){
+        console.log(this.currIndex)
+        if(this.currIndex==0){
+            this.onShare1();
+        }else if(this.currIndex==1){
+            this.onShare2();
+        }else if(this.currIndex==2){
+            this.onShare3();
+        }
+    }
+
+    onShare1(){
+        let closing = new Animation([
+            {
+                translate: { x: this.shareGrid.originX - this.windowWidth, y:this.shareGrid.originY },
+                scale: { x: .5, y: .5},
+                duration: 1000,
+                target: this.shareGrid,
+                delay: 0,
+            }
+        ]);
+        let opening = new Animation([
+            {
+                translate: { x: this.shareGrid.originX, y: this.shareGrid.originY},
+                scale: { x: 1, y: 1},
+                duration: 300,
+                target: this.shareGrid,
+                delay: 0,
+            }
+        ]);
+        if(this.shareOn==0){
+            opening.play();
+            this.shareOn = 1;
+        }else{
+            closing.play();
+            this.shareOn = 0;
+        }
+    }
+
+    onShare2(){
+        let closing = new Animation([
+            {
+                translate: { x: this.shareGrid2.originX - this.windowWidth, y:this.shareGrid2.originY },
+                scale: { x: .5, y: .5},
+                duration: 1000,
+                target: this.shareGrid2,
+                delay: 0,
+            }
+        ]);
+        let opening = new Animation([
+            {
+                translate: { x: this.shareGrid2.originX, y: this.shareGrid2.originY},
+                scale: { x: 1, y: 1},
+                duration: 300,
+                target: this.shareGrid2,
+                delay: 0,
+            }
+        ]);
+        if(this.shareOn2==0){
+            opening.play();
+            this.shareOn2 = 1;
+        }else{
+            closing.play();
+            this.shareOn2 = 0;
+        }
+    }
+
+    onShare3(){
+        let closing = new Animation([
+            {
+                translate: { x: this.shareGrid3.originX - this.windowWidth, y:this.shareGrid3.originY },
+                scale: { x: .5, y: .5},
+                duration: 1000,
+                target: this.shareGrid3,
+                delay: 0,
+            }
+        ]);
+        let opening = new Animation([
+            {
+                translate: { x: this.shareGrid3.originX, y: this.shareGrid3.originY},
+                scale: { x: 1, y: 1},
+                duration: 300,
+                target: this.shareGrid3,
+                delay: 0,
+            }
+        ]);
+        if(this.shareOn3==0){
+            opening.play();
+            this.shareOn3 = 1;
+        }else{
+            closing.play();
+            this.shareOn3 = 0;
+        }
+    }
+
+    copyShareText(){
+        var clipboard = require("nativescript-clipboard");
+        clipboard.setText("Fashion iOS - Find Your Fashion: App Store (iOS): https://itunes.apple.com/us/app/nativescript-playground/id1263543946?mt=8&ls=1 After installing, send a text to 856-316-9329 for the Fashion iOS QR Code").then(function() {
+            alert('Message Copied, Share it with whomever you please.')
+        })
+    }
 
     //User Grid Functions
     userGridInitialized(args){
@@ -702,79 +842,6 @@ export class ItemsComponent implements OnInit {
                     this.profileSearchUsers.push(this.itemService.allUsers[i]);
                 }else if(this.itemService.allUsers[i]['last_name'].toLowerCase().includes(searchText.toLowerCase())){
                     this.profileSearchUsers.push(this.itemService.allUsers[i]);
-                }
-            }
-        }
-    }
-    
-    //Likes Grid Functions
-    likesGridInitialized(args){
-        this.profileLikesSearchMenuOn = 0;
-        this.profileLikesSearchBar = <SearchBar>this.page.getViewById('searchBarLikesProfile');
-        this.profileLikesSearchMenu = args.object;
-        this.profileLikesSearchMenu.translateY = this.profileLikesSearchMenu.originY + this.windowHeight;
-    }
-
-    profileLikesScrollStartedEvent(args){
-        this.profileLikesSearchBar.dismissSoftInput();
-    }
-
-    closeLikes(){
-        this.profileLikesSearchBar.dismissSoftInput();
-        let closing = new Animation([
-            {
-                translate: { x: this.profileLikesSearchMenu.originX, y:this.profileLikesSearchMenu.originY + this.windowHeight },
-                scale: { x: .5, y: .5},
-                duration: 1000,
-                target: this.profileLikesSearchMenu,
-                delay: 0,
-            }
-        ]);
-        if(this.profileLikesSearchMenuOn==1){
-            closing.play();
-            this.profileLikesSearchMenuOn = 0;
-        }
-    }
-
-    openLikes(){
-        let opening = new Animation([
-            {
-                translate: { x: this.profileLikesSearchMenu.originX, y: this.profileLikesSearchMenu.originY},
-                scale: { x: 1, y: 1},
-                duration: 300,
-                target: this.profileLikesSearchMenu,
-                delay: 0,
-            }
-        ]);
-        if(this.profileLikesSearchMenuOn==0){
-            opening.play();
-            this.profileLikesSearchMenuOn = 1;
-        }
-    }
-
-    onLikesClear(args){
-        this.searchLikes = this.userLikes;
-    }
-
-    onLikeTextChanged(args){
-        var searchText = args.object.text;
-        if(searchText && searchText.length>0){
-            this.searchLikes = [];
-            let lowerSearchText = searchText.toLowerCase();
-            for(var i=0; i<this.userLikes.length;i++){
-                let itemName = this.userLikes[i]['name'].toLowerCase();
-                if(itemName.search(lowerSearchText)!=-1){
-                    this.searchLikes.push(this.userLikes[i]);
-                    /*let found = false;
-                    for(var k=0; k<this.searchLikes.length;k++){
-                        if(this.searchLikes[k]==this.userLikes[i]){
-                            found=true;
-                            break;
-                        }
-                    }
-                    if(found==false){
-                        this.searchLikes.push(this.userLikes[i]);
-                    }*/
                 }
             }
         }
@@ -849,6 +916,104 @@ export class ItemsComponent implements OnInit {
         }
     }
 
+    //Likes Grid Functions
+    likesGridInitialized(args){
+        this.profileLikesSearchMenuOn = 0;
+        this.profileLikesSearchBar = <SearchBar>this.page.getViewById('searchBarLikesProfile');
+        this.profileLikesSearchText = this.profileLikesSearchBar.text;
+        this.profileLikesSearchMenu = args.object;
+        this.profileLikesSearchMenu.translateY = this.profileLikesSearchMenu.originY + this.windowHeight;
+    }
+
+    profileLikesScrollStartedEvent(args){
+        this.profileLikesSearchBar.dismissSoftInput();
+    }
+
+    closeLikes(){
+        this.profileLikesSearchBar.dismissSoftInput();
+        let closing = new Animation([
+            {
+                translate: { x: this.profileLikesSearchMenu.originX, y:this.profileLikesSearchMenu.originY + this.windowHeight },
+                scale: { x: .5, y: .5},
+                duration: 1000,
+                target: this.profileLikesSearchMenu,
+                delay: 0,
+            }
+        ]);
+        if(this.profileLikesSearchMenuOn==1){
+            closing.play();
+            this.profileLikesSearchMenuOn = 0;
+        }
+    }
+
+    openLikes(){
+        let opening = new Animation([
+            {
+                translate: { x: this.profileLikesSearchMenu.originX, y: this.profileLikesSearchMenu.originY},
+                scale: { x: 1, y: 1},
+                duration: 300,
+                target: this.profileLikesSearchMenu,
+                delay: 0,
+            }
+        ]);
+        if(this.profileLikesSearchMenuOn==0){
+            opening.play();
+            this.profileLikesSearchMenuOn = 1;
+        }
+    }
+
+    onLikesClear(args){
+        this.searchLikes = this.userLikes;
+    }
+
+    onLikeTextChanged(args){
+        this.profileLikesSearchText = args.object.text;
+        this.likesSearchRouter();
+    }
+
+    likesCategoryChange(args){
+        let likesListPicker = <ListPicker>this.page.getViewById('likeCategoryPicker');
+        this.profileLikesCategoryIndex = likesListPicker.selectedIndex;
+        this.likesSearchRouter();
+    }
+
+    likesSearchRouter() {
+        this.searchLikes = [];
+        if (this.profileLikesSearchText == null) {
+            if(this.profileLikesCategoryIndex == 0) {
+                for(var i=0; i<this.userLikes.length;i++){
+                    this.searchLikes.push(this.userLikes[i]);
+                }      
+            } else {
+                let itemCategory = this.categories[this.profileLikesCategoryIndex].toLowerCase();
+                for(var i=0; i<this.userLikes.length;i++){
+                    if(this.userLikes[i]['category']==itemCategory){
+                        this.searchLikes.push(this.userLikes[i]);
+                    }
+                }   
+            }
+        } else {
+            if(this.profileLikesCategoryIndex == 0) {
+                let lowerSearchText = this.profileLikesSearchText.toLowerCase();
+                for(var i=0; i<this.userLikes.length;i++){
+                    let itemName = this.userLikes[i]['name'].toLowerCase();
+                    if(itemName.search(lowerSearchText)!=-1){
+                        this.searchLikes.push(this.userLikes[i]);
+                    }
+                }         
+            } else {
+                let lowerSearchText = this.profileLikesSearchText.toLowerCase();
+                for(var i=0; i<this.userLikes.length;i++){
+                    let itemName = this.userLikes[i]['name'].toLowerCase();
+                    let itemCategory = this.categories[this.profileLikesCategoryIndex].toLowerCase()
+                    if(itemName.search(lowerSearchText)!=-1 && this.userLikes[i]['category']==itemCategory){
+                        this.searchLikes.push(this.userLikes[i]);
+                    }
+                }             
+            }
+        }
+    }
+    
     //Saved Grid Functions
     savedGridInitialized(args){
         this.profileSavedGridOn = 0;
@@ -899,21 +1064,55 @@ export class ItemsComponent implements OnInit {
     }
 
     onSavedClear(){
-        this.profileSavedSearchList = this.profileSavedList;  
+        this.searchSaved = this.profileSavedList;  
     }
 
     onSavedTextChanged(args){
-        var searchText = args.object.text;
-        if(searchText && searchText.length>0){
-            this.profileSavedSearchList = [];
-            let lowerSearchText = searchText.toLowerCase();
-            for(var i=0; i<this.userLikes.length;i++){
-                let itemName = this.profileSavedList[i]['name'].toLowerCase();
-                if(itemName.search(lowerSearchText)!=-1){
-                    this.profileSavedSearchList.push(this.profileSavedList[i]);
-                }
+        this.profileSavedSearchText = args.object.text;
+        this.savedSearchRouter();        
+
+    }
+
+    savedCategoryChange(args){
+        let savedListPicker = <ListPicker>this.page.getViewById('savedCategoryPicker');
+        this.profileSavedCategoryIndex = savedListPicker.selectedIndex;
+        this.savedSearchRouter();
+    }
+
+    savedSearchRouter() {
+        this.searchSaved = [];
+        if (this.profileSavedSearchText == null) {
+            if(this.profileSavedCategoryIndex == 0) {
+                for(var i=0; i<this.userSaved.length;i++){
+                    this.searchSaved.push(this.userSaved[i]);
+                }      
+            } else {
+                let itemCategory = this.categories[this.profileSavedCategoryIndex].toLowerCase();
+                for(var i=0; i<this.userSaved.length;i++){
+                    if(this.userSaved[i]['category']==itemCategory){
+                        this.searchSaved.push(this.userSaved[i]);
+                    }
+                }   
+            }
+        } else {
+            if(this.profileSavedCategoryIndex == 0) {
+                let lowerSearchText = this.profileSavedSearchText.toLowerCase();
+                for(var i=0; i<this.userSaved.length;i++){
+                    let itemName = this.userSaved[i]['name'].toLowerCase();
+                    if(itemName.search(lowerSearchText)!=-1){
+                        this.searchSaved.push(this.userSaved[i]);
+                    }
+                }         
+            } else {
+                let lowerSearchText = this.profileSavedSearchText.toLowerCase();
+                for(var i=0; i<this.userSaved.length;i++){
+                    let itemName = this.userSaved[i]['name'].toLowerCase();
+                    let itemCategory = this.categories[this.profileSavedCategoryIndex].toLowerCase()
+                    if(itemName.search(lowerSearchText)!=-1 && this.userSaved[i]['category']==itemCategory){
+                        this.searchSaved.push(this.userSaved[i]);
+                    }
+                }             
             }
         }
-
     }
 }
