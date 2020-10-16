@@ -5,8 +5,20 @@
     font-family: FontAwesome, fontawesome-webfont;
 }
 
-#accountMenu {
-    background-image: linear-gradient(to top, white 0%, black 100%);
+.ns-light TabStrip{
+    background-color: white;
+}
+
+.ns-dark TabStrip{
+    background-color: black;
+}
+
+.ns-dark #accountMenu {
+    background-image: linear-gradient(to top, gray 0%, black 100%);
+}
+
+.ns-light #accountMenu {
+    background-image: linear-gradient(to top, grey 0%, white 100%);
 }
 
 .TileBackground {
@@ -126,10 +138,11 @@ FlexboxLayout{
     color: #8D99AE
 }
 
+
 Button {
-    border-width: 3;
-    border-color: #E7EBC5;
-    border-radius: 50%;
+    border-width: 20;
+    border-radius: 10%;
+    border-color: white;
     color: black;
     font-weight: bold;
 }
@@ -211,10 +224,12 @@ Button {
 
 .ns-light .mainViewText{
     color: black;
+    font-size: 10;
 }
 
 .ns-dark .mainViewText{
     color: white;
+    font-size: 10;
 }
 
 SearchBar{
@@ -225,13 +240,45 @@ SearchBar{
 .popUpMenu{
     background-color: rgba(59, 59, 59, .8);
     margin-right: 5; 
-    border: 1px; 
+    border-width: 3px; 
+    border-color: black;
     border-top-left-radius: 50%;
     border-top-right-radius: 50%;
 }
 
-.tabMenu{
+.shareMenu{
+    background-color: rgba(59, 59, 59, 0.938);
+    margin-right: 5; 
+    border-width: 3px; 
+    border-color: black;
+    border-radius: 20%;
+    margin: 10;
+}
+
+.shareMenu label{
+    color: white;
+    font-size: medium;
+}
+
+.itemDetailInfo{
+    padding-left: 20;
+    padding-right: 20;
+}
+
+.ns-light TabStripItem label{
+    color:black;
+}
+
+.ns-dark TabStripItem label{
     color:white;
+}
+
+.ns-dark .tabMenu{
+    color:white;
+}
+
+.ns-light .tabMenu{
+    color:black;
 }
 
 .ns-light .mainView{
@@ -242,6 +289,10 @@ SearchBar{
     background-color: rgb(117, 117, 117);
 }
 
+image{
+    border-radius: 20%;
+}
+
 .ns-light .cardView{
     outline-width: 10;
     outline-color: black;
@@ -249,11 +300,11 @@ SearchBar{
     border-top-right-radius: 20%;
     border-bottom-right-radius: 20%;
 
-    border-right-color:rgba(109, 109, 109, 0);
-    border-left-color:rgba(109, 109, 109, 0);
+    border-right-color:rgba(109, 109, 109, 0.486);
+    border-left-color:rgba(109, 109, 109, 0.103);
     
     border-bottom-color:rgba(109, 109, 109, 0.486);
-    border-top-color:rgba(109, 109, 109, 0.486);
+    border-top-color:rgba(109, 109, 109, 0.151);
 
     background-color: rgb(180, 180, 180);
     margin:5px;
@@ -267,12 +318,25 @@ SearchBar{
     border-top-right-radius: 20%;
     border-bottom-left-radius: 20%;
         
-    border-top-color:rgba(109, 109, 109, 0.486);
+    border-right-color:rgba(109, 109, 109, 0.486);
+    border-left-color:rgba(109, 109, 109, 0.103);
+    
+    border-top-color:rgba(109, 109, 109, 0.151);
     border-bottom-color:rgba(109, 109, 109, 0.486);
-
-    border-right-color:rgb(46, 46, 46);
-    background-color: rgb(46, 46, 46);
+    
+    background-color: rgb(46, 46, 46, 0);
     margin:5px;
+}
 
+.ns-dark #buttonNeo{
+    border-width: 3;
+    border-color: white;
+    border-radius: 10%;
+}
+
+.ns-light #buttonNeo{
+    border-width: 3;
+    border-color: black;
+    border-radius: 10%;
 }
 

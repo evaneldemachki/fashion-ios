@@ -1,27 +1,27 @@
 <router-outlet></router-outlet>
 <Gridlayout padding="2 0 2 2" rows = "*,*,*" id="accountMenu" margin="0"> 
     <StackLayout row="0">
-        <Image [src] = "userIcon" height="70%" width = "70%"></Image>
-        <Label [text]="username + ' ' + fullname" textAlignment="center"></Label>
+        <Image [src] = "userIcon" height="60%" width = "60%"></Image>
+        <Label [text]="fullname" textAlignment="center" style="font-size: 15;"></Label>
+        <Label [text]="username" textAlignment="center"></Label>
         <GridLayout columns="*,*,*,*,*">
-            <button col="0" colspan="2" width="100%" text="See Top Outfits" (tap)="browseTopOutfits()"></button>
-            <button col="3" colspan="2" width="100%" text="Friends" (tap)="openFriend()" ></button>
+            <button id="buttonNeo" col="0" colspan="2" width="100%" text="See Top Outfits" (tap)="browseTopOutfits()"></button>
+            <button id="buttonNeo" col="3" colspan="2" width="100%" text="Friends" (tap)="openFriend()" ></button>
         </GridLayout>
     </StackLayout>    
     <ScrollView row="1" rowspan="2" orientation="vertical">
         <StackLayout>
-                <Button class="profile" textAlignment = "center" text="Their Liked" (tap)="openLikes()"></Button>
+                <Button id="buttonNeo" class="profile" textAlignment = "center" text="Their Liked" (tap)="openLikes()"></Button>
                 <RadListView height ="200" row="0" orientation="horizontal" [items]="userLikes" margin-left = "2" margin-right="2">
-                    <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal"></ListViewLinearLayout>
+                    <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="125"></ListViewLinearLayout>
                     <ng-template let-item="item" let-index="index">
-                        <StackLayout [nsRouterLink]="['detail', index]" 
-                        [queryParams]="{ source: 'userLikes', liked: true, disliked: false }">
+                        <StackLayout [nsRouterLink]="['detail', index]" [queryParams]="{ source: 'user', id: userLikes[index]['_id'] }">
                             <Image [src]="item.img[0]" height="80%" width = "80%" ios:stretch="aspectFill"></Image>
                             <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
                         </StackLayout>
                     </ng-template>
                 </RadListView>
-                <Button text = "Their Outfits"></Button>
+                <Button id="buttonNeo" text = "Their Outfits"></Button>
                 <RadListView height ="200" row="0" orientation="horizontal" [items]="userOutfits" margin-left = "2" margin-right="2">
                     <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="200" itemHeight="200" ></ListViewLinearLayout>
                     <ng-template let-item="item" let-index="index">
@@ -43,8 +43,7 @@
         id="listView" selectionBehavior="None">
             <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
             <ng-template horizontalAlignment="center" let-item="item" let-index="index">
-                <GridLayout style="background-image: ~/item/backgroundShadow.png;" [nsRouterLink]="['detail', index]" 
-                [queryParams]="{ source: 'userLikes', liked: true, disliked: false, id: searchLikes[index]['_id'] }" >
+                <GridLayout [nsRouterLink]="['detail', index]" [queryParams]="{ source: 'user', id: searchLikes[index]['_id'] }" >
                     <GridLayout columns="*,*,*" padding="0 0 0 0" >
                         <Image colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
                     </GridLayout>
@@ -55,9 +54,10 @@
             </ng-template>
         </RadListView>
 
-        <SearchBar class="popUpMenu" id="searchBarLikesProfile" row=0 column="2" colspan="10" hint="Search through likes ..." (textChange)="onLikeTextChanged($event)" color="Black" textFieldHintColor="red" style="background-color: rgba(59, 59, 59, .8);"
+        <SearchBar class="popUpMenu" id="searchBarLikesProfile" row=0 column="2" colspan="5" hint="Search through likes ..." (textChange)="onLikeTextChanged($event)" color="Black" textFieldHintColor="red" style="background-color: rgba(59, 59, 59, .8);"
             [text]="searchPhrase" (clear)="onLikesClear($event)" submit="onSubmit($event)">
         </SearchBar>
+        <ListPicker id="likeCategoryPicker" (selectedIndexChange)="likesCategoryChange()" row="0" column="7" colspan="3" [items]="categories" style="font-size: 10;"></ListPicker>
         <Label id="closeLikesIcon" row="0" column="0" colspan="2" class="far t-36" style="padding: 10; padding-left: 20; color: black;" text="&#xf057;" (tap)="closeLikes()"></Label>
     </GridLayout>
 

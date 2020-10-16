@@ -16,6 +16,7 @@ import { GestureTypes, GestureEventData } from "tns-core-modules/ui/gestures";
 import { GridLayout, ItemSpec } from "tns-core-modules/ui/layouts/grid-layout";
 import { Label } from "tns-core-modules/ui/label";
 import { screen } from "tns-core-modules/platform/platform";
+import { ListPicker } from "tns-core-modules/ui/list-picker";
 
 
 @Component({
@@ -29,9 +30,11 @@ export class userComponent implements OnInit {
     username;
     fullname;
     index;
-    userLikes;
-    userOutfits;
-    userFriends;
+    userLikes=[];
+    userOutfits=[];
+    userFriends=[];
+    userIcon;
+    categories = [];
 
     public profileLikesSearchMenu: GridLayout;
     public profileLikesSearchBar: SearchBar;
@@ -43,6 +46,8 @@ export class userComponent implements OnInit {
     public profileFriendsGridOn = 0;
     public profileFriendsSearchUsers = [];
     public profileFriendsList = [];
+    public profileLikesSearchText = "";
+    public profileLikesCategoryIndex = 0;
 
     public windowHeight = screen.mainScreen.heightPixels;
     public windowWidth = screen.mainScreen.widthPixels;
@@ -63,12 +68,28 @@ export class userComponent implements OnInit {
             this.id = params.id;
         });
         this.itemService.getFriendData(this.id).subscribe(res => {
+            this.userIcon = res['img']
+            this.fullname = res['first_name'] + ' ' + res['last_name']
+            this.username = '@' + res['username']
             this.userOutfits = res['outfits']
             this.userLikes = res['likes']
+            this.userFriends = res['friends']
+            this.profileFriendsSearchUsers = this.userFriends;
+            this.searchLikes = this.userLikes;
         });
-        //this.username = this.user['username'];
-        //this.fullname = this.user['first_name'] + ' ' + this.user['last_name']
 
+        this.itemService.getCategories().subscribe((res) =>{
+            let cat = JSON.parse(res);
+            //this.categories.push({"name" : "Any"});
+            for(let i=0; i < cat.length; i++) {
+                // capitalize first letter of category
+                cat[i] = cat[i].charAt(0).toUpperCase() + cat[i].slice(1);
+                //this.categories.push({"name" : cat[i]});
+            }
+            // add 'Any' category to search all items
+            cat.unshift("Any");
+            this.categories = cat;
+        });
     }
 
     start(args){
@@ -125,25 +146,49 @@ export class userComponent implements OnInit {
     }
 
     onLikeTextChanged(args){
-        var searchText = args.object.text;
-        if(searchText && searchText.length>0){
-            this.searchLikes = [];
-            let lowerSearchText = searchText.toLowerCase();
-            for(var i=0; i<this.userLikes.length;i++){
-                let itemName = this.userLikes[i]['name'].toLowerCase();
-                if(itemName.search(lowerSearchText)!=-1){
+        this.profileLikesSearchText = args.object.text;
+        this.likesSearchRouter();
+    }
+
+    likesCategoryChange(args){
+        let likesListPicker = <ListPicker>this.page.getViewById('likeCategoryPicker');
+        this.profileLikesCategoryIndex = likesListPicker.selectedIndex;
+        this.likesSearchRouter();
+    }
+
+    likesSearchRouter() {
+        this.searchLikes = [];
+        if (this.profileLikesSearchText == null) {
+            if(this.profileLikesCategoryIndex == 0) {
+                for(var i=0; i<this.userLikes.length;i++){
                     this.searchLikes.push(this.userLikes[i]);
-                    /*let found = false;
-                    for(var k=0; k<this.searchLikes.length;k++){
-                        if(this.searchLikes[k]==this.userLikes[i]){
-                            found=true;
-                            break;
-                        }
-                    }
-                    if(found==false){
+                }      
+            } else {
+                let itemCategory = this.categories[this.profileLikesCategoryIndex].toLowerCase();
+                for(var i=0; i<this.userLikes.length;i++){
+                    if(this.userLikes[i]['category']==itemCategory){
                         this.searchLikes.push(this.userLikes[i]);
-                    }*/
-                }
+                    }
+                }   
+            }
+        } else {
+            if(this.profileLikesCategoryIndex == 0) {
+                let lowerSearchText = this.profileLikesSearchText.toLowerCase();
+                for(var i=0; i<this.userLikes.length;i++){
+                    let itemName = this.userLikes[i]['name'].toLowerCase();
+                    if(itemName.search(lowerSearchText)!=-1){
+                        this.searchLikes.push(this.userLikes[i]);
+                    }
+                }         
+            } else {
+                let lowerSearchText = this.profileLikesSearchText.toLowerCase();
+                for(var i=0; i<this.userLikes.length;i++){
+                    let itemName = this.userLikes[i]['name'].toLowerCase();
+                    let itemCategory = this.categories[this.profileLikesCategoryIndex].toLowerCase()
+                    if(itemName.search(lowerSearchText)!=-1 && this.userLikes[i]['category']==itemCategory){
+                        this.searchLikes.push(this.userLikes[i]);
+                    }
+                }             
             }
         }
     }
@@ -216,4 +261,6 @@ export class userComponent implements OnInit {
             }
         }
     }
+
+
 }

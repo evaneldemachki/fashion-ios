@@ -23,7 +23,6 @@ export class ItemDetailComponent implements OnInit {
     focus: number = 0;
     token: String;
     liked: boolean;
-    disliked: boolean;
     index: number;
     source: string;
     saved: boolean;
@@ -52,7 +51,9 @@ export class ItemDetailComponent implements OnInit {
             //this.disliked = (params.disliked == "true");
             //this.saved = (params.saved == "true");
             this.source = params.source;
+            this.id = params.id;
 
+            console.log(this.source + ' ' + this.id)
             if(this.source == "itemsShown") {
                 this.item = <Item>this.itemService.itemsShown.getItem(i);
                 for(var j=0;j<this.itemService.userLikes.length;j++){
@@ -60,7 +61,6 @@ export class ItemDetailComponent implements OnInit {
                         this.liked=true;
                     }
                 }
-
                 for(var j=0;j<this.itemService.userSaved.length;j++){
                     if(this.itemService.userSaved[j]['_id']==this.item['_id']){
                         this.saved = true;  
@@ -106,11 +106,26 @@ export class ItemDetailComponent implements OnInit {
                         this.saved = true;  
                     }
                 }
+            }else if(this.source == "user"){
+                if(this.id){
+                    this.itemService.getOne(this.id).subscribe(res => {
+                        this.item = <Item>res
+                        for(var j=0;j<this.itemService.userLikes.length;j++){
+                            if(this.itemService.userLikes[j]['_id']==this.item['_id']){
+                                this.liked=true;
+                            }
+                        }
+        
+                        for(var j=0;j<this.itemService.userSaved.length;j++){
+                            if(this.itemService.userSaved[j]['_id']==this.item['_id']){
+                                this.saved = true;  
+                            }
+                        }
+                    });
+                }
             
             }
         });
-        this.id = this.item['_id']
-        console.log("liked: " + this.liked + ", disliked: "  + this.disliked);
 
 
     }
@@ -133,26 +148,11 @@ export class ItemDetailComponent implements OnInit {
 
     onItemLike(args) {
         if(this.liked) {
-            this.disliked = false;
             this.liked = false;
             this.itemService.processAction("reset", this.source, this.index);
         } else {
-            this.disliked = false;
             this.liked = true;
             this.itemService.processAction("like", this.source, this.index);
-        }
-    }
-
-
-    onItemDislike(args) {
-        if(this.disliked) {
-            this.disliked = false;
-            this.liked = false;
-            this.itemService.processAction("reset", this.source, this.index);
-        } else {
-            this.disliked = true;
-            this.liked = false;
-            this.itemService.processAction("dislike", this.source, this.index);
         }
     }
 
