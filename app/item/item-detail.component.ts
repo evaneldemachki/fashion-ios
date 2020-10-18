@@ -124,6 +124,24 @@ export class ItemDetailComponent implements OnInit {
                     });
                 }
             
+            }else if(this.source == "outfit"){
+                if(this.id){
+                    this.itemService.getOne(this.id).subscribe(res => {
+                        this.item = <Item>res
+                        for(var j=0;j<this.itemService.userLikes.length;j++){
+                            if(this.itemService.userLikes[j]['_id']==this.item['_id']){
+                                this.liked=true;
+                            }
+                        }
+        
+                        for(var j=0;j<this.itemService.userSaved.length;j++){
+                            if(this.itemService.userSaved[j]['_id']==this.item['_id']){
+                                this.saved = true;  
+                            }
+                        }
+                    });
+                }
+            
             }
             this.id = this.item['_id']
         });

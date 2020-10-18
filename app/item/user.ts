@@ -17,6 +17,7 @@ import { GridLayout, ItemSpec } from "tns-core-modules/ui/layouts/grid-layout";
 import { Label } from "tns-core-modules/ui/label";
 import { screen } from "tns-core-modules/platform/platform";
 import { ListPicker } from "tns-core-modules/ui/list-picker";
+import { RouterExtensions } from 'nativescript-angular/router';
 
 
 @Component({
@@ -55,6 +56,7 @@ export class userComponent implements OnInit {
     constructor(
         private itemService: ItemService,
         private route: ActivatedRoute,
+        protected router: RouterExtensions,
         private page: Page,
         private http: HttpClient,
     ) { }
@@ -90,6 +92,18 @@ export class userComponent implements OnInit {
             cat.unshift("Any");
             this.categories = cat;
         });
+    }
+
+    goToFriendsProfile(source, id){
+        this.router.navigate(['user', id], 
+            {
+                relativeTo: this.route.parent,
+                queryParams: { 'source': source, 'id': id },
+                transition: {
+                    name: 'slideLeft',
+                    duration: 500
+                }
+            });
     }
 
     start(args){

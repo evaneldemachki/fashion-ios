@@ -120,6 +120,7 @@ export class ItemsComponent implements OnInit {
     constructor(
         private itemService: ItemService,
         private route: ActivatedRoute,
+        protected router: RouterExtensions,
         private page: Page,
         private routerExtensions: RouterExtensions,
         ) { }
@@ -206,7 +207,6 @@ export class ItemsComponent implements OnInit {
             this.outfitCreaterList = this.userSaved;
             this.myOutfits = res['outfits']
             this.itemService.outfits = this.myOutfits;
-
             this.itemService.friends = res['friends'];
             this.profileFriendsList = this.itemService.friends;
             this.profileFriendsSearchUsers = this.profileFriendsList;                                    
@@ -217,7 +217,6 @@ export class ItemsComponent implements OnInit {
             this.itemService.allUsers = res;
             for(var i =0; i<this.itemService.allUsers.length;i++){
                 if(this.itemService.allUsers[i]['_id']==this.itemService.userId){
-                    console.log("found user")
                     this.itemService.allUsers.splice(i,1);
                 }
             }
@@ -498,8 +497,10 @@ export class ItemsComponent implements OnInit {
     saveOutfit(args){
         if(this.currentlyChosen.length>0){
             let ids = [];
+            let createdOutfit = [];
             for(let i =0;i<this.currentlyChosen.length;i++){
                 ids.push(this.currentlyChosen[i]['_id']);
+                createdOutfit.push(this.currentlyChosen[i]);
             }
             console.log(ids)
             let input = { "items": ids }
@@ -507,7 +508,7 @@ export class ItemsComponent implements OnInit {
             this.itemService.addOutfit(input).subscribe((res) =>{
                 newID = res['outfitID'];
             });
-            this.myOutfits.push(ids)
+            this.myOutfits.push({'items': createdOutfit})
             this.currentlyChosen=[];
             let vibrator = new Vibrate();
             vibrator.vibrate(50);
@@ -780,6 +781,18 @@ export class ItemsComponent implements OnInit {
         clipboard.setText("Fashion iOS - Find Your Fashion: App Store (iOS): https://itunes.apple.com/us/app/nativescript-playground/id1263543946?mt=8&ls=1 After installing, send a text to 856-316-9329 for the Fashion iOS QR Code").then(function() {
             alert('Message Copied, Share it with whomever you please.')
         })
+    }
+
+    goToFriendsProfile(source, id){
+        this.router.navigate(['user', id], 
+            {
+                relativeTo: this.route,
+                queryParams: { 'source': source, 'id': id },
+                transition: {
+                    name: 'slideLeft',
+                    duration: 500
+                }
+            });
     }
 
     //User Grid Functions

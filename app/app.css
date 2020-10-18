@@ -255,6 +255,17 @@ SearchBar{
     margin: 10;
 }
 
+.outfit{
+    padding-top: 10;
+    padding-right: 10;
+    padding-left: 10;
+
+}
+
+.outfitLabels{
+    font-size: 12;
+}
+
 .shareMenu label{
     color: white;
     font-size: medium;

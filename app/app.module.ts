@@ -7,6 +7,8 @@ import { LoginComponent } from "./login.component";
 import { NativeScriptFormsModule } from "@nativescript/angular/forms";
 import { userComponent } from "./item/user";
 import { NgShadowModule } from 'nativescript-ng-shadow';
+import { RouteReuseStrategy } from "@angular/router";
+import { CustomRouteReuseStrategy } from "./item/custom-route-reuse-strategy";
 
 
 //import { ItemsComponent } from "./item/items.component";
@@ -32,7 +34,12 @@ import { NgShadowModule } from 'nativescript-ng-shadow';
         AppComponent,
         LoginComponent,
     ],
-    providers: [],
+    providers: [
+        {
+            provide: RouteReuseStrategy,
+            useClass: CustomRouteReuseStrategy
+        }
+    ],
     schemas: [
         NO_ERRORS_SCHEMA
     ]

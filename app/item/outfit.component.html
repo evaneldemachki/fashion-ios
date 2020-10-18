@@ -1,8 +1,27 @@
 <GridLayout rows="*,*,*,*,*,*,*,*,*,*" columns="*,*,*,*,*,*,*,*,*,*">
     <RadListView row=0 rowspan=6 column=0 colspan=10 [items]="outfit" orientation="Horizontal" style="background-color: white;">
-        <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal"  spanCount="1" itemWidth="400" itemHeight="400"></ListViewLinearLayout>
+        <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal"  spanCount="1" itemWidth="400" itemHeight="410"></ListViewLinearLayout>
             <ng-template let-item="item" let-index="index">
-                <Image [src]="item.img[0]" height="100%" width="80%" ios:stretch="aspectFill"></Image>
+                <GridLayout (tap)="goToItemPage('outfit', item['_id'])" style="margin-right: -10;" height="100%" width="80%">
+                    <Image [src]="item.img[0]" height="100%" width="80%" ios:stretch="aspectFill"></Image>
+                </GridLayout>
             </ng-template>
     </RadListView>
+    <StackLayout class="outfit" row="6" column="0" colspan="5">
+        <label class="outfitLabels" textWrap="true" [text]="'Brands include: ' + brands"></label>
+        <label class="outfitLabels" style="text-decoration: underline" text='Items include: '></label>
+    </StackLayout>
+    <StackLayout class="outfit" row="6" column="5" colspan="5">
+        <Label textAlignment="right" [text]="'Outfit created by ' + createdBy"></Label>
+    </StackLayout>
+    <RadListView style="margin-left:10" class="outfit" [items]="outfit" orientation="Vertical" row="7" rowspan="3" column="0" colSpan="5" height="100%">
+        <ListViewLinearLayout tkListViewLayout scrollDirection="Vertical"  spanCount="1" itemHeight="50"></ListViewLinearLayout>
+        <ng-template let-item="item" let-index="index">
+            <label class="outfitLabels" textWrap="true" [text]="item.name"></label>
+        </ng-template>
+    </RadListView>
+    <StackLayout row="7" rowspan="3" column="5" colspan="5">
+        <Button id="buttonNeo" [text]="created ? 'Delete this Outfit' : 'Save this Outfit'"></Button>
+    </StackLayout>
+
 </GridLayout>

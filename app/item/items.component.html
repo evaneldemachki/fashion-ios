@@ -266,7 +266,7 @@
                             <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" itemWidth="350" itemHeight="95" spanCount="1"></ListViewGridLayout>
                                 <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
                             <ng-template let-item="item" let-index="index" horizontalAlignment="center">
-                                <GridLayout id="userList" columns="*,*,*,*,*,*" rows="*,*" [nsRouterLink]="['user']" [queryParams]="{ source: 'friends', id: profileFriendsSearchUsers[index]['_id']}" style="margin-top: 10; margin-left: 15;">
+                                <GridLayout id="userList" columns="*,*,*,*,*,*" rows="*,*" [nsRouterLink]="['user', item['_id']]" [queryParams]="{ source: 'friends', id: profileFriendsSearchUsers[index]['_id']}" style="margin-top: 10; margin-left: 15;">
                                     <StackLayout orientation="horizontal" row="0" column="0" colspan="3" >
                                     <label class="userListText" textAlignment = "left" [text]="'@' + item.username"></label>
                                     </StackLayout>
