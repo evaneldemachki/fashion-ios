@@ -193,7 +193,7 @@
                             </ng-template>
                         </RadListView>
                         <Button id="buttonNeo" text = "My Outfits"></Button>
-                        <RadListView height ="200" row="0" orientation="horizontal" [items]="myOutfits" margin-left = "2" margin-right="2">
+                        <RadListView height ="200" row="0" orientation="horizontal" [items]="outfits" margin-left = "2" margin-right="2">
                             <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="200" itemHeight="200" ></ListViewLinearLayout>
                             <ng-template let-item="item" let-index="index">
                                 <GridLayout rows="*,*" columns="*,*" [nsRouterLink]="['outfit']" [queryParams]="{ outfit: index}">
@@ -222,7 +222,7 @@
                                     <StackLayout row="1" column="0" colspan="3" orientation="horizontal">
                                         <label class="userListText"  [text]="item.first_name + ' ' + item.last_name" textAlignment = "left"></label>
                                     </StackLayout>
-                                    <Button id="buttonNeo" text="Friend" row="0" rowspan="2" column="4" colspan="2" style="background-color: white; color: black;" borderColor="white" borderWidth="3"></Button>
+                                    <Button id="buttonNeo" (tap)="friendAction(item['_id'], 'friends', index)" [text]="isFriend[index] ? 'Friend' : 'Unfriend'" row="0" rowspan="2" column="4" colspan="2" style="background-color: white; color: black;" borderColor="white" borderWidth="3"></Button>
                                 </GridLayout>
                             </ng-template>
                 </RadListView>
@@ -260,7 +260,7 @@
 
             <!--Profile Search Friends-->
             <GridLayout class="friendsListGrid popUpMenu" id="profileFriends" row="0" rowspan="3" columns="*,*,*,*,*" rows="*,*,*,*,*,*,*,*,*,*" (loaded)="friendGridInitialized($event)">
-                <RadListView id="Main" column="0" colspan="5" row="1" rowspan="10" [items]="profileFriendsSearchUsers" orientation="Vertical" height=100%
+                <RadListView id="Main" column="0" colspan="5" row="1" rowspan="9" [items]="friendsListView ? profileFriendsSearchUsers : requests" orientation="Vertical" height=100%
                         multipleSelection="false" selectionBehavior="Press" (scrolled)="friendsScrollStartedEvent($event)"
                         (itemDeselected)="categoryDeselected($event)">
                             <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" itemWidth="350" itemHeight="95" spanCount="1"></ListViewGridLayout>
@@ -273,7 +273,7 @@
                                     <StackLayout row="1" column="0" colspan="3" orientation="horizontal">
                                         <label class="userListText"  [text]="item.first_name + ' ' + item.last_name" textAlignment = "left"></label>
                                     </StackLayout>
-                                    <Button id="buttonNeo" text="Friend" row="0" rowspan="2" column="4" colspan="2" style="background-color: white; color: black;"></Button>
+                                    <Button id="buttonNeo" (tap)="friendAction(item['_id'], 'search', index)" text="Friend" row="0" rowspan="2" column="4" colspan="2" style="background-color: white; color: black;"></Button>
                                 </GridLayout>
                             </ng-template>
                 </RadListView>
@@ -281,6 +281,13 @@
                 [text]="searchPhrase" (clear)="onFriendClear($event)" submit="onSubmit($event)" style="padding-left: 30;">
                 </SearchBar>
                 <Label id="closeFriendIcon" row="0" column="0" class="far t-36" style="padding: 10; padding-left: 20; color: black;" text="&#xf057;" (tap)="closeFriend()"></Label>
+                <GridLayout column="0" colspan="10" row="10" columns="*,*,*,*,*,*" rows="*,*">
+                    <button text="Friends" column="0" colspan="3" row="0" rowspan="2" (tap)="SwapFriendsView('friends')"></button>
+                    <button text="Requests" column="3" colspan="3" row="0" rowspan="2" (tap)="SwapFriendsView('requests')"></button>
+                    <GridLayout column="5" row="0" [class]="requestsNum>0 ? 'requests' : 'requestsNone'">
+                        <label [text]="requestsNum"></label>
+                    </GridLayout>
+                </GridLayout>
             </GridLayout>
 
             <!--Profile Search Saved-->

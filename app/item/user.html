@@ -4,8 +4,15 @@
         <Label [text]="fullname" textAlignment="center" style="font-size: 15;"></Label>
         <Label [text]="username" textAlignment="center"></Label>
         <GridLayout columns="*,*,*,*,*">
-            <button id="buttonNeo" col="0" colspan="2" width="100%" text="See Top Outfits" (tap)="browseTopOutfits()"></button>
-            <button id="buttonNeo" col="3" colspan="2" width="100%" text="Friends" (tap)="openFriend()" ></button>
+            <GridLayout column="0" colspan="2" columns="*,*,*,*">
+                <button id="buttonNeo" col="0" colspan="4" width="100%" [text]="followStatus" (tap)="FollowUser()"></button>
+                <button column="0" id="buttonNeo" [class]="showOptions ? 'fas' : 'invisible'" style="background-color: green" width="100%" text="&#xf00c;" (tap)="confirmRequest()" ></button>
+                <button column="3" id="buttonNeo" [class]="showOptions ? 'fas' : 'invisible'" style="background-color: red" width="100%" text="&#xf00d;" (tap)="denyRequest()" ></button>
+            </GridLayout>
+            <GridLayout col="3" colspan="2">
+                <button id="buttonNeo" col="3" colspan="2" width="100%" text="Friends" (tap)="openFriend()" ></button>
+            </GridLayout>
+            
         </GridLayout>
     </StackLayout>    
     <ScrollView row="1" rowspan="2" orientation="vertical">

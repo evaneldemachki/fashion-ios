@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Item } from "./item"
+import { Image } from "tns-core-modules/ui/image";
 
 import { Observable } from 'tns-core-modules/data/observable';
 import { ObservableArray } from 'tns-core-modules/data/observable-array';
@@ -29,6 +30,10 @@ export class ItemService {
     public wardrobe = [];
     public outfits = [];
     public friends = [];
+    public pending = [];
+    public requests = [];
+    public userIcon: Image;
+    public friendStatus = [];
     public allUsers;
 
     constructor(private http: HttpClient) { }
@@ -411,6 +416,17 @@ export class ItemService {
             "id": id
         }
         var url = "https://fashionapi.herokuapp.com/user/friend";
+        let header = {"Authorization": "Bearer " + this.token}
+        return this.http.post(
+            url, body, { headers: header, responseType: "json" }
+        );
+    }
+
+    sendFriendAction(id, action){
+        let body = {
+            "id": id
+        }
+        var url = "https://fashionapi.herokuapp.com/user/add-friend";
         let header = {"Authorization": "Bearer " + this.token}
         return this.http.post(
             url, body, { headers: header, responseType: "json" }

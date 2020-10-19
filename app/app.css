@@ -351,3 +351,21 @@ image{
     border-radius: 10%;
 }
 
+.requests{
+    border-width: 1;
+    border-color: black;
+    border-radius: 50;
+    text-align: center;
+    background-color: red;
+    visibility: visible;
+    width: 30;
+}
+
+.requests label{
+    font-size: 15;
+}
+
+.requestsNone{
+    visibility:hidden;
+}
+
