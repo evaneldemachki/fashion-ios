@@ -1,12 +1,18 @@
-<router-outlet></router-outlet>
 <Gridlayout padding="2 0 2 2" rows = "*,*,*" id="accountMenu" margin="0"> 
     <StackLayout row="0">
         <Image [src] = "userIcon" height="60%" width = "60%"></Image>
         <Label [text]="fullname" textAlignment="center" style="font-size: 15;"></Label>
         <Label [text]="username" textAlignment="center"></Label>
         <GridLayout columns="*,*,*,*,*">
-            <button id="buttonNeo" col="0" colspan="2" width="100%" text="See Top Outfits" (tap)="browseTopOutfits()"></button>
-            <button id="buttonNeo" col="3" colspan="2" width="100%" text="Friends" (tap)="openFriend()" ></button>
+            <GridLayout column="0" colspan="2" columns="*,*,*,*">
+                <button id="buttonNeo" col="0" colspan="4" width="100%" [text]="followStatus" (tap)="FollowUser()"></button>
+                <button column="0" id="buttonNeo" [class]="showOptions ? 'fas' : 'invisible'" style="background-color: green" width="100%" text="&#xf00c;" (tap)="confirmRequest()" ></button>
+                <button column="3" id="buttonNeo" [class]="showOptions ? 'fas' : 'invisible'" style="background-color: red" width="100%" text="&#xf00d;" (tap)="denyRequest()" ></button>
+            </GridLayout>
+            <GridLayout col="3" colspan="2">
+                <button id="buttonNeo" col="3" colspan="2" width="100%" text="Friends" (tap)="openFriend()" ></button>
+            </GridLayout>
+            
         </GridLayout>
     </StackLayout>    
     <ScrollView row="1" rowspan="2" orientation="vertical">
@@ -69,7 +75,7 @@
                     <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" itemWidth="350" itemHeight="95" spanCount="1"></ListViewGridLayout>
                         <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
                     <ng-template let-item="item" let-index="index" horizontalAlignment="center">
-                        <GridLayout id="userList" columns="*,*,*,*,*,*" rows="*,*" [nsRouterLink]="['user']" [queryParams]="{ source: 'friends', id: profileFriendsSearchUsers[index]['_id']}" style="margin-top: 10; margin-left: 15;">
+                        <GridLayout id="userList" columns="*,*,*,*,*,*" rows="*,*" (tap)="goToFriendsProfile(friends, profileFriendsSearchUsers[index]['_id'])" style="margin-top: 10; margin-left: 15;">
                             <StackLayout orientation="horizontal" row="0" column="0" colspan="3" >
                             <label class="userListText" textAlignment = "left" [text]="'@' + item.username"></label>
                             </StackLayout>

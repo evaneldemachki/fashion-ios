@@ -11,15 +11,13 @@ import { userComponent } from "./user";
 
 
 const routes: Routes = [
-    { path: "", component: ItemsComponent },
+    { path: "", component: ItemsComponent},
     { path: "detail/:id", component: ItemDetailComponent },
     { path: "detail/:id/:url", component: ItemReferenceComponent },
     { path: "outfit", component: OutfitComponent },
-    { path: "user", component: userComponent},
-    { path: "user/detail/:id", component: ItemDetailComponent},
-    { path: "user/detail/:id/:url", component: ItemReferenceComponent },
-
-    
+    { path: "user/:id", component: userComponent, data: { noReuse: true, id: ':/id' }},
+    { path: "user/:id/detail/:id", component: ItemDetailComponent},
+    { path: "user/:id/detail/:id/:url", component: ItemReferenceComponent },
 ];
 
 @NgModule({

@@ -39,27 +39,25 @@ import { Vibrate } from 'nativescript-vibrate';
     templateUrl: "./items.component.html"
 })
 export class ItemsComponent implements OnInit {
+    
+    //Main View
     public items: ObservableArray<Item> = new ObservableArray();
-    public itemsSaved = [];
-
     searchBar: SearchBar;
     listPicker: ListPicker;
     searchText: string;
-    categoryView: RadListView;
     sideBarMenu: GridLayout;
-    //categories = new ObservableArray()
+    
+    //User Profile
+    private token: string;
+    public categoryList: RadListView;
 
     public categories = [];
-    public loadMore = false;
+    public isFriend = [];
     public currentlyLoaded = 0;
     public selectedIndex = 0;
     public totalLoaded = 0;
-    public leftThresholdPassed = false;
-    public rightThresholdPassed = false;
-    public userIcon: Image;
-    private token: string;
-    public categoryList: RadListView;
     public currIndex=0;
+    public friendsListView = true;
 
 
     public profileSearchMenu: GridLayout;
@@ -72,6 +70,7 @@ export class ItemsComponent implements OnInit {
     public profileFriendsGridOn = 0;
     public profileFriendsSearchUsers = [];
     public profileFriendsList = [];
+    public requestsNum = 0;
 
     public profileLikesSearchMenu: GridLayout;
     public profileLikesSearchBar: SearchBar;
@@ -103,7 +102,6 @@ export class ItemsComponent implements OnInit {
 
 
     //Outfit Creator
-    public myOutfits = [];
     public currentlyChosen = [];
     public savedItems = [];
     public outfitCreaterList = [];
@@ -120,6 +118,7 @@ export class ItemsComponent implements OnInit {
     constructor(
         private itemService: ItemService,
         private route: ActivatedRoute,
+        protected router: RouterExtensions,
         private page: Page,
         private routerExtensions: RouterExtensions,
         ) { }
@@ -148,17 +147,71 @@ export class ItemsComponent implements OnInit {
     get itemsLiked() {
         return this.itemService.itemsLiked;
     }
-    set itemsDisliked(value) {
-        this.itemService.itemsLiked = value;
+    set itemsSaved(value) {
+        this.itemService.itemsSaved = value;
     }
-    get itemsDisliked() {
-        return this.itemService.itemsDisliked;
+    get itemsSaved() {
+        return this.itemService.itemsSaved;
     }
     set userSaved(value) {
         this.itemService.userSaved = value;
     }
     get userSaved() {
         return this.itemService.userSaved;
+    }
+    set userIcon(value) {
+        this.itemService.userIcon = value;
+    }
+    get userIcon() {
+        return this.itemService.userIcon;
+    }
+    set friendStatus(value) {
+        this.itemService.friendStatus = value;
+    }
+    get friendStatus() {
+        return this.itemService.friendStatus;
+    }
+    set userId(value) {
+        this.itemService.userId = value;
+    }
+    get userId() {
+        return this.itemService.userId;
+    }
+    set userName(value) {
+        this.itemService.userName = value;
+    }
+    get userName() {
+        return this.itemService.userName;
+    }
+    set userFullname(value) {
+        this.itemService.userFullname = value;
+    }
+    get userFullname() {
+        return this.itemService.userFullname;
+    }
+    set friends(value) {
+        this.itemService.friends = value;
+    }
+    get friends() {
+        return this.itemService.friends;
+    }
+    set outfits(value) {
+        this.itemService.outfits = value;
+    }
+    get outfits() {
+        return this.itemService.outfits;
+    }
+    set requests(value) {
+        this.itemService.requests = value;
+    }
+    get requests() {
+        return this.itemService.requests;
+    }
+    set pending(value) {
+        this.itemService.pending = value;
+    }
+    get pending() {
+        return this.itemService.pending;
     }
 
     ngOnInit(): void {
@@ -190,26 +243,27 @@ export class ItemsComponent implements OnInit {
         let input = { "token": this.token };
         this.itemService.getUserData(input).subscribe(res => {
             //this.itemService.userID = res['username']
-            this.itemService.userId = res['_id'];
-            this.itemService.userName = res['username'];
-            this.itemService.userFullname = res['first_name'] + ' ' + res['last_name'];
-
+            this.userId = res['_id'];
+            this.userName = res['username'];
+            this.userFullname = res['first_name'] + ' ' + res['last_name'];
+            this.friends = res['friends'];
             this.userLikes = res['likes'];
-            this.userLikes.reverse();
-            this.searchLikes = this.userLikes;
             this.userDislikes = res['dislikes'];
             this.userIcon = res['img'];
-            this.userSaved = res['wardrobe']
+            this.userSaved = res['wardrobe'];
+            this.outfits = res['outfits'];
+            this.requests = res['requests'];
+            this.pending =  res['pending'];
+
+            this.userLikes.reverse();
             this.userSaved.reverse();
+            this.searchLikes = this.userLikes;
             this.profileSavedList = this.userSaved;
             this.searchSaved = this.profileSavedList;
             this.outfitCreaterList = this.userSaved;
-            this.myOutfits = res['outfits']
-            this.itemService.outfits = this.myOutfits;
-
-            this.itemService.friends = res['friends'];
-            this.profileFriendsList = this.itemService.friends;
-            this.profileFriendsSearchUsers = this.profileFriendsList;                                    
+            this.profileFriendsList = this.friends;
+            this.profileFriendsSearchUsers = this.profileFriendsList;       
+            this.requestsNum = this.requests.length;                             
             this.findUserActions();
         });
 
@@ -217,7 +271,6 @@ export class ItemsComponent implements OnInit {
             this.itemService.allUsers = res;
             for(var i =0; i<this.itemService.allUsers.length;i++){
                 if(this.itemService.allUsers[i]['_id']==this.itemService.userId){
-                    console.log("found user")
                     this.itemService.allUsers.splice(i,1);
                 }
             }
@@ -333,10 +386,8 @@ export class ItemsComponent implements OnInit {
     
     findUserActions() {
         this.itemsLiked=[]
-        this.itemsDisliked=[];
         this.itemsSaved = [];
-        
-
+        this.friendStatus = [];
         for(let i = 0; i < this.userLikes.length; i++) {
             for(let j =0; j < this.items.length; j++) {
                 if(this.userLikes[i]['_id'] == this.items[j]['_id']) {
@@ -350,6 +401,9 @@ export class ItemsComponent implements OnInit {
                     this.itemsSaved[l] = true;
                 }
             }
+        }
+        for(let m=0; m<this.itemService.friends.length;m++){
+            this.isFriend[m]=true;
         }
         
     }
@@ -416,8 +470,8 @@ export class ItemsComponent implements OnInit {
                 utils.layout.makeMeasureSpec(itemView.getMeasuredHeight(), utils.layout.EXACTLY));
             viewModule.View.layoutChild(<viewModule.View>currentView.parent, currentView, 0, 0, dimensions.measuredWidth, dimensions.measuredHeight);
             if (args.data.x > mainView.getMeasuredWidth() / 3) {
-                this.rightThresholdPassed = false;
-                this.leftThresholdPassed = true;
+                //this.rightThresholdPassed = false;
+                //this.leftThresholdPassed = true;
             }
         } else {
             currentView = itemView.getViewById("delete-view");
@@ -428,8 +482,8 @@ export class ItemsComponent implements OnInit {
                 utils.layout.makeMeasureSpec(mainView.getMeasuredHeight(), utils.layout.EXACTLY));
             viewModule.View.layoutChild(<viewModule.View>currentView.parent, currentView, mainView.getMeasuredWidth() - dimensions.measuredWidth, 0, mainView.getMeasuredWidth(), dimensions.measuredHeight);
             if (Math.abs(args.data.x) > mainView.getMeasuredWidth() / 3) {
-                this.leftThresholdPassed = false;
-                this.rightThresholdPassed = true;
+                //this.leftThresholdPassed = false;
+                //this.rightThresholdPassed = true;
             }
         }
     }
@@ -498,8 +552,10 @@ export class ItemsComponent implements OnInit {
     saveOutfit(args){
         if(this.currentlyChosen.length>0){
             let ids = [];
+            let createdOutfit = [];
             for(let i =0;i<this.currentlyChosen.length;i++){
                 ids.push(this.currentlyChosen[i]['_id']);
+                createdOutfit.push(this.currentlyChosen[i]);
             }
             console.log(ids)
             let input = { "items": ids }
@@ -507,7 +563,7 @@ export class ItemsComponent implements OnInit {
             this.itemService.addOutfit(input).subscribe((res) =>{
                 newID = res['outfitID'];
             });
-            this.myOutfits.push(ids)
+            this.outfits.push({'items': createdOutfit})
             this.currentlyChosen=[];
             let vibrator = new Vibrate();
             vibrator.vibrate(50);
@@ -638,7 +694,7 @@ export class ItemsComponent implements OnInit {
         }
     }
 
-    fashionItemInit(index){
+    fashionItemLike(index){
         let vibrator = new Vibrate();
         let thisItem = this.itemsShown.getItem(index);
         // swiped to dislike item:
@@ -780,6 +836,41 @@ export class ItemsComponent implements OnInit {
         clipboard.setText("Fashion iOS - Find Your Fashion: App Store (iOS): https://itunes.apple.com/us/app/nativescript-playground/id1263543946?mt=8&ls=1 After installing, send a text to 856-316-9329 for the Fashion iOS QR Code").then(function() {
             alert('Message Copied, Share it with whomever you please.')
         })
+    }
+
+    goToFriendsProfile(source, id){
+        this.router.navigate(['user', id], 
+            {
+                relativeTo: this.route,
+                queryParams: { 'source': source, 'id': id },
+                transition: {
+                    name: 'slideLeft',
+                    duration: 500
+                }
+            });
+    }
+
+    friendAction(id, source, index){
+        let found = 0; 
+        for(var i = 0; i<this.itemService.friends.length;i++){
+            if(id==this.itemService.friends[i]['_id']){
+                found=1;
+                break;
+            }
+        }
+        if(found==0){
+            this.itemService.sendFriendAction(id, 'add')
+        }else{
+            this.isFriend[index] = false;
+        }
+    }
+
+    SwapFriendsView(switchView){
+        if(switchView=='friends'){
+            this.friendsListView = true;
+        }else if(switchView=='requests'){
+            this.friendsListView = false;
+        }
     }
 
     //User Grid Functions

@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Item } from "./item"
+import { Image } from "tns-core-modules/ui/image";
 
 import { Observable } from 'tns-core-modules/data/observable';
 import { ObservableArray } from 'tns-core-modules/data/observable-array';
@@ -29,7 +30,24 @@ export class ItemService {
     public wardrobe = [];
     public outfits = [];
     public friends = [];
+    public pending = [];
+    public requests = [];
+    public userIcon: Image;
+    public friendStatus = [];
+    public loadedItem= {
+        _id: '',
+        url: '',
+        name: '',
+        price: '',
+        img: '',
+        gender: '',
+        category: '',
+        source: '',
+        product_id: '',
+    };
     public allUsers;
+    public loadedItemLiked = false;
+    public loadedItemSaved = false;
 
     constructor(private http: HttpClient) { }
 
@@ -67,10 +85,25 @@ export class ItemService {
     }
 
     getOne(itemID) {
+        this.loadedItemLiked=false;
+        this.loadedItemSaved=false;
         var query = "grab?item=" + itemID;
-        return this.http.get(
+        this.http.get(
             this.serverUrl + query, {
                 responseType: "json"
+            }).subscribe(res => {
+                this.loadedItem = <Item>res;
+                for(var j=0;j<this.userLikes.length;j++){
+                    if(this.userLikes[j]['_id']==this.loadedItem['_id']){
+                        this.loadedItemLiked=true;
+                    }
+                }
+    
+                for(var k=0;k<this.userSaved.length;k++){
+                    if(this.userSaved[k]['_id']==this.loadedItem['_id']){
+                        this.loadedItemSaved = true;  
+                    }
+                }
             });        
     }
 
@@ -134,138 +167,45 @@ export class ItemService {
 
     processAction(action, source, index) {
         console.log("GOT ACTION: " + action + ", " + source)
+        let itemID = this.loadedItem['_id'];
+        let thisItem = this.loadedItem;
         if(action == "like") {
             if(source == "itemsShown") {
-                this.itemsLiked[index] = true;
-                this.itemsDisliked[index] = false;
-
-                let thisItem = this.itemsShown.getItem(index);
+                let thisItem = this.itemsShown.getItem(index);   
+                let itemID = thisItem['_id'];  
                 this.userLikes.unshift(thisItem)
-                let itemID = thisItem["_id"];
-                
                 this.sendUserAction(itemID, action);
+                this.itemsLiked[index]=true;
             } else if(source == "userLikes") {
-                this.itemsLiked[index] = true;
-                this.itemsDisliked[index] = false;
-
-                let thisItem = this.userLikes[index];
                 this.userLikes.unshift(thisItem)
-                let itemID = thisItem["_id"];
-
-                for(let i = 0; i < this.itemsShown.length; i++) {
-                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
-                        this.itemsLiked[i] = true;
-                        this.itemsDisliked[i] = false;
-                    }
-                }
-
                 this.sendUserAction(itemID, action);
             }else if(source == "userSaved") {
-                this.itemsLiked[index] = true;
-                this.itemsDisliked[index] = false;
-
-                let thisItem = this.userSaved[index];
                 this.userLikes.unshift(thisItem)
-                let itemID = thisItem["_id"];
-
-                for(let i = 0; i < this.itemsShown.length; i++) {
-                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
-                        this.itemsLiked[i] = true;
-                        this.itemsDisliked[i] = false;
-                    }
-                }
+                this.sendUserAction(itemID, action);
+            }else if(source == "outfit") {
+                this.userLikes.unshift(thisItem)
                 this.sendUserAction(itemID, action);
             }
         }
-        else if (action == "dislike") {
-            if(source == "itemsShown") {
-                this.itemsLiked[index] = false;
-                this.itemsDisliked[index] = true;
-                let itemID = this.itemsShown.getItem(index)["_id"];
-
-                for(let i = 0; i < this.userLikes.length; i++) {
-                    if(this.userLikes[i]["_id"] == itemID) {
-                        this.userLikes.splice(i, 1);
-                        break;
-                    }
-                }
-                this.sendUserAction(itemID, action);
-            } else if(source == "userLikes") {
-                this.itemsLiked[index] = false;
-                this.itemsDisliked[index] = true;
-
-                let itemID = this.userLikes[index]["_id"];
-                this.userLikes.splice(index, 1);
-
-                for(let i = 0; i < this.itemsShown.length; i++) {
-                    if(this.itemsShown.getItem(index)["_id"] == itemID) {
-                        this.itemsLiked[i] = false;
-                        this.itemsDisliked[i] = true; 
-                        break;
-                    }
-                }
-                this.sendUserAction(itemID, action);
-            } else if(source == "userSaved") {
-                this.itemsLiked[index] = false;
-                this.itemsDisliked[index] = true;
-
-                let itemID = this.userSaved[index]["_id"];
-                
-                for(let i = 0; i < this.userLikes.length; i++) {
-                    if(this.userLikes[i]["_id"] == itemID) {
-                        this.userLikes.splice(i, 1);
-                        break;
-                    }
-                }
-                for(let i = 0; i < this.itemsShown.length; i++) {
-                    if(this.itemsShown.getItem(index)["_id"] == itemID) {
-                        this.itemsLiked[i] = false;
-                        this.itemsDisliked[i] = true;
-                        break;
-                    }
-                }
-                this.sendUserAction(itemID, action);
-            } 
-        }
         else if (action == "reset") {
             if(source == "itemsShown") {
-                let itemID = this.itemsShown.getItem(index)["_id"];
-
                 this.itemsLiked[index] = false;
                 this.itemsDisliked[index] = false;
-
+                let thisItem = this.itemsShown.getItem(index);   
+                let itemID = thisItem['_id']; 
                 for(let i = 0; i < this.userLikes.length; i++) {
                     if(this.userLikes[i]["_id"] == itemID) {
                         this.userLikes.splice(i, 1);
                         break;
                     }
                 }
-    
                 this.sendUserAction(itemID, action);
             } else if(source == "userLikes") {
-                let itemID = this.userLikes[index]["_id"];
                 this.userLikes.splice(index, 1);
-
-                for(let i = 0; i < this.itemsShown.length; i++) {
-                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
-                        this.itemsLiked[i] = false;
-                        this.itemsDisliked[i] = false;
-                        break;
-                    }
-                }
                 this.sendUserAction(itemID, action);
             }
         }else if(action=="unsave"){
             if(source == "itemsShown") {
-                let thisItem = this.itemsShown.getItem(index);
-                let itemID = this.itemsShown.getItem(index)["_id"];
-
-                for(let i = 0; i < this.itemsShown.length; i++) {
-                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
-                        this.itemsSaved[i] = false;
-                        break;
-                    }
-                }
                 for(let j=0;j<this.userSaved.length;j++){
                     if(this.userSaved[j]['_id']==itemID){
                         this.userSaved.splice(j, 1);
@@ -274,15 +214,6 @@ export class ItemService {
                 }
                 this.sendUserAction(itemID, action);
             } else if(source == "userLikes") {
-                let thisItem = this.userLikes[index];
-                let itemID = this.userLikes[index]["_id"];
-
-                for(let i = 0; i < this.itemsShown.length; i++) {
-                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
-                        this.itemsSaved[i] = false
-                        break;
-                    }
-                }
                 for(let j=0;j<this.userSaved.length;j++){
                     if(this.userSaved[j]['_id']==itemID){
                         this.userSaved.splice(j, 1);
@@ -290,16 +221,7 @@ export class ItemService {
                     }
                 }
                 this.sendUserAction(itemID, action);
-            }else if(source == "userSaved") {
-                let thisItem = this.userSaved[index];
-                let itemID = this.userSaved[index]["_id"];
-
-                for(let i = 0; i < this.itemsShown.length; i++) {
-                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
-                        this.itemsSaved[i] = false
-                        break;
-                    }
-                }                
+            }else if(source == "userSaved") {             
                 for(let j=0;j<this.userSaved.length;j++){
                     if(this.userSaved[j]['_id']==itemID){
                         this.userSaved.splice(j, 1);
@@ -310,44 +232,17 @@ export class ItemService {
             }
         }else if(action=="save"){
             if(source == "itemsShown") {
-                let thisItem = this.itemsShown.getItem(index);
-                let itemID = this.itemsShown.getItem(index)["_id"];
-
-                for(let i = 0; i < this.itemsShown.length; i++) {
-                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
-                        this.itemsSaved[i] = true
-                        break;
-                    }
-                }
                 this.userSaved.unshift(thisItem);
                 this.sendUserAction(itemID, action);
-                //this.userSaved.unshift(thisItem)
             } else if(source == "userLikes") {
-                let thisItem = this.userLikes[index];
-                let itemID = this.userLikes[index]["_id"];
-
-                for(let i = 0; i < this.itemsShown.length; i++) {
-                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
-                        this.itemsSaved[i] = true
-                        break;
-                    }
-                }
                 this.userSaved.unshift(thisItem);
                 this.sendUserAction(itemID, action);
-                //this.userSaved.unshift(thisItem)
             } else if(source == "userSaved") {
-                let thisItem = this.userSaved[index];
-                let itemID = this.userSaved[index]["_id"];
-
-                for(let i = 0; i < this.itemsShown.length; i++) {
-                    if(this.itemsShown.getItem(i)["_id"] == itemID) {
-                        this.itemsSaved[i] = true
-
-                    }
-                }
                 this.userSaved.unshift(thisItem);
                 this.sendUserAction(itemID, action);
-                //this.userSaved.unshift(thisItem)
+            }else if(source == "outfit") {
+                this.userSaved.unshift(thisItem);
+                this.sendUserAction(itemID, action);
             }
             
         } else {
@@ -411,6 +306,17 @@ export class ItemService {
             "id": id
         }
         var url = "https://fashionapi.herokuapp.com/user/friend";
+        let header = {"Authorization": "Bearer " + this.token}
+        return this.http.post(
+            url, body, { headers: header, responseType: "json" }
+        );
+    }
+
+    sendFriendAction(id, action){
+        let body = {
+            "id": id
+        }
+        var url = "https://fashionapi.herokuapp.com/user/add-friend";
         let header = {"Authorization": "Bearer " + this.token}
         return this.http.post(
             url, body, { headers: header, responseType: "json" }

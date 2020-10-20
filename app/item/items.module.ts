@@ -12,6 +12,9 @@ import { OutfitComponent } from "./outfit.component";
 import { tutorialComponent } from "./tutorial";
 import { friendsComponent } from "./friends";
 import { userComponent } from "./user";
+import { RouteReuseStrategy } from "@angular/router";
+import { CustomRouteReuseStrategy } from "./custom-route-reuse-strategy";
+
 
 
 @NgModule({
@@ -31,7 +34,11 @@ import { userComponent } from "./user";
         userComponent,
     ],
     providers: [
-        ItemService
+        ItemService,
+        {
+            provide: RouteReuseStrategy,
+            useClass: CustomRouteReuseStrategy
+        }
     ]
 })
 export class ItemsModule { }

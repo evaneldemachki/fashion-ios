@@ -17,6 +17,7 @@ import { GridLayout, ItemSpec } from "tns-core-modules/ui/layouts/grid-layout";
 import { Label } from "tns-core-modules/ui/label";
 import { screen } from "tns-core-modules/platform/platform";
 import { ListPicker } from "tns-core-modules/ui/list-picker";
+import { RouterExtensions } from 'nativescript-angular/router';
 
 
 @Component({
@@ -35,6 +36,8 @@ export class userComponent implements OnInit {
     userFriends=[];
     userIcon;
     categories = [];
+    followStatus = "";
+    showOptions = false;
 
     public profileLikesSearchMenu: GridLayout;
     public profileLikesSearchBar: SearchBar;
@@ -55,6 +58,7 @@ export class userComponent implements OnInit {
     constructor(
         private itemService: ItemService,
         private route: ActivatedRoute,
+        protected router: RouterExtensions,
         private page: Page,
         private http: HttpClient,
     ) { }
@@ -90,6 +94,79 @@ export class userComponent implements OnInit {
             cat.unshift("Any");
             this.categories = cat;
         });
+        this.getFollowerStatus();
+    }
+
+    getFollowerStatus(){
+        let found = 0
+        for(let i=0; i<this.itemService.friends.length; i++){
+            if(this.id ==this.itemService.friends[i]['_id']){
+                this.followStatus = 'Unfollow'
+                found = 1;
+                break;
+            }
+        }
+        for(let j=0; j<this.itemService.pending.length; j++){
+            if(this.id ==this.itemService.friends[j]['_id']){
+                this.followStatus = 'Pending'
+                found = 1;
+                break;
+            }
+        }
+        for(let k=0; k<this.itemService.requests.length; k++){
+            if(this.id ==this.itemService.requests[k]['_id']){
+                this.followStatus = 'Respond'
+                found = 1;
+                break;
+            }
+        }
+        if(found==0){
+            this.followStatus = 'Follow'
+        }
+    }
+
+    FollowUser(){
+        if(this.followStatus!='Follow'){
+            if(this.showOptions==false){
+                this.showOptions = true;
+            }else{
+                this.showOptions = false;
+            }
+        }else{
+            //send follow request
+        }
+    }
+
+    confirmRequest(){
+        if(this.followStatus=="Unfollow"){
+
+        }else if(this.followStatus=="Pending"){
+
+        }else if(this.followStatus=='Respond'){
+
+        }
+    }
+
+    denyRequest(){
+        if(this.followStatus=="Unfollow"){
+            this.showOptions = false;
+        }else if(this.followStatus=="Pending"){
+            this.showOptions = false;
+        }else if(this.followStatus=='Respond'){
+            this.showOptions = false;
+        }
+    }
+
+    goToFriendsProfile(source, id){
+        this.router.navigate(['user', id], 
+            {
+                relativeTo: this.route.parent,
+                queryParams: { 'source': source, 'id': id },
+                transition: {
+                    name: 'slideLeft',
+                    duration: 500
+                }
+            });
     }
 
     start(args){

@@ -11,6 +11,10 @@ import { ItemService } from "./item.service"
 export class ItemReferenceComponent implements OnInit {
     item_url: string;
     id: string;
+    
+    get item() {
+        return this.itemService.loadedItem;
+    }
 
     constructor( 
         private route: ActivatedRoute,
@@ -25,9 +29,7 @@ export class ItemReferenceComponent implements OnInit {
 
         this.route.queryParams.subscribe(params => {
             this.id = params.id;
-            this.itemService.getOne(this.id).subscribe(res => {
-                this.item_url = res["url"]
-            });
+            this.itemService.getOne(this.id);
         });
 
     }

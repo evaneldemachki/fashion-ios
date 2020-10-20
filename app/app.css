@@ -255,6 +255,17 @@ SearchBar{
     margin: 10;
 }
 
+.outfit{
+    padding-top: 10;
+    padding-right: 10;
+    padding-left: 10;
+
+}
+
+.outfitLabels{
+    font-size: 12;
+}
+
 .shareMenu label{
     color: white;
     font-size: medium;
@@ -338,5 +349,23 @@ image{
     border-width: 3;
     border-color: black;
     border-radius: 10%;
+}
+
+.requests{
+    border-width: 1;
+    border-color: black;
+    border-radius: 50;
+    text-align: center;
+    background-color: red;
+    visibility: visible;
+    width: 30;
+}
+
+.requests label{
+    font-size: 15;
+}
+
+.requestsNone{
+    visibility:hidden;
 }
 
