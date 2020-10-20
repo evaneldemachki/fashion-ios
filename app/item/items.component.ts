@@ -694,7 +694,7 @@ export class ItemsComponent implements OnInit {
         }
     }
 
-    fashionItemInit(index){
+    fashionItemLike(index){
         let vibrator = new Vibrate();
         let thisItem = this.itemsShown.getItem(index);
         // swiped to dislike item:

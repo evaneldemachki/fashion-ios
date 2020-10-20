@@ -34,10 +34,10 @@
             (itemSwiping)="onItemSwiping" >
                 <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="240"></ListViewGridLayout>
                 <ng-template horizontalAlignment="center" let-item="item" let-index="index" >
-                <GridLayout rows="*, 20, 20" columns="*,*,*" class="cardView" (doubleTap)="fashionItemInit(index)" [nsRouterLink]="['detail', index]" 
-                [queryParams]="{ source: 'itemsShown', liked: itemsLiked[index], saved: itemsSaved[index]}">
+                <GridLayout rows="*, 20, 20" columns="*,*,*" class="cardView" (doubleTap)="fashionItemLike(index)" [nsRouterLink]="['detail', index]" 
+                [queryParams]="{ id: item['_id'], 'source':'itemsShown'}">
                     <GridLayout row=0 column=0 colspan=3>
-                        <GridLayout columns="*,*,55" loaded="fashionItemInit($event, index)" padding="0 0 0 0" >
+                        <GridLayout columns="*,*,55" padding="0 0 0 0" >
                             <Image class="mainViewImage" colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
                             <StackLayout column="2" style="padding-left: 0;">
                                 <Label [class]="itemsLiked[index] ? 'far t-36' : 'invisible'" style="color: green;" text="&#xf004;" ></Label>
@@ -175,7 +175,7 @@
                             <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="125"></ListViewLinearLayout>
                             <ng-template let-item="item" let-index="index" >
                                 <StackLayout [nsRouterLink]="['detail', index]" 
-                                [queryParams]="{ source: 'userLikes', liked: true, disliked: false }">
+                                [queryParams]="{ id: item['_id'], 'source': 'userLikes' }">
                                     <Image [src]="item.img[0]" height="80%" width = "80%" ios:stretch="aspectFill"></Image>
                                     <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
                                 </StackLayout>
@@ -186,7 +186,7 @@
                             <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="125"></ListViewLinearLayout>
                             <ng-template let-item="item" let-index="index">
                                 <StackLayout [nsRouterLink]="['detail', index]" 
-                                [queryParams]="{ source: 'userSaved', saved: true }">
+                                [queryParams]="{ id: item['_id'], 'source':'userSaved' }">
                                     <Image [src]="item.img[0]" height="80%" width = "80%" ios:stretch="aspectFill"></Image>
                                     <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
                                 </StackLayout>

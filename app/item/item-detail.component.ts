@@ -27,12 +27,10 @@ export class ItemDetailComponent implements OnInit {
     source: string;
     saved: boolean;
     id: string;
+    images = [];
     
     activelikedIcon: Image;
     activedislikedIcon: Image;
-    Color = require("tns-core-modules/color").Color;
-    colors = require("tns-core-modules/color/known-colors");
-    colorRed = new this.Color("#FF0000");
 
     constructor(
         private itemService: ItemService,
@@ -46,95 +44,30 @@ export class ItemDetailComponent implements OnInit {
         this.index = i;
 
         this.route.queryParams.subscribe(params => {
-            // convert string parameters to boolean:
-            //this.liked = (params.liked == "true");
-            //this.disliked = (params.disliked == "true");
-            //this.saved = (params.saved == "true");
             this.source = params.source;
             this.id = params.id;
+            this.itemService.getOne(this.id);
 
-            if(this.source == "itemsShown") {
-                this.item = <Item>this.itemService.itemsShown.getItem(i);
-            } else if(this.source == "userLikes") {
-                if(this.id){
-                    this.itemService.getOne(this.id).subscribe(res => {
-                        this.item = <Item>res
-                    });
-                }else{
-                    this.item = <Item>this.itemService.userLikes[i];
-                }
-            }else if(this.source == "userSaved"){
-                if(this.id){
-                    this.itemService.getOne(this.id).subscribe(res => {
-                        this.item = <Item>res
-                    });
-                }else{
-                    this.item = <Item>this.itemService.userSaved[i];
-                }
-            }else if(this.source == "user"){
-                if(this.id){
-                    this.itemService.getOne(this.id).subscribe(res => {
-                        this.item = <Item>res
-                    });
-                }
-            }else if(this.source == "outfit"){
-                if(this.id){
-                    this.itemService.getOne(this.id).subscribe(res => {
-                        this.item = <Item>res
-                    });
-                }
-            
-            }
-            for(var j=0;j<this.itemService.userLikes.length;j++){
-                if(this.itemService.userLikes[j]['_id']==this.item['_id']){
-                    this.liked=true;
-                }
-            }
-
-            for(var j=0;j<this.itemService.userSaved.length;j++){
-                if(this.itemService.userSaved[j]['_id']==this.item['_id']){
-                    this.saved = true;  
-                }
-            }
-            this.id = this.item['_id']
         });
-
-
-    }
-
-    onScrollEnded(event) {
-        if(event.scrollOffset % 350 != 0) {
-            this.focus = Math.round(event.scrollOffset / 350);
-            event.object.scrollToIndex(this.focus, true);
-        }
-    }
-
-    onScrollDragEnded(event) {
-        if(event.scrollOffset > ( (this.focus * 350) + 175 )) {
-            this.focus += 1;
-        } else if(event.scrollOffset < ( (this.focus * 350) - 175 )) {
-            this.focus -= 1;
-        }
-        event.object.scrollToIndex(this.focus, true);
     }
 
     onItemLike(args) {
-        if(this.liked) {
-            this.liked = false;
+        if(this.itemService.loadedItemLiked) {
             this.itemService.processAction("reset", this.source, this.index);
+            this.itemService.loadedItemLiked = false;
         } else {
-            this.liked = true;
             this.itemService.processAction("like", this.source, this.index);
+            this.itemService.loadedItemLiked = true;
         }
     }
 
     onItemSave(args) {
-        if(this.saved) {
+        if(this.itemService.loadedItemSaved) {
             this.itemService.processAction("unsave", this.source, this.index);
-            this.saved = false;
+            this.itemService.loadedItemSaved = false;
         } else {
             this.itemService.processAction("save", this.source, this.index);
-            this.saved = true;
+            this.itemService.loadedItemSaved = true;
         }
     }
       /*
