@@ -138,15 +138,6 @@ FlexboxLayout{
     color: #8D99AE
 }
 
-
-Button {
-    border-width: 20;
-    border-radius: 10%;
-    border-color: white;
-    color: black;
-    font-weight: bold;
-}
-
 .ns-light .input-field{
     border-width: 3;
     border-color: black;
@@ -367,5 +358,21 @@ image{
 
 .requestsNone{
     visibility:hidden;
+}
+
+Button {
+    border-width: 20;
+    border-radius: 10%;
+    border-color: white;
+    color: black;
+    font-weight: bold;
+}
+
+.profilePicture{
+    height: 50%;
+    width: 28%;
+    border-width: 5;
+    border-radius: 50%;
+    border-color: black;
 }
 

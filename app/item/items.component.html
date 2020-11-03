@@ -1,17 +1,21 @@
-<ActionBar title="Find Your Fashion" (loaded)="findUserActions()">
+<ActionBar title="Find Your Fashion" (loaded)="findUserActions()" style="background-color: black;">
     <ActionItem (tap)="onShare()" ios.systemIcon="9" ios.position="left" android.systemIcon="res://ic_menu_share" android.position="actionBar"></ActionItem>
     <ActionItem (tap)="openSearch($event)" ios.systemIcon="12" ios.position="right" text="search" android.position="popup"></ActionItem>
 </ActionBar>
 <Tabs selectedIndex="0" (selectedIndexChanged)="indexChanged($event)">
     <!-- The bottom tab UI is created via TabStrip (the containier) and TabStripItem (for each tab)-->
     <TabStrip>
-        <TabStripItem >
-            <Label text="Browse" class="tabMenu"></Label>
-            <Image src="font://&#xf00e;" class="fas t-36"></Image>
+        <TabStripItem>
+            <Label text="Explore" class="tabMenu"></Label>
+            <Image src="font://&#xf14e;" class="fas t-36"></Image>
         </TabStripItem>
         <TabStripItem class="special">
             <Label text="Outfits" class="tabMenu"></Label>
             <Image src="font://&#xf553;" class="fas t-36"></Image>
+        </TabStripItem>
+        <TabStripItem>
+            <Label text="Feed" class="tabMenu"></Label>
+            <Image src="font://&#xf005;" class="fas t-36"></Image>
         </TabStripItem>
         <TabStripItem class="special">
             <Label text="Profile" class="tabMenu"></Label>
@@ -32,13 +36,13 @@
             itemSwipeProgressEnded="onSwipeCellFinished($event)"
             itemSwipeProgressStarted="onSwipeCellStarted($event)" 
             (itemSwiping)="onItemSwiping" >
-                <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="240"></ListViewGridLayout>
+                <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" itemWidth="186" itemHeight="240"></ListViewGridLayout>
                 <ng-template horizontalAlignment="center" let-item="item" let-index="index" >
                 <GridLayout rows="*, 20, 20" columns="*,*,*" class="cardView" (doubleTap)="fashionItemLike(index)" [nsRouterLink]="['detail', index]" 
                 [queryParams]="{ id: item['_id'], 'source':'itemsShown'}">
                     <GridLayout row=0 column=0 colspan=3>
                         <GridLayout columns="*,*,55" padding="0 0 0 0" >
-                            <Image class="mainViewImage" colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
+                            <Image class="mainViewImage" colspan="3" [src]="item.img[0]" height="186" stretch="aspectFill" ></Image>
                             <StackLayout column="2" style="padding-left: 0;">
                                 <Label [class]="itemsLiked[index] ? 'far t-36' : 'invisible'" style="color: green;" text="&#xf004;" ></Label>
                                 <Label [class]="itemsSaved[index] ? 'far t-36' : 'invisible'" style="color: green;" text="&#xf0c7;" ></Label>
@@ -103,7 +107,13 @@
     <TabContentItem>
         <StackLayout id="accountMenu" padding="2 0 2 6" margin="0">
             <GridLayout rows="*,*,*,*,*,*,*,*,*,*,*,*" columns="*,*,*,*,*,*,*,*,*,*">
-                    <Button id="buttonNeo" row="0" column="0" colspan="4" [text]="filterBySaved? 'Saved' : 'Likes'" (tap)="swapFilterSaved()" width="100%"></Button>
+                    <Button id="buttonNeo" row="0" column="0" colspan="4" (tap)="swapFilterSaved()" width="100%">
+                        <FormattedString>
+                            <Span text="Saved" [style]="filterBySaved? 'font-weight: 800;' : 'font-weight: normal;'"></Span>
+                            <Span text=" / "></Span>
+                            <Span text="Liked" [style]="filterBySaved? 'font-weight: normal;' : 'font-weight: 800;'"></Span>
+                        </FormattedString>
+                    </Button>
                     <RadListView style="margin-right:15;" row="0" column="4" colspan="7" [items]="categories" orientation="horizontal" height=50 width="100%"
                     multipleSelection="false" selectionBehavior="Press" 
                     (itemSelected)="outfitCategorySelected($event)" (itemDeselected)="outfitCategoryDeselected($event)">
@@ -121,7 +131,7 @@
                         <ListViewLinearLayout id="radListSelected" tkListViewLayout scrollDirection="Vertical"></ListViewLinearLayout>
                         <ng-template let-item="item" let-index="index">
                             <StackLayout>
-                                <Image id="StyleImage" [src]="item.img[0]" height="100" width = "100" ios:stretch="aspectFill"></Image>
+                                <Image id="StyleImage" [src]="item.img[0]" height="100" width = "100" stretch="aspectFill"></Image>
                                 <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
                             </StackLayout>
                         </ng-template>
@@ -131,14 +141,14 @@
                     <ListViewGridLayout style="padding-right: 10;" tkListViewLayout scrollDirection="Vertical" itemWidth="120" itemHeight="150" spanCount="2"></ListViewGridLayout>
                     <ng-template let-item="item">
                         <StackLayout>
-                            <Image [src]="item.img[0]" height="100" width = "100" ios:stretch="aspectFill"></Image>
+                            <Image [src]="item.img[0]" height="100" width = "100" stretch="aspectFill"></Image>
                             <Label textAlignment = "center" size = "13" width="100%" [text]="item.name" textWrap="true"></Label>
                         </StackLayout>
                     </ng-template>
                 </RadListView>
 
                 <StackLayout row="10" rowspan="2" col="4" colspan="10" style="padding-bottom: 10;">
-                    <button id="buttonNeo" verticalAlignment = "bottom" text="Save Outfit" (tap)="saveOutfit()"></button>
+                    <button id="buttonNeo" verticalAlignment = "bottom" text="Save Outfit" (tap)="saveOutfit($event)"></button>
                     <Label size="16" textAlignment = "center" [text] = "outfitCostLabel"></Label>
                 </StackLayout>
                 <!--[class]="outfitTutorialHide ? 'invisible' : 'visible'"-->
@@ -157,17 +167,23 @@
         </StackLayout>
 
     </TabContentItem>
-    
+
+    <TabContentItem>
+        <Label text="Feed"></Label>
+    </TabContentItem>
+
     <!--Profile-->
     <TabContentItem>
         <Gridlayout padding="2 0 2 2" rows = "*,*,*" id="accountMenu" margin="0"> 
-            <StackLayout row="0">
-                <Image [src] = "userIcon" height="70%" width = "70%"></Image>
-                <GridLayout columns="*,*,*,*,*">
-                    <Button id="buttonNeo" col="0" colspan="2" width="100%" text="Logout" (tap)="Logout()"></Button>
-                    <Button id="buttonNeo" col="3" colspan="2" width="100%" text="Friends" (tap)="openFriend()"></Button>
+            <GridLayout row="0" columns="*,*,*,*,*,*,*" rows="*,*,*">
+                <Image class="profilePicture" column="2" colspan="3" row="0" rowspan="3" [src] = "userIcon" height="60%" width = "30%"></Image>
+                <Button id="buttonNeo" row="0" col="0" colspan="2" width="100%" text="Logout" (tap)="Logout()"></Button>
+                <Button id="buttonNeo" row="1" col="5" colspan="2" width="100%" text="Followers" (tap)="openFollower()"></Button>
+                <Button id="buttonNeo" row="2" col="5" colspan="2" width="100%" text="Following" (tap)="openFollowing()"></Button>
+                <GridLayout col="5" colspan="2" row="0" (tap)="goToSettings()">
+                    <Image id="settingsGear" src="font://&#xf013;" class="fas t-36" height=30></Image>
                 </GridLayout>
-            </StackLayout>    
+            </GridLayout>    
             <ScrollView row="1" rowspan="2" orientation="vertical">
                 <StackLayout>
                         <Button id="buttonNeo" class="profile" textAlignment = "center" text="My Liked" (tap)="openLikes()"></Button>
@@ -176,7 +192,7 @@
                             <ng-template let-item="item" let-index="index" >
                                 <StackLayout [nsRouterLink]="['detail', index]" 
                                 [queryParams]="{ id: item['_id'], 'source': 'userLikes' }">
-                                    <Image [src]="item.img[0]" height="80%" width = "80%" ios:stretch="aspectFill"></Image>
+                                    <Image [src]="item.img[0]" height="80%" width = "80%" stretch="aspectFill"></Image>
                                     <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
                                 </StackLayout>
                             </ng-template>
@@ -187,7 +203,7 @@
                             <ng-template let-item="item" let-index="index">
                                 <StackLayout [nsRouterLink]="['detail', index]" 
                                 [queryParams]="{ id: item['_id'], 'source':'userSaved' }">
-                                    <Image [src]="item.img[0]" height="80%" width = "80%" ios:stretch="aspectFill"></Image>
+                                    <Image [src]="item.img[0]" height="80%" width = "80%" stretch="aspectFill"></Image>
                                     <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true"></Label>
                                 </StackLayout>
                             </ng-template>
@@ -197,10 +213,10 @@
                             <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="200" itemHeight="200" ></ListViewLinearLayout>
                             <ng-template let-item="item" let-index="index">
                                 <GridLayout rows="*,*" columns="*,*" [nsRouterLink]="['outfit']" [queryParams]="{ outfit: index}">
-                                    <Image row=0 column=0 [src]="item['items'][0] ? item['items'][0].img[0] : ''" height="70%" width = "70%" ios:stretch="aspectFill"></Image>
-                                    <Image row=0 column=1 [src]="item['items'][1] ? item['items'][1].img[0] : ''" height="70%" width = "70%" ios:stretch="aspectFill"></Image>
-                                    <Image row=1 column=0 [src]="item['items'][2] ? item['items'][2].img[0] : ''" height="70%" width = "70%" ios:stretch="aspectFill"></Image>
-                                    <Image row=1 column=1 [src]="item['items'][3] ? item['items'][3].img[0] : ''" height="70%" width = "70%" ios:stretch="aspectFill"></Image>
+                                    <Image row=0 column=0 [src]="item['items'][0] ? item['items'][0].img[0] : ''" height="70%" width = "70%" stretch="aspectFill"></Image>
+                                    <Image row=0 column=1 [src]="item['items'][1] ? item['items'][1].img[0] : ''" height="70%" width = "70%" stretch="aspectFill"></Image>
+                                    <Image row=1 column=0 [src]="item['items'][2] ? item['items'][2].img[0] : ''" height="70%" width = "70%" stretch="aspectFill"></Image>
+                                    <Image row=1 column=1 [src]="item['items'][3] ? item['items'][3].img[0] : ''" height="70%" width = "70%" stretch="aspectFill"></Image>
                                 </GridLayout>
                             </ng-template>
                         </RadListView>
@@ -222,7 +238,7 @@
                                     <StackLayout row="1" column="0" colspan="3" orientation="horizontal">
                                         <label class="userListText"  [text]="item.first_name + ' ' + item.last_name" textAlignment = "left"></label>
                                     </StackLayout>
-                                    <Button id="buttonNeo" (tap)="friendAction(item['_id'], 'friends', index)" [text]="isFriend[index] ? 'Friend' : 'Unfriend'" row="0" rowspan="2" column="4" colspan="2" style="background-color: white; color: black;" borderColor="white" borderWidth="3"></Button>
+                                    <Button id="buttonNeo" (tap)="followerAction(item['_id'], 'Followers', index)" [text]="isFollower[index] ? 'Followed' : 'Unfollow'" row="0" rowspan="2" column="4" colspan="2" style="background-color: white; color: black;" borderColor="white" borderWidth="3"></Button>
                                 </GridLayout>
                             </ng-template>
                 </RadListView>
@@ -237,12 +253,12 @@
                 <RadListView row="1" rowspan="10" column="0" colspan="10" orientation="vertical" [items]="searchLikes"
                 width="100%" height="100%" (scrolled)="profileLikesScrollStartedEvent($event)"
                 id="listView" selectionBehavior="None">
-                    <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
+                    <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" itemWidth="186" itemHeight="180"></ListViewGridLayout>
                     <ng-template horizontalAlignment="center" let-item="item" let-index="index">
                         <GridLayout [nsRouterLink]="['detail', index]" 
                         [queryParams]="{ source: 'userLikes', liked: true, disliked: false, id: searchLikes[index]['_id'] }" >
                             <GridLayout columns="*,*,*" padding="0 0 0 0" >
-                                <Image colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
+                                <Image colspan="3" [src]="item.img[0]" height="186" stretch="aspectFill" ></Image>
                             </GridLayout>
                             <GridLayout style="background-color: rgba(255, 255, 255, 0.685); border-radius: 80%; border: 2" height="40">
                                 <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true" style="color: black;"></Label>
@@ -258,36 +274,61 @@
                 <Label id="closeLikesIcon" row="0" column="0" colspan="2" class="far t-36" style="padding: 10; padding-left: 20; color: black;" text="&#xf057;" (tap)="closeLikes()"></Label>
             </GridLayout>
 
-            <!--Profile Search Friends-->
-            <GridLayout class="friendsListGrid popUpMenu" id="profileFriends" row="0" rowspan="3" columns="*,*,*,*,*" rows="*,*,*,*,*,*,*,*,*,*" (loaded)="friendGridInitialized($event)">
-                <RadListView id="Main" column="0" colspan="5" row="1" rowspan="9" [items]="friendsListView ? profileFriendsSearchUsers : requests" orientation="Vertical" height=100%
-                        multipleSelection="false" selectionBehavior="Press" (scrolled)="friendsScrollStartedEvent($event)"
+            <!--Profile Search Followers-->
+            <GridLayout class="followersListGrid popUpMenu" id="profileFollowers" row="0" rowspan="3" columns="*,*,*,*,*" rows="*,*,*,*,*,*,*,*,*,*" (loaded)="followerGridInitialized($event)">
+                <RadListView id="Main" column="0" colspan="5" row="1" rowspan="9" [items]="profileFollowersSearchUsers" orientation="Vertical" height=100%
+                        multipleSelection="false" selectionBehavior="Press" (scrolled)="followersScrollStartedEvent($event)"
                         (itemDeselected)="categoryDeselected($event)">
                             <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" itemWidth="350" itemHeight="95" spanCount="1"></ListViewGridLayout>
                                 <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
                             <ng-template let-item="item" let-index="index" horizontalAlignment="center">
-                                <GridLayout id="userList" columns="*,*,*,*,*,*" rows="*,*" [nsRouterLink]="['user', item['_id']]" [queryParams]="{ source: 'friends', id: profileFriendsSearchUsers[index]['_id']}" style="margin-top: 10; margin-left: 15;">
+                                <GridLayout id="userList" columns="*,*,*,*,*,*" rows="*,*" [nsRouterLink]="['user', item['_id']]" [queryParams]="{ source: 'follower', id: profileFollowersSearchUsers[index]['_id']}" style="margin-top: 10; margin-left: 15;">
                                     <StackLayout orientation="horizontal" row="0" column="0" colspan="3" >
                                     <label class="userListText" textAlignment = "left" [text]="'@' + item.username"></label>
                                     </StackLayout>
                                     <StackLayout row="1" column="0" colspan="3" orientation="horizontal">
                                         <label class="userListText"  [text]="item.first_name + ' ' + item.last_name" textAlignment = "left"></label>
                                     </StackLayout>
-                                    <Button id="buttonNeo" (tap)="friendAction(item['_id'], 'search', index)" text="Friend" row="0" rowspan="2" column="4" colspan="2" style="background-color: white; color: black;"></Button>
+                                    <Button id="buttonNeo" (tap)="goToUserProfile(item['_id'])" [text]="FollowingListView ? 'Follower' : 'Respond'" row="0" rowspan="2" column="4" colspan="2" style="background-color: white; color: black; width: 100;"></Button>
                                 </GridLayout>
                             </ng-template>
                 </RadListView>
-                <SearchBar id="searchBarFriends" row="0" column="1" colspan="5" hint="Search for Users ..." loaded="searchStart($event)" (textChange)="onFriendTextChanged($event)"
-                [text]="searchPhrase" (clear)="onFriendClear($event)" submit="onSubmit($event)" style="padding-left: 30;">
+                <SearchBar id="searchBarFollowers" row="0" column="1" colspan="5" hint="Search for Followers ..." loaded="searchStart($event)" (textChange)="onFollowerTextChanged($event)"
+                [text]="searchPhrase" (clear)="onFollowerClear($event)" submit="onSubmit($event)" style="padding-left: 30;">
                 </SearchBar>
-                <Label id="closeFriendIcon" row="0" column="0" class="far t-36" style="padding: 10; padding-left: 20; color: black;" text="&#xf057;" (tap)="closeFriend()"></Label>
+                <Label id="closeFollowerIcon" row="0" column="0" class="far t-36" style="padding: 10; padding-left: 20; color: black;" text="&#xf057;" (tap)="closeFollower()"></Label>
                 <GridLayout column="0" colspan="10" row="10" columns="*,*,*,*,*,*" rows="*,*">
-                    <button text="Friends" column="0" colspan="3" row="0" rowspan="2" (tap)="SwapFriendsView('friends')"></button>
-                    <button text="Requests" column="3" colspan="3" row="0" rowspan="2" (tap)="SwapFriendsView('requests')"></button>
+                    <button text="Followers" column="0" colspan="3" row="0" rowspan="2" (tap)="SwapFollowersView('Followers')"></button>
+                    <button text="Requests" column="3" colspan="3" row="0" rowspan="2" (tap)="SwapFollowersView('requests')"></button>
                     <GridLayout column="5" row="0" [class]="requestsNum>0 ? 'requests' : 'requestsNone'">
                         <label [text]="requestsNum"></label>
                     </GridLayout>
                 </GridLayout>
+            </GridLayout>
+
+            <!--Profile Search Following-->
+            <GridLayout class="followingListGrid popUpMenu" id="profileFollowing" row="0" rowspan="3" columns="*,*,*,*,*" rows="*,*,*,*,*,*,*,*,*,*" (loaded)="followingGridInitialized($event)">
+                <RadListView id="Main" column="0" colspan="5" row="1" rowspan="9" [items]="profileFollowingSearchUsers" orientation="Vertical" height=100%
+                        multipleSelection="false" selectionBehavior="Press" (scrolled)="followingScrollStartedEvent($event)"
+                        (itemDeselected)="categoryDeselected($event)">
+                            <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" itemWidth="350" itemHeight="95" spanCount="1"></ListViewGridLayout>
+                                <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
+                            <ng-template let-item="item" let-index="index" horizontalAlignment="center">
+                                <GridLayout id="userList" columns="*,*,*,*,*,*" rows="*,*" [nsRouterLink]="['user', item['_id']]" [queryParams]="{ source: 'follower', id: profileFollowingSearchUsers[index]['_id']}" style="margin-top: 10; margin-left: 15;">
+                                    <StackLayout orientation="horizontal" row="0" column="0" colspan="3" >
+                                    <label class="userListText" textAlignment = "left" [text]="'@' + item.username"></label>
+                                    </StackLayout>
+                                    <StackLayout row="1" column="0" colspan="3" orientation="horizontal">
+                                        <label class="userListText"  [text]="item.first_name + ' ' + item.last_name" textAlignment = "left"></label>
+                                    </StackLayout>
+                                    <Button id="buttonNeo" (tap)="FollowingAction(item['_id'], 'search', index)" text="Following" row="0" rowspan="2" column="4" colspan="2" style="background-color: white; color: black; width: 100;"></Button>
+                                </GridLayout>
+                            </ng-template>
+                </RadListView>
+                <SearchBar id="searchBarFollowing" row="0" column="1" colspan="5" hint="Search for Following ..." loaded="searchStart($event)" (textChange)="onFollowingTextChanged($event)"
+                [text]="searchPhrase" (clear)="onFollowingClear($event)" submit="onSubmit($event)" style="padding-left: 30;">
+                </SearchBar>
+                <Label id="closeFollowingIcon" row="0" column="0" class="far t-36" style="padding: 10; padding-left: 20; color: black;" text="&#xf057;" (tap)="closeFollowing()"></Label>
             </GridLayout>
 
             <!--Profile Search Saved-->
@@ -295,12 +336,12 @@
                 <RadListView row="1" rowspan="10" column="0" colspan="10" orientation="vertical" [items]="searchSaved"
                 width="100%" height="100%" (scrolled)="savedScrollStartedEvent($event)"
                 id="listView" selectionBehavior="None">
-                    <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" ios:itemWidth="186" ios:itemHeight="180"></ListViewGridLayout>
+                    <ListViewGridLayout tkListViewLayout itemInsertAnimation="Scale" scrollDirection="Vertical" itemWidth="186" itemHeight="180"></ListViewGridLayout>
                     <ng-template horizontalAlignment="center" let-item="item" let-index="index">
                         <GridLayout [nsRouterLink]="['detail', index]" 
                         [queryParams]="{ source: 'userSaved', id: searchSaved[index]['_id']}" >
                             <GridLayout columns="*,*,*" padding="0 0 0 0" >
-                                <Image colspan="3" [src]="item.img[0]" height="186" ios:stretch="aspectFill" ></Image>
+                                <Image colspan="3" [src]="item.img[0]" height="186" stretch="aspectFill" ></Image>
                             </GridLayout>
                             <GridLayout style="background-color: rgba(255, 255, 255, 0.685); border-radius: 80%; border: 2" height="40">
                                 <Label textAlignment = "center" size = "15" width="100%" [text]="item.name" textWrap="true" style="color: black;"></Label>

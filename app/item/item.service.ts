@@ -29,7 +29,7 @@ export class ItemService {
     public userSaved = [];
     public wardrobe = [];
     public outfits = [];
-    public friends = [];
+    public follow_data = {followers: [], following: [], pending: [], requested: []};
     public pending = [];
     public requests = [];
     public userIcon: Image;
@@ -185,6 +185,9 @@ export class ItemService {
             }else if(source == "outfit") {
                 this.userLikes.unshift(thisItem)
                 this.sendUserAction(itemID, action);
+            }else if(source == "user") {
+                this.userLikes.unshift(thisItem)
+                this.sendUserAction(itemID, action);
             }
         }
         else if (action == "reset") {
@@ -229,6 +232,14 @@ export class ItemService {
                     }
                 }
                 this.sendUserAction(itemID, action);
+            }else if(source == "user") {             
+                for(let j=0;j<this.userSaved.length;j++){
+                    if(this.userSaved[j]['_id']==itemID){
+                        this.userSaved.splice(j, 1);
+                        break;
+                    }
+                }
+                this.sendUserAction(itemID, action);
             }
         }else if(action=="save"){
             if(source == "itemsShown") {
@@ -243,18 +254,14 @@ export class ItemService {
             }else if(source == "outfit") {
                 this.userSaved.unshift(thisItem);
                 this.sendUserAction(itemID, action);
+            }else if(source == "user") {
+                this.userSaved.unshift(thisItem);
+                this.sendUserAction(itemID, action);
             }
             
         } else {
             throw new Error("invalid action specified");
         }
-    }
-
-    //save and unsave action
-    sendUserAction(item, action) {
-        let input = { item, action }
-        this.getPostResponse(input).subscribe((res) =>{
-        })
     }
 
     addOutfit(input){
@@ -291,35 +298,46 @@ export class ItemService {
             });
     }
 
-    getFriends(){
-        var url = "https://fashionapi.herokuapp.com/user/friend";
-        let header = {"Authorization": "Bearer " + this.token}
-        return this.http.get(
-            url, {
-                headers: header,
-                responseType: "text"
-            });
-    }
-
-    getFriendData(id){
+    getFollowerData(id){
         let body = {
             "id": id
         }
-        var url = "https://fashionapi.herokuapp.com/user/friend";
+        var url = "https://fashionapi.herokuapp.com/user/user-data";
         let header = {"Authorization": "Bearer " + this.token}
         return this.http.post(
             url, body, { headers: header, responseType: "json" }
         );
     }
 
-    sendFriendAction(id, action){
+    sendUserAction(id, action){
+        console.log('Action Received: ' + action);
         let body = {
             "id": id
         }
-        var url = "https://fashionapi.herokuapp.com/user/add-friend";
-        let header = {"Authorization": "Bearer " + this.token}
-        return this.http.post(
-            url, body, { headers: header, responseType: "json" }
-        );
+        if(action=='follow'){
+            var url = "https://fashionapi.herokuapp.com/user/follow";
+            let header = {"Authorization": "Bearer " + this.token}
+            return this.http.post(
+                url, body, { headers: header, responseType: "json" }
+            );
+        }else if(action=='unfollow'){
+            var url = "https://fashionapi.herokuapp.com/user/unfollow";
+            let header = {"Authorization": "Bearer " + this.token}
+            return this.http.post(
+                url, body, { headers: header, responseType: "json" }
+            );
+        }else if(action=='reject'){
+            var url = "https://fashionapi.herokuapp.com/user/reject-follow";
+            let header = {"Authorization": "Bearer " + this.token}
+            return this.http.post(
+                url, body, { headers: header, responseType: "json" }
+            );
+        }else if(action=='accept'){
+            var url = "https://fashionapi.herokuapp.com/user/accept-follow";
+            let header = {"Authorization": "Bearer " + this.token}
+            return this.http.post(
+                url, body, { headers: header, responseType: "json" }
+            );
+        }
     }
 }

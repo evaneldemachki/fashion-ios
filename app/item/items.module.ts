@@ -10,10 +10,10 @@ import { ItemReferenceComponent } from "./item-reference.component";
 import { ItemService } from "./item.service";
 import { OutfitComponent } from "./outfit.component";
 import { tutorialComponent } from "./tutorial";
-import { friendsComponent } from "./friends";
 import { userComponent } from "./user";
 import { RouteReuseStrategy } from "@angular/router";
 import { CustomRouteReuseStrategy } from "./custom-route-reuse-strategy";
+import { settingsComponent } from "./settings";
 
 
 
@@ -30,8 +30,8 @@ import { CustomRouteReuseStrategy } from "./custom-route-reuse-strategy";
         ItemReferenceComponent,
         OutfitComponent,
         tutorialComponent,
-        friendsComponent,
         userComponent,
+        settingsComponent,
     ],
     providers: [
         ItemService,

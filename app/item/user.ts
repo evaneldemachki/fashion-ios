@@ -33,24 +33,31 @@ export class userComponent implements OnInit {
     index;
     userLikes=[];
     userOutfits=[];
-    userFriends=[];
+    userFollowData={followers: [], following: []};
     userIcon;
     categories = [];
     followStatus = "";
-    showOptions = false;
+    showOptionsAccept = false;
+    showOptionsReject = false;
 
     public profileLikesSearchMenu: GridLayout;
     public profileLikesSearchBar: SearchBar;
     public profileLikesSearchMenuOn = 0;
     public searchLikes = [];
 
-    public profileFriendsSearchBar: SearchBar;
-    public profileFriendsGrid: GridLayout;
-    public profileFriendsGridOn = 0;
-    public profileFriendsSearchUsers = [];
-    public profileFriendsList = [];
+    public profileFollowerSearchBar: SearchBar;
+    public profileFollowerGrid: GridLayout;
+    public profileFollowerGridOn = 0;
+    public profileFollowerSearchUsers = [];
+    public profileFollowerList = [];
     public profileLikesSearchText = "";
     public profileLikesCategoryIndex = 0;
+
+    public profileFollowingSearchBar: SearchBar;
+    public profileFollowingGrid: GridLayout;
+    public profileFollowingGridOn = 0;
+    public profileFollowingSearchUsers = [];
+    public profileFollowingList = [];
 
     public windowHeight = screen.mainScreen.heightPixels;
     public windowWidth = screen.mainScreen.widthPixels;
@@ -71,14 +78,16 @@ export class userComponent implements OnInit {
             this.source = params.source;
             this.id = params.id;
         });
-        this.itemService.getFriendData(this.id).subscribe(res => {
+        this.itemService.getFollowerData(this.id).subscribe(res => {
             this.userIcon = res['img']
             this.fullname = res['first_name'] + ' ' + res['last_name']
             this.username = '@' + res['username']
             this.userOutfits = res['outfits']
             this.userLikes = res['likes']
-            this.userFriends = res['friends']
-            this.profileFriendsSearchUsers = this.userFriends;
+            this.userFollowData['followers'] = res['followers']
+            this.userFollowData['following'] = res['following']
+            this.profileFollowerSearchUsers = this.userFollowData['followers'];
+            this.profileFollowingSearchUsers = this.userFollowData['followers'];
             this.searchLikes = this.userLikes;
         });
 
@@ -99,22 +108,22 @@ export class userComponent implements OnInit {
 
     getFollowerStatus(){
         let found = 0
-        for(let i=0; i<this.itemService.friends.length; i++){
-            if(this.id ==this.itemService.friends[i]['_id']){
+        for(let i=0; i<this.itemService.follow_data['followers'].length; i++){
+            if(this.id ==this.itemService.follow_data['followers'][i]['_id']){
                 this.followStatus = 'Unfollow'
                 found = 1;
                 break;
             }
         }
-        for(let j=0; j<this.itemService.pending.length; j++){
-            if(this.id ==this.itemService.friends[j]['_id']){
+        for(let j=0; j<this.itemService.follow_data['requested'].length; j++){
+            if(this.id ==this.itemService.follow_data['requested'][j]['_id']){
                 this.followStatus = 'Pending'
                 found = 1;
                 break;
             }
         }
-        for(let k=0; k<this.itemService.requests.length; k++){
-            if(this.id ==this.itemService.requests[k]['_id']){
+        for(let k=0; k<this.itemService.follow_data['pending'].length; k++){
+            if(this.id ==this.itemService.follow_data['pending'][k]['_id']){
                 this.followStatus = 'Respond'
                 found = 1;
                 break;
@@ -126,38 +135,89 @@ export class userComponent implements OnInit {
     }
 
     FollowUser(){
-        if(this.followStatus!='Follow'){
-            if(this.showOptions==false){
-                this.showOptions = true;
-            }else{
-                this.showOptions = false;
-            }
+        if(this.followStatus=='Follow'){
+            this.itemService.sendUserAction(this.id, 'follow');
         }else{
-            //send follow request
+            if(this.followStatus=='Unfollow'){
+                if(this.showOptionsAccept==false){
+                    this.showOptionsAccept = true;
+                    this.showOptionsReject = true;
+                }else{
+                    this.showOptionsAccept = false;
+                    this.showOptionsReject = false;
+                }
+            }else if(this.followStatus=="Pending"){
+                if(this.showOptionsReject == false){
+                    this.showOptionsReject = true;
+                }else{
+                    this.showOptionsReject = false;
+                }
+            }else if(this.followStatus=='Respond'){
+                if(this.showOptionsAccept==false){
+                    this.showOptionsAccept = true;
+                    this.showOptionsReject = true;
+                }else{
+                    this.showOptionsAccept = false;
+                    this.showOptionsReject = false;
+                }
+            }
         }
     }
 
     confirmRequest(){
         if(this.followStatus=="Unfollow"){
+            this.itemService.sendUserAction(this.id, 'unfollow');
+            this.followStatus = 'Follow';
+            this.showOptionsAccept = false;
+            this.showOptionsReject = false;
+            for(let i = 0; i<this.itemService.follow_data['followers'].length;i++){
+                if(this.itemService.follow_data['followers']['_id'] == this.id){
+                    this.itemService.follow_data['followers'].splice(i,1)
+                    break;
+                }
 
+            }
         }else if(this.followStatus=="Pending"){
 
         }else if(this.followStatus=='Respond'){
-
+            this.itemService.sendUserAction(this.id, 'accept-follow');
+            this.followStatus = 'Unfollow';
+            this.showOptionsAccept = false;
+            this.showOptionsReject = false;
+            this.itemService.follow_data['followers'].push(this.user);
         }
     }
 
     denyRequest(){
         if(this.followStatus=="Unfollow"){
-            this.showOptions = false;
+            this.showOptionsAccept = false;
+            this.showOptionsReject = false;
         }else if(this.followStatus=="Pending"){
-            this.showOptions = false;
+            this.followStatus = 'Follow';
+            this.itemService.sendUserAction(this.id, 'reject-follow');
+            this.showOptionsAccept = false;
+            this.showOptionsReject = false;  
+            for(let i = 0; i<this.itemService.follow_data['pending'].length;i++){
+                if(this.itemService.follow_data['pending']['_id'] == this.id){
+                    this.itemService.follow_data['pending'].splice(i,1)
+                    break;
+                }
+            } 
         }else if(this.followStatus=='Respond'){
-            this.showOptions = false;
+            this.followStatus = 'Follow';
+            this.itemService.sendUserAction(this.id, 'reject-follow');
+            this.showOptionsAccept = false;
+            this.showOptionsReject = false;   
+            for(let i = 0; i<this.itemService.follow_data['pending'].length;i++){
+                if(this.itemService.follow_data['pending']['_id'] == this.id){
+                    this.itemService.follow_data['pending'].splice(i,1)
+                    break;
+                }
+            } 
         }
     }
 
-    goToFriendsProfile(source, id){
+    goToUserProfile(source, id){
         this.router.navigate(['user', id], 
             {
                 relativeTo: this.route.parent,
@@ -270,70 +330,139 @@ export class userComponent implements OnInit {
         }
     }
 
-    //Friends Grid Functions
-    friendGridInitialized(args){
+    //Follower Grid Functions
+    followerGridInitialized(args){
         this.profileLikesSearchMenuOn = 0;
-        this.profileFriendsSearchBar = this.page.getViewById('searchBarFriends');
-        this.profileFriendsGrid = <GridLayout>this.page.getViewById('profileFriends');
+        this.profileFollowerSearchBar = this.page.getViewById('searchBarFollower');
+        this.profileFollowerGrid = <GridLayout>this.page.getViewById('profileFollowers');
 
-        this.profileFriendsGrid.translateY = this.profileFriendsGrid.originY + this.windowHeight;
-        this.profileFriendsGrid.scaleX = this.profileFriendsGrid.scaleX * .5;
-        this.profileFriendsGrid.scaleY = this.profileFriendsGrid.scaleY * .5;
+        this.profileFollowerGrid.translateY = this.profileFollowerGrid.originY + this.windowHeight;
+        this.profileFollowerGrid.scaleX = this.profileFollowerGrid.scaleX * .5;
+        this.profileFollowerGrid.scaleY = this.profileFollowerGrid.scaleY * .5;
 
     }
 
-    friendsScrollStartedEvent(args){
-        this.profileFriendsSearchBar.dismissSoftInput();
+    followerScrollStartedEvent(args){
+        this.profileFollowerSearchBar.dismissSoftInput();
     }
 
-    closeFriend(){
-        this.profileFriendsSearchBar.dismissSoftInput();
+    closeFollower(){
+        this.profileFollowerSearchBar.dismissSoftInput();
         let closing = new Animation([
             {
-                translate: { x: this.profileFriendsGrid.originX, y:this.profileFriendsGrid.originY + this.windowHeight },
+                translate: { x: this.profileFollowerGrid.originX, y:this.profileFollowerGrid.originY + this.windowHeight },
                 scale: { x: .5, y: .5},
                 duration: 1000,
-                target: this.profileFriendsGrid,
+                target: this.profileFollowerGrid,
                 delay: 0,
             }
         ]);
-        if(this.profileFriendsGridOn==1){
+        if(this.profileFollowerGridOn==1){
             closing.play();
-            this.profileFriendsGridOn = 0;
+            this.profileFollowerGridOn = 0;
         }
     }
 
-    openFriend(){
+    openFollower(){
         let opening = new Animation([
             {
-                translate: { x: this.profileFriendsGrid.originX, y: this.profileFriendsGrid.originY},
+                translate: { x: this.profileFollowerGrid.originX, y: this.profileFollowerGrid.originY},
                 scale: { x: 1, y: 1},
                 duration: 300,
-                target: this.profileFriendsGrid,
+                target: this.profileFollowerGrid,
                 delay: 0,
             }
         ]);
-        if(this.profileFriendsGridOn==0){
+        if(this.profileFollowerGridOn==0){
             opening.play();
-            this.profileFriendsGridOn = 1;
+            this.profileFollowerGridOn = 1;
         }
     }
 
-    onFriendClear(){
-        this.profileFriendsSearchUsers = this.profileFriendsList;  
+    onFollowerClear(){
+        this.profileFollowerSearchUsers = this.profileFollowerList;  
     }
 
-    onFriendTextChanged(args){
+    onFollowerTextChanged(args){
         var searchText = args.object.text;
         if(searchText && searchText.length>0){
-            this.profileFriendsSearchUsers = [];
-            for(var i=0; i<this.profileFriendsList.length;i++){
-                if(this.profileFriendsList[i]['username'].includes(searchText)){
-                    this.profileFriendsSearchUsers.push(this.profileFriendsList[i]);
-                }else if(this.profileFriendsList[i]['first_name'].includes(searchText)){
-                    this.profileFriendsSearchUsers.push(this.profileFriendsList[i]);
-                }else if(this.profileFriendsList[i]['last_name'].includes(searchText)){
-                    this.profileFriendsSearchUsers.push(this.profileFriendsList[i]);
+            this.profileFollowerSearchUsers = [];
+            for(var i=0; i<this.profileFollowerList.length;i++){
+                if(this.profileFollowerList[i]['username'].includes(searchText)){
+                    this.profileFollowerSearchUsers.push(this.profileFollowerList[i]);
+                }else if(this.profileFollowerList[i]['first_name'].includes(searchText)){
+                    this.profileFollowerSearchUsers.push(this.profileFollowerList[i]);
+                }else if(this.profileFollowerList[i]['last_name'].includes(searchText)){
+                    this.profileFollowerSearchUsers.push(this.profileFollowerList[i]);
+                }
+            }
+        }
+    }
+
+    //Following Grid Functions
+    followingGridInitialized(args){
+        this.profileLikesSearchMenuOn = 0;
+        this.profileFollowingSearchBar = this.page.getViewById('searchBarFollowing');
+        this.profileFollowingGrid = <GridLayout>this.page.getViewById('profileFollowing');
+
+        this.profileFollowingGrid.translateY = this.profileFollowingGrid.originY + this.windowHeight;
+        this.profileFollowingGrid.scaleX = this.profileFollowingGrid.scaleX * .5;
+        this.profileFollowingGrid.scaleY = this.profileFollowingGrid.scaleY * .5;
+
+    }
+
+    followingScrollStartedEvent(args){
+        this.profileFollowingSearchBar.dismissSoftInput();
+    }
+
+    closeFollowing(){
+        this.profileFollowingSearchBar.dismissSoftInput();
+        let closing = new Animation([
+            {
+                translate: { x: this.profileFollowingGrid.originX, y:this.profileFollowingGrid.originY + this.windowHeight },
+                scale: { x: .5, y: .5},
+                duration: 1000,
+                target: this.profileFollowingGrid,
+                delay: 0,
+            }
+        ]);
+        if(this.profileFollowingGridOn==1){
+            closing.play();
+            this.profileFollowingGridOn = 0;
+        }
+    }
+
+    openFollowing(){
+        let opening = new Animation([
+            {
+                translate: { x: this.profileFollowingGrid.originX, y: this.profileFollowingGrid.originY},
+                scale: { x: 1, y: 1},
+                duration: 300,
+                target: this.profileFollowingGrid,
+                delay: 0,
+            }
+        ]);
+        if(this.profileFollowingGridOn==0){
+            opening.play();
+            this.profileFollowingGridOn = 1;
+        }
+    }
+
+    onFollowingClear(){
+        this.profileFollowingSearchUsers = this.profileFollowingList;  
+    }
+
+    onFollowingTextChanged(args){
+        var searchText = args.object.text;
+        if(searchText && searchText.length>0){
+            this.profileFollowingSearchUsers = [];
+            for(var i=0; i<this.profileFollowingList.length;i++){
+                if(this.profileFollowingList[i]['username'].includes(searchText)){
+                    this.profileFollowingSearchUsers.push(this.profileFollowingList[i]);
+                }else if(this.profileFollowingList[i]['first_name'].includes(searchText)){
+                    this.profileFollowingSearchUsers.push(this.profileFollowingList[i]);
+                }else if(this.profileFollowingList[i]['last_name'].includes(searchText)){
+                    this.profileFollowingSearchUsers.push(this.profileFollowingList[i]);
                 }
             }
         }
