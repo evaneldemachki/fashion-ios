@@ -152,7 +152,7 @@
                     <Label size="16" textAlignment = "center" [text] = "outfitCostLabel"></Label>
                 </StackLayout>
                 <!--[class]="outfitTutorialHide ? 'invisible' : 'visible'"-->
-                <Label row="1" rowspan="2" col="4" colspan="8" [class]="outfitTutorialHide ? 'invisible Tutorials' : 'visible Tutorials'" style="font-size: 12; padding-top: 10; color: white;" textAlignment="center" textWrap="true" text="Tap your clothes, build your perfect outfit"></Label>
+                <Label row="1" rowspan="2" col="4" colspan="8" [class]="currentlyChosen.length == 0 ? 'visible Tutorials' : 'invisible Tutorials'" style="font-size: 12; padding-top: 10; color: white;" textAlignment="center" textWrap="true" text="Tap your clothes, build your perfect outfit"></Label>
 
                 <!--Share Menu-->
                 <GridLayout class="shareMenu" (loaded)="shareLoaded2($event)" row=1 rowspan=6 column=0 colspan=10 rows="*,*,*,*,*,*,*,*,*,*" columns="*,*,*,*,*,*,*,*,*,*">

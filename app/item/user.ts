@@ -79,6 +79,7 @@ export class userComponent implements OnInit {
             this.id = params.id;
         });
         this.itemService.getFollowerData(this.id).subscribe(res => {
+            this.user = res;
             this.userIcon = res['img']
             this.fullname = res['first_name'] + ' ' + res['last_name']
             this.username = '@' + res['username']
@@ -108,13 +109,7 @@ export class userComponent implements OnInit {
 
     getFollowerStatus(){
         let found = 0
-        for(let i=0; i<this.itemService.follow_data['followers'].length; i++){
-            if(this.id ==this.itemService.follow_data['followers'][i]['_id']){
-                this.followStatus = 'Unfollow'
-                found = 1;
-                break;
-            }
-        }
+        
         for(let j=0; j<this.itemService.follow_data['requested'].length; j++){
             if(this.id ==this.itemService.follow_data['requested'][j]['_id']){
                 this.followStatus = 'Pending'
@@ -136,7 +131,7 @@ export class userComponent implements OnInit {
 
     FollowUser(){
         if(this.followStatus=='Follow'){
-            this.itemService.sendUserAction(this.id, 'follow');
+            this.itemService.sendFollowAction(this.id, 'follow', this.user);
         }else{
             if(this.followStatus=='Unfollow'){
                 if(this.showOptionsAccept==false){
@@ -166,25 +161,17 @@ export class userComponent implements OnInit {
 
     confirmRequest(){
         if(this.followStatus=="Unfollow"){
-            this.itemService.sendUserAction(this.id, 'unfollow');
+            this.itemService.sendFollowAction(this.id, 'unfollow', this.user);
             this.followStatus = 'Follow';
             this.showOptionsAccept = false;
             this.showOptionsReject = false;
-            for(let i = 0; i<this.itemService.follow_data['followers'].length;i++){
-                if(this.itemService.follow_data['followers']['_id'] == this.id){
-                    this.itemService.follow_data['followers'].splice(i,1)
-                    break;
-                }
-
-            }
         }else if(this.followStatus=="Pending"){
 
         }else if(this.followStatus=='Respond'){
-            this.itemService.sendUserAction(this.id, 'accept-follow');
+            this.itemService.sendFollowAction(this.id, 'accept-follow', this.user);
             this.followStatus = 'Unfollow';
             this.showOptionsAccept = false;
             this.showOptionsReject = false;
-            this.itemService.follow_data['followers'].push(this.user);
         }
     }
 
@@ -194,26 +181,16 @@ export class userComponent implements OnInit {
             this.showOptionsReject = false;
         }else if(this.followStatus=="Pending"){
             this.followStatus = 'Follow';
-            this.itemService.sendUserAction(this.id, 'reject-follow');
+            this.itemService.sendFollowAction(this.id, 'reject-follow', this.user);
             this.showOptionsAccept = false;
             this.showOptionsReject = false;  
-            for(let i = 0; i<this.itemService.follow_data['pending'].length;i++){
-                if(this.itemService.follow_data['pending']['_id'] == this.id){
-                    this.itemService.follow_data['pending'].splice(i,1)
-                    break;
-                }
-            } 
+            
         }else if(this.followStatus=='Respond'){
             this.followStatus = 'Follow';
-            this.itemService.sendUserAction(this.id, 'reject-follow');
+            this.itemService.sendFollowAction(this.id, 'reject-follow', this.user);
             this.showOptionsAccept = false;
             this.showOptionsReject = false;   
-            for(let i = 0; i<this.itemService.follow_data['pending'].length;i++){
-                if(this.itemService.follow_data['pending']['_id'] == this.id){
-                    this.itemService.follow_data['pending'].splice(i,1)
-                    break;
-                }
-            } 
+            
         }
     }
 

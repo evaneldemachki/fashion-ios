@@ -111,15 +111,12 @@ export class ItemsComponent implements OnInit {
 
 
     //Outfit Creator
-    public currentlyChosen = [];
     public savedItems = [];
     public outfitCreaterList = [];
     public filterBySaved = true;
     public searchCategories =[];
     public tutorialHide = false;
     public outfitTutorialHide = false;
-    public outfitCost = 0;
-    public outfitCostLabel = "";
     public searchView = 0;
     public sideMenuView = 0;
     public categoryVisible = false;
@@ -222,6 +219,24 @@ export class ItemsComponent implements OnInit {
     get pending() {
         return this.itemService.pending;
     }
+    set currentlyChosen(value) {
+        this.itemService.currentlyChosen = value;
+    }
+    get currentlyChosen() {
+        return this.itemService.currentlyChosen;
+    }
+    set outfitCost(value) {
+        this.itemService.outfitCost = value;
+    }
+    get outfitCost() {
+        return this.itemService.outfitCost;
+    }
+    set outfitCostLabel(value) {
+        this.itemService.outfitCostLabel = value;
+    }
+    get outfitCostLabel() {
+        return this.itemService.outfitCostLabel;
+    }
 
     ngOnInit(): void {
         this.token = this.route.snapshot.params.token;
@@ -265,7 +280,7 @@ export class ItemsComponent implements OnInit {
             this.userIcon = res['img'];
             this.userSaved = res['wardrobe'];
             this.outfits = res['outfits'];
-            this.requests = res['requests'];
+            this.requests = res['requested'];
             this.pending =  res['pending'];
 
             this.userLikes.reverse();
@@ -274,6 +289,7 @@ export class ItemsComponent implements OnInit {
             this.profileSavedList = this.userSaved;
             this.searchSaved = this.profileSavedList;
             this.outfitCreaterList = this.userSaved;
+
             this.profileFollowersList = this.follow_data['followers'];
             this.profileFollowersSearchUsers = this.profileFollowersList;
             this.profileFollowingList = this.follow_data['following'];
@@ -401,6 +417,13 @@ export class ItemsComponent implements OnInit {
     }
     
     findUserActions() {
+        this.profileFollowersList = this.follow_data['followers'];
+        this.profileFollowersSearchUsers = this.profileFollowersList;
+        this.profileFollowingList = this.follow_data['following'];
+        this.profileFollowingSearchUsers = this.profileFollowingList;
+
+        this.requestsNum = this.follow_data['pending'].length;                             
+
         this.itemsLiked=[]
         this.itemsSaved = [];
         for(let i = 0; i < this.userLikes.length; i++) {
@@ -421,7 +444,7 @@ export class ItemsComponent implements OnInit {
         for(let m=0; m<this.itemService.follow_data['followers'].length;m++){
             this.isFollower[m]=true;
         }
-        
+        this.requestsNum = this.itemService.follow_data['pending'].length;
     }
 
     onSearch() {
@@ -539,7 +562,7 @@ export class ItemsComponent implements OnInit {
         let i = args.index;
         var exists =false;
         for(var j=0;j<this.currentlyChosen.length;j++){
-            if(this.outfitCreaterList[i]==this.currentlyChosen[j]){
+            if(this.outfitCreaterList[i]['_id']==this.currentlyChosen[j]['_id']){
                 exists = true;
             }
         }
@@ -583,6 +606,7 @@ export class ItemsComponent implements OnInit {
                 newID = res['outfitID'];
             });
             this.outfits.push({'items': createdOutfit})
+            this.outfitCost = 0;
             this.currentlyChosen=[];
 
             let vibrator = new Vibrate();
@@ -1196,7 +1220,7 @@ export class ItemsComponent implements OnInit {
                     if(this.userLikes[i]['category']==itemCategory){
                         this.searchLikes.push(this.userLikes[i]);
                     }
-                }   
+                }
             }
         } else {
             if(this.profileLikesCategoryIndex == 0) {

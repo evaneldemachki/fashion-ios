@@ -48,6 +48,9 @@ export class ItemService {
     public allUsers;
     public loadedItemLiked = false;
     public loadedItemSaved = false;
+    public currentlyChosen = [];
+    public outfitCost = 0;
+    public outfitCostLabel = "Total cost of this outfit is: $" + this.outfitCost.toFixed(2);
 
     constructor(private http: HttpClient) { }
 
@@ -309,35 +312,68 @@ export class ItemService {
         );
     }
 
-    sendUserAction(id, action){
+    sendUserAction(item, action) {
+        let input = { item, action }
+        this.getPostResponse(input).subscribe((res) =>{
+        })
+    }
+
+    sendFollowAction(id, action, user){
         console.log('Action Received: ' + action);
         let body = {
             "id": id
         }
         if(action=='follow'){
+            this.follow_data['following'].push(user);
+
             var url = "https://fashionapi.herokuapp.com/user/follow";
             let header = {"Authorization": "Bearer " + this.token}
+            
             return this.http.post(
                 url, body, { headers: header, responseType: "json" }
-            );
+            ).subscribe();
         }else if(action=='unfollow'){
+            for(let i = 0; i<this.follow_data['following'].length;i++){
+                if(this.follow_data['following'][i]['_id'] == id){
+                    this.follow_data['following'].splice(i,1)
+                    break;
+                }
+            } 
+
             var url = "https://fashionapi.herokuapp.com/user/unfollow";
             let header = {"Authorization": "Bearer " + this.token}
             return this.http.post(
                 url, body, { headers: header, responseType: "json" }
-            );
-        }else if(action=='reject'){
+            ).subscribe();
+        }else if(action=='reject-follow'){
+
+            for(let i = 0; i<this.follow_data['pending'].length;i++){
+                if(this.follow_data['pending'][i]['_id'] == id){
+                    this.follow_data['pending'].splice(i,1)
+                    break;
+                }
+            } 
+
             var url = "https://fashionapi.herokuapp.com/user/reject-follow";
             let header = {"Authorization": "Bearer " + this.token}
             return this.http.post(
                 url, body, { headers: header, responseType: "json" }
-            );
-        }else if(action=='accept'){
+            ).subscribe();
+        }else if(action=='accept-follow'){
+            this.follow_data['followers'].push(user);
+            for(let i = 0; i<this.follow_data['pending'].length;i++){
+                if(this.follow_data['pending'][i]['_id'] == id){
+                    this.follow_data['pending'].splice(i,1)
+                    break;
+                }
+            } 
+
             var url = "https://fashionapi.herokuapp.com/user/accept-follow";
             let header = {"Authorization": "Bearer " + this.token}
             return this.http.post(
                 url, body, { headers: header, responseType: "json" }
-            );
+            ).subscribe();
         }
+
     }
 }

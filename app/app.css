@@ -376,3 +376,12 @@ Button {
     border-color: black;
 }
 
+.settingsOption{
+    padding-left:10;
+}
+
+.settingsOption label{
+    font-size: 20;
+}
+
+

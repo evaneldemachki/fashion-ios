@@ -9,8 +9,8 @@
     </ActionItem>-->
 </ActionBar>
 
-<GridLayout columns="*,*,*,*,*,*,*,*,*,*" rows="*,*,*,*,*,*,*,*,*,*">
-    <RadListView row="0" rowspan="6" column="0" colspan="10" orientation="horizontal" [items]="itemService.loadedItem.img" swipeActions="false" width="100%" height="350">
+<GridLayout columns="*,*,*,*,*,*,*,*,*,*" rows="*,*,*,*,*,*,*,*,*,*,*,*">
+    <RadListView row="0" rowspan="7" column="0" colspan="10" orientation="horizontal" [items]="itemService.loadedItem.img" swipeActions="false" width="100%" height="350">
         <ListViewLinearLayout tkListViewLayout scrollDirection="Horizontal" itemWidth="350" itemHeight="350" [spanCount]="1"></ListViewLinearLayout>
         <ng-template let-img="item">
             <StackLayout>
@@ -18,13 +18,18 @@
             </StackLayout>
         </ng-template>
     </RadListView>
-    <GridLayout class="itemDetailInfo" row="6" rowspan="3" column="0" colspan="10" orientation="horizontal" rows="*,*,*,*" columns="*,*,*,*,*">
+    <GridLayout class="itemDetailInfo" row="7" rowspan="2" column="0" colspan="10" orientation="horizontal" rows="*,*,*" columns="*,*,*,*,*">
         <Label row="0" rowspan="2" column="0" colspan="3" class="h1" width="100%" [text]="itemService.loadedItem.source" textWrap="false"></Label>
         <Label row="1" rowspan="2" column="0" colspan="3" [text]="itemService.loadedItem.name" class="listing-left" textAlignment="left" textWrap="true"></Label>
         <Label row="1" rowspan="2" column="3" colspan="2" [text]="'$' + itemService.loadedItem.price" class="listing-right" textAlignment="center" textWrap="true" style="font-size: 20;"></Label>
     </GridLayout>
-    <Button row="8" rowspan="2" column="0" colspan="5"  class="itemDetailButton" [text]="saved ? 'Unsave For Later' : 'Save For Later'" backgroundColor="black" (tap)=onItemSave()></Button>
-    <Button row="8" rowspan="2" column="5" colspan="5" class="itemDetailButton" text="Buy This Product" backgroundColor="blue" [nsRouterLink]="index" [queryParams]="{ id: id}"></Button>
+    <GridLayout row="9" rowspan="3" column="0" colspan="10" rows="*,*,*" columns="*,*">
+        <Button row="0" rowspan="2" column="0"  class="itemDetailButton" [text]="saved ? 'Unsave For Later' : 'Save For Later'" backgroundColor="black" (tap)=onItemSave()></Button>
+        <Button row="0" rowspan="2" column="1" class="itemDetailButton" text="Buy This Product" backgroundColor="blue" [nsRouterLink]="index" [queryParams]="{ id: id}"></Button>
+        <Button row="2" rowspan="0" column="0" colspan="2" class="itemDetailButton" text="Add this to Outfit Creator" backgroundColor="green" (tap)="addToOutfit()"></Button>
+        <Label class='fas t-36' style="color: green;" text="&#xf164;" horizontalAlignment="center"></Label>
+
+    </GridLayout>
     <StackLayout col="9" row="0">
         <Label [class]="itemService.loadedItemSaved ? 'far t-36' : 'invisible'" style="color: green;" text="&#xf0c7;" horizontalAlignment="center"></Label>
     </StackLayout>
