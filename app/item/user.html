@@ -1,20 +1,18 @@
 <Gridlayout padding="2 0 2 2" rows = "*,*,*" id="accountMenu" margin="0"> 
-    <StackLayout row="0">
-        <Image [src] = "userIcon" height="60%" width = "60%"></Image>
-        <Label [text]="fullname" textAlignment="center" style="font-size: 15;"></Label>
-        <Label [text]="username" textAlignment="center"></Label>
-        <GridLayout columns="*,*,*,*,*">
-            <GridLayout column="0" colspan="2" columns="*,*,*,*">
-                <button id="buttonNeo" col="0" colspan="4" width="100%" [text]="followStatus" (tap)="FollowUser()"></button>
-                <button column="0" id="buttonNeo" [class]="showOptions ? 'fas' : 'invisible'" style="background-color: green" width="100%" text="&#xf00c;" (tap)="confirmRequest()" ></button>
-                <button column="3" id="buttonNeo" [class]="showOptions ? 'fas' : 'invisible'" style="background-color: red" width="100%" text="&#xf00d;" (tap)="denyRequest()" ></button>
-            </GridLayout>
-            <GridLayout col="3" colspan="2">
-                <button id="buttonNeo" col="3" colspan="2" width="100%" text="Friends" (tap)="openFriend()" ></button>
-            </GridLayout>
-            
+    <GridLayout row="0" columns="*,*,*,*,*,*,*" rows="*,*,*,*,*">
+        <Image class="profilePicture" [src] = "userIcon" column="0" colspan="3" row="1" rowspan="3"></Image>
+        <Label [text]="fullname" column="0" colspan="3" row="0" textAlignment="center" style="font-size: 15;"></Label>
+        <Label [text]="username" column="4" colspan="3" row="0" extAlignment="center"></Label>
+        <GridLayout column="0" colspan="3" row="4" columns="*,*,*,*" style="padding-bottom: 5;">
+            <button id="buttonNeo" col="0" colspan="4" width="100%" [text]="followStatus" (tap)="FollowUser()"></button>
+            <button column="0" id="buttonNeo" [class]="showOptionsAccept ? 'fas' : 'invisible'" style="background-color: green;" width="100%" text="&#xf00c;" (tap)="confirmRequest()" ></button>
+            <button column="3" id="buttonNeo" [class]="showOptionsReject ? 'fas' : 'invisible'" style="background-color: red;" width="100%" text="&#xf00d;" (tap)="denyRequest()" ></button>
         </GridLayout>
-    </StackLayout>    
+        <GridLayout column="4" colspan="3" row="4" style="padding-bottom: 5;">
+            <button id="buttonNeo" width="100%" text="Followers" (tap)="openFollower()"></button>
+        </GridLayout>
+
+    </GridLayout>    
     <ScrollView row="1" rowspan="2" orientation="vertical">
         <StackLayout>
                 <Button id="buttonNeo" class="profile" textAlignment = "center" text="Their Liked" (tap)="openLikes()"></Button>
@@ -42,7 +40,7 @@
         </StackLayout>
     </ScrollView>
 
-    <!--Search Friends Likes-->
+    <!--User Search Likes-->
     <GridLayout class="popUpMenu"row="0" rowspan="3" id="profileLikesSearch" rows="*,*,*,*,*,*,*,*,*,*" columns = "*,*,*,*,*,*,*,*,*,*" (loaded)="likesGridInitialized($event)">
         <RadListView row="1" rowspan="10" column="0" colspan="10" orientation="vertical" [items]="searchLikes"
         width="100%" height="100%" (scrolled)="profileLikesScrollStartedEvent($event)"
@@ -67,29 +65,54 @@
         <Label id="closeLikesIcon" row="0" column="0" colspan="2" class="far t-36" style="padding: 10; padding-left: 20; color: black;" text="&#xf057;" (tap)="closeLikes()"></Label>
     </GridLayout>
 
-    <!--Profile Search Friends-->
-    <GridLayout class="friendsListGrid popUpMenu" id="profileFriends" row="0" rowspan="3" columns="*,*,*,*,*" rows="*,*,*,*,*,*,*,*,*,*" (loaded)="friendGridInitialized($event)">
-        <RadListView id="Main" column="0" colspan="5" row="1" rowspan="10" [items]="profileFriendsSearchUsers" orientation="Vertical" height=100%
-                multipleSelection="false" selectionBehavior="Press" (scrolled)="friendsScrollStartedEvent($event)"
+    <!--User Search Followers-->
+    <GridLayout class="FollowersListGrid popUpMenu" id="profileFollowers" row="0" rowspan="3" columns="*,*,*,*,*" rows="*,*,*,*,*,*,*,*,*,*" (loaded)="followerGridInitialized($event)">
+        <RadListView id="Main" column="0" colspan="5" row="1" rowspan="10" [items]="profileFollowersSearchUsers" orientation="Vertical" height=100%
+                multipleSelection="false" selectionBehavior="Press" (scrolled)="followersScrollStartedEvent($event)"
                 (itemDeselected)="categoryDeselected($event)">
                     <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" itemWidth="350" itemHeight="95" spanCount="1"></ListViewGridLayout>
                         <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
                     <ng-template let-item="item" let-index="index" horizontalAlignment="center">
-                        <GridLayout id="userList" columns="*,*,*,*,*,*" rows="*,*" (tap)="goToFriendsProfile(friends, profileFriendsSearchUsers[index]['_id'])" style="margin-top: 10; margin-left: 15;">
+                        <GridLayout id="userList" columns="*,*,*,*,*,*" rows="*,*" (tap)="goToFollowersProfile(Followers, profileFollowersSearchUsers[index]['_id'])" style="margin-top: 10; margin-left: 15;">
                             <StackLayout orientation="horizontal" row="0" column="0" colspan="3" >
                             <label class="userListText" textAlignment = "left" [text]="'@' + item.username"></label>
                             </StackLayout>
                             <StackLayout row="1" column="0" colspan="3" orientation="horizontal">
                                 <label class="userListText"  [text]="item.first_name + ' ' + item.last_name" textAlignment = "left"></label>
                             </StackLayout>
-                            <Button text="Friend" row="0" rowspan="2" column="4" colspan="2" style="background-color: white; color: black;"></Button>
+                            <Button text="Follower" row="0" rowspan="2" column="4" colspan="2" style="background-color: white; color: black;"></Button>
                         </GridLayout>
                     </ng-template>
         </RadListView>
-        <SearchBar id="searchBarFriends" row="0" column="1" colspan="5" hint="Search for Users ..." loaded="searchStart($event)" (textChange)="onFriendTextChanged($event)"
-        [text]="searchPhrase" (clear)="onFriendClear($event)" submit="onSubmit($event)" style="padding-left: 30;">
+        <SearchBar id="searchBarFollower" row="0" column="1" colspan="5" hint="Search for Users ..." loaded="searchStart($event)" (textChange)="onFollowerTextChanged($event)"
+        [text]="searchPhrase" (clear)="onFollowerClear($event)" submit="onSubmit($event)" style="padding-left: 30;">
         </SearchBar>
-        <Label id="closeFriendIcon" row="0" column="0" class="far t-36" style="padding: 10; padding-left: 20; color: black;" text="&#xf057;" (tap)="closeFriend()"></Label>
+        <Label id="closeFollowerIcon" row="0" column="0" class="far t-36" style="padding: 10; padding-left: 20; color: black;" text="&#xf057;" (tap)="closeFollower()"></Label>
+    </GridLayout>
+
+    <!--User Search Following-->
+    <GridLayout class="FollowingListGrid popUpMenu" id="profileFollowing" row="0" rowspan="3" columns="*,*,*,*,*" rows="*,*,*,*,*,*,*,*,*,*" (loaded)="followingGridInitialized($event)">
+        <RadListView id="Main" column="0" colspan="5" row="1" rowspan="10" [items]="profileFollowingSearchUsers" orientation="Vertical" height=100%
+                multipleSelection="false" selectionBehavior="Press" (scrolled)="followingScrollStartedEvent($event)"
+                (itemDeselected)="categoryDeselected($event)">
+                    <ListViewGridLayout tkListViewLayout scrollDirection="Vertical" itemWidth="350" itemHeight="95" spanCount="1"></ListViewGridLayout>
+                        <!-- When nesting ListView in ScrollView, make sure that the nested scrollable component has an explicitly set height -->
+                    <ng-template let-item="item" let-index="index" horizontalAlignment="center">
+                        <GridLayout id="userList" columns="*,*,*,*,*,*" rows="*,*" (tap)="goToFollowingProfile(Followers, profileFollowingSearchUsers[index]['_id'])" style="margin-top: 10; margin-left: 15;">
+                            <StackLayout orientation="horizontal" row="0" column="0" colspan="3" >
+                            <label class="userListText" textAlignment = "left" [text]="'@' + item.username"></label>
+                            </StackLayout>
+                            <StackLayout row="1" column="0" colspan="3" orientation="horizontal">
+                                <label class="userListText"  [text]="item.first_name + ' ' + item.last_name" textAlignment = "left"></label>
+                            </StackLayout>
+                            <Button text="Follower" row="0" rowspan="2" column="4" colspan="2" style="background-color: white; color: black;"></Button>
+                        </GridLayout>
+                    </ng-template>
+        </RadListView>
+        <SearchBar id="searchBarFollowing" row="0" column="1" colspan="5" hint="Search for Users ..." loaded="searchStart($event)" (textChange)="onFollowingTextChanged($event)"
+        [text]="searchPhrase" (clear)="onFollowingClear($event)" submit="onSubmit($event)" style="padding-left: 30;">
+        </SearchBar>
+        <Label id="closeFollowingIcon" row="0" column="0" class="far t-36" style="padding: 10; padding-left: 20; color: black;" text="&#xf057;" (tap)="closeFollowing()"></Label>
     </GridLayout>
 
 </Gridlayout>
