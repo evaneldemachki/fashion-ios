@@ -5,11 +5,12 @@ import { Image } from "tns-core-modules/ui/image";
 
 import { Observable } from 'tns-core-modules/data/observable';
 import { ObservableArray } from 'tns-core-modules/data/observable-array';
+import {returnServerDetails} from './serverdetails.js';
 
 @Injectable()
 export class ItemService {
     // dev mode
-    private serverUrl = "https://fashionapi.herokuapp.com/api/";
+    private serverUrl = returnServerDetails();
     
     //items: Item[];
     public items = new ObservableArray();
